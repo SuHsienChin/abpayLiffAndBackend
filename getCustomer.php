@@ -1,7 +1,7 @@
 <?php
 require_once 'getApiJsonClass.php';
 
-$url = 'http://www.adp.idv.tw/apiTest/Customer?Line=' . $_GET["lineId"];
+$url = 'http://www.adp.idv.tw/api/Customer?Line=' . $_GET["lineId"];
 $curlRequest = new CurlRequest($url);
 $response = $curlRequest->sendRequest();
 

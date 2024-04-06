@@ -68,7 +68,8 @@
 <script>
 
     $(document).ready(function () {
-        $('.order-detail-link').click(function (event) {
+
+          $('.order-detail-link').click(function (event) {
             event.preventDefault();
             var orderId = $(this).data('order-id');
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>確認下單</title>
+    <title>查詢訂單</title>
     <!-- 引入Bootstrap 4的CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
 </head>
@@ -43,26 +43,28 @@
 <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
 <script>
-
     function getOrderList(lineId) {
-        axios.get('get_order_list.php?lineId=A03')
-            .then(function (response) {
-                const orders = response.data;
-                const tableBody = document.getElementById('orderTableBody');
+        try {
+            axios.get('get_order_list.php?lineId=' + lineId)
+                .then(function (response) {
+                    const orders = response.data;
+                    const tableBody = document.getElementById('orderTableBody');
 
-                if (orders.length > 0) {
-                    orders.forEach(function (order) {
-                        var row = document.createElement('tr');
-                        row.innerHTML = `
+                    if (orders.length > 0) {
+                        orders.forEach(function (order) {
+                            var row = document.createElement('tr');
+                            //<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#orderDetails${order.orderId}">查看詳細</button>
+                            row.innerHTML = `
                             <td>${order.created_at}</td>
                             <td>${order.orderId}</td>
                             <td>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#orderDetails${order.orderId}">查看詳細</button>
+                                <button type="button" onclick="clickOpenBtn(this)" class="btn btn-primary" data-target="#orderDetails${order.orderId}">查看詳細</button>
                                 <!-- Modal -->
-                                <div class="modal fade" id="orderDetails${order.orderId}" tabindex="-1" role="dialog" aria-labelledby="orderDetailsLabel${order.orderId}" aria-hidden="true">
+                                <div class="modal" id="orderDetails${order.orderId}" tabindex="-1" role="dialog" aria-labelledby="orderDetailsLabel${order.orderId}" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
+                                            <button type="button" onclick="clickCloseBtn(this)" class="btn btn-secondary" data-dismiss="modal" data-target="#orderDetails${order.orderId}">關閉</button>
                                                 <h5 class="modal-title" id="orderDetailsLabel${order.orderId}">訂單內容</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
@@ -80,82 +82,122 @@
                                                 ➤角色名稱：<label id='characters'>${order.gameAccountName}</label></br>
                                                 ➤ID編號：<label></label>${order.gameAccountId}</br>
                                                 ➤下單商品確認：</br></br>
-                                                <label id='gameItems'>${splitItemsAndCounts(order.gameItemsName, order.gameItemCounts, order.itemsMoney)}</label></br></br>
+                                                <label id='gameItems'>${splitItemsAndCounts(JSON.parse(order.gameItemsName), order.gameItemCounts, order.itemsMoney)}</label></br></br>
                                                 總計: <label id='sumMoney'>${order.sumMoney}</label> <label id='customerCurrency'></label>
                                             </fieldset>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
+                                                <button type="button" onclick="clickCloseBtn(this)" class="btn btn-secondary" data-dismiss="modal" data-target="#orderDetails${order.orderId}">關閉</button>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                 </div>
                             </td>
                             <td>${order.status}</td>
                         `;
-                        tableBody.appendChild(row);
-                    });
-                } else {
-                    tableBody.innerHTML = '<tr><td colspan="4">沒有訂單</td></tr>';
-                }
-            })
-            .catch((error) => console.log(error))
+                            tableBody.appendChild(row);
+                        });
+                    } else {
+                        tableBody.innerHTML = '<tr><td colspan="4">沒有訂單</td></tr>';
+                    }
+                })
+                .catch((error) => console.log(error))
+        } catch (e) {
+            alert('讀訂單出錯，請洽小編\n' + e);
+        }
+
     }
 
 
     function initializeLiff(myLiffId) {
-        liff
-            .init({
-                liffId: myLiffId,
-                withLoginOnExternalBrowser: true, // Enable automatic login process
-            })
-            .then(() => {
-                initializeApp();
-            })
-            .catch((err) => {
-                console.log(err);
-                console.log('啟動失敗。');
-            });
+        try {
+            liff
+                .init({
+                    liffId: myLiffId,
+                    withLoginOnExternalBrowser: true, // Enable automatic login process
+                })
+                .then(() => {
+                    initializeApp();
+                })
+                .catch((err) => {
+                    console.log(err);
+                    console.log('啟動失敗。');
+                });
+        } catch (e) {
+            alert('啟動liff失敗，請洽小編\n' + e);
+        }
+
     }
 
     function initializeApp() {
-        console.log('啟動成功。');
-        liff.getProfile()
-            .then(profile => {
-                console.log(profile.displayName);
-                console.log(profile.userId);
-                console.log(profile.statusMessage);
-                console.log(profile);
-                sessionStorage.setItem('lineUserId', profile.userId);
-                const lineId = $("#lineId").val(sessionStorage.getItem('lineUserId'));
-                getOrderList(lineId);
-            })
-            .catch((err) => {
-                console.log('error', err);
-            });
-
+        try {
+            console.log('啟動成功。');
+            liff.getProfile()
+                .then(profile => {
+                    console.log(profile.displayName);
+                    console.log(profile.userId);
+                    console.log(profile.statusMessage);
+                    console.log(profile);
+                    sessionStorage.setItem('lineUserId', profile.userId);
+                    const lineId = $("#lineId").val(sessionStorage.getItem('lineUserId'));
+                    getOrderList(profile.userId);
+                })
+                .catch((err) => {
+                    console.log('error', err);
+                });
+        } catch (e) {
+            alert('啟動getProfile失敗，請洽小編\n' + e);
+        }
     }
 
     //使用 LIFF_ID 初始化 LIFF 應用
     initializeLiff('2000183731-nVr0b25p');
 
     function splitItemsAndCounts(items, counts, itemsMoney) {
+        try {
+            if (items.split(',').length > 1) {
+                const myitems = items.split(',');
+                const mycounts = counts.split(',');
+                const myitemsMoney = itemsMoney.split(',');
+                let str = '';
+                for (let i = 0; i < myitems.length; i++) {
+                    str += myitems[i] + ' X ' + mycounts[i] + ' = ' + myitemsMoney[i] + '<br />';
+                }
 
-        if (items.split(',').length > 1) {
-            const myitems = items.split(',');
-            const mycounts = counts.split(',');
-            const myitemsMoney = itemsMoney.split(',');
-            let str = '';
-            for (let i = 0; i < myitems.length; i++) {
-                str += myitems[i] + ' X ' + mycounts[i] + ' = ' + myitemsMoney[i] + '<br />';
+                return str;
+            } else {
+                return items + ' X ' + counts + ' = ' + itemsMoney;
             }
-
-            return str;
-        } else {
-            return items + ' X ' + counts + ' = ' + itemsMoney;
+        } catch (e) {
+            alert('處理字串失敗，請洽小編\n' + e);
         }
-
     }
+
+    // 開啟訂單內容視窗
+    function clickOpenBtn(button) {
+        // 獲取按鈕得 data-custom 屬性內容
+        const customData = button.getAttribute('data-target');
+
+        // 弹出按钮的 data-custom 属性内容
+        //alert('按钮的 data-custom 属性内容为：' + customData);
+
+        //
+        $(customData).show();
+    }
+
+    function clickCloseBtn(button) {
+        const customData = button.getAttribute('data-target');
+        $(customData).hide();
+    }
+
+    // 關閉訂單內容視窗
+    $(document).ready(function () {
+        // 使用事件代理绑定 click 事件
+        $('.openbtn').on('click', 'button', function () {
+            alert('你点击了动态按钮！');
+        });
+    });
+
 </script>
 
 </html>

@@ -7,6 +7,7 @@
     <title>確認下單</title>
     <!-- 引入Bootstrap 4的CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
@@ -20,8 +21,10 @@
                     <div class="card-body">
                         <div class="form-group">
                             <fieldset class="border p-4">
-                                <h2>艾比代感謝您下單😘</h2>
-                                <h4>訂單：<?php echo($_GET["orderId"]) ?></h4>
+                                <h4>訂單編號：
+                                    <?php echo ($_GET["orderId"]) ?>
+                                </h4>
+                                <label id='order_finish_display_message'></label>
                             </fieldset>
                         </div>
                     </div>
@@ -38,7 +41,45 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        axios.get('get_order_finish_display_messages.php')
+            .then(function (response) {
+                //console.log(JSON.parse(response.data[0].content));
 
+                //取得客人資料
+                const customerData = JSON.parse(sessionStorage.getItem('customerData'));
+
+                const groupCode = customerData.Id.charAt(0);
+
+
+                if (groupCode === 'S') {
+                    response.data.forEach(function (item, i) {
+                        if (item.title === '晴子') {
+                            $('#order_finish_display_message').text(JSON.parse(item.content))
+                        }
+                    });
+                }
+                if (groupCode === 'W') {
+                    response.data.forEach(function (item, i) {
+                        if (item.title === '沐沐代儲') {
+                            $('#order_finish_display_message').text(JSON.parse(item.content))
+                        }
+                    });
+                }
+                if (groupCode === 'A') {
+                    response.data.forEach(function (item, i) {
+                        if (item.title === '艾比代') {
+                            $('#order_finish_display_message').text(JSON.parse(item.content))
+                        }
+                    });
+                } else {
+                    if (item.title === '艾比代') {
+                        $('#order_finish_display_message').text(JSON.parse(item.content))
+                    }
+                }
+            })
+            .catch((error) => console.log(error))
+
+        sessionStorage.clear();
     </script>
 </body>
 

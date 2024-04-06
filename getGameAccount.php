@@ -1,7 +1,7 @@
 <?php
 require_once 'getApiJsonClass.php';
 
-$url = 'http://www.adp.idv.tw/apiTest/GameAccount?Sid=' . $_GET["Sid"];
+$url = 'http://www.adp.idv.tw/api/GameAccount?Sid=' . $_GET["Sid"];
 $curlRequest = new CurlRequest($url);
 $response = $curlRequest->sendRequest();
 

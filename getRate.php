@@ -1,7 +1,7 @@
 <?php
 require_once 'getApiJsonClass.php';
 
-$url = 'http://www.adp.idv.tw/apiTest/Rate';
+$url = 'http://www.adp.idv.tw/api/Rate';
 $curlRequest = new CurlRequest($url);
 $response = $curlRequest->sendRequest();
 

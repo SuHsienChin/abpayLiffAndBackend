@@ -18,6 +18,17 @@
                     <div class="card-header text-center">
                         <h3>遊戲下單</h3>
                     </div>
+                    <div id="loading" class="modal" style="display: none;">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card-body">
                         <form method="post" action="order_check.php">
                             <div class="form-group">
@@ -79,9 +90,36 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <!-- 以下是liff 要上線時需打開 -->
-    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="/js/liff.js"></script>
+    <!-- <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="/js/liff.js"></script> -->
     <script>
+
+
+        const loadingModal = new bootstrap.Modal(document.getElementById('loading'), {
+            backdrop: 'static',
+            keyboard: false
+        });
+
+        // 顯示 Loading 動畫
+        loadingModal.show();
+
+        // // 執行耗時操作
+        // someSlowOperation().then(() => {
+
+        //     console.log('111111');
+        //     // 隱藏 Loading 動畫
+            
+        // });
+
+        var delayInMilliseconds = 1000; //1 second
+
+        setTimeout(function () {
+
+            loadingModal.hide();
+            //your code to be executed after 1 second
+        }, delayInMilliseconds);
+
+
         var liffID = '2000183731-BLmrAGPp';
 
         liff.init({
@@ -132,6 +170,8 @@
         var user = liff.getDecodedIDToken();
         var email = user.email;
         console.log(email);
+
+
     </script>
 </body>
 

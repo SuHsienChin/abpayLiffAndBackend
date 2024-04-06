@@ -32,7 +32,7 @@ try {
     foreach ($_POST as $key => $value) {
         $$key = $value;
     }
-
+    $gameItemsName = json_encode($gameItemsName);
     // 接收 POST 請求中的 JSON 數據
     //$data = json_decode(file_get_contents('php://input'));
 
@@ -41,11 +41,11 @@ try {
     // 插入資料到 "orders" 資料表
     $sql = "INSERT INTO orders (lineId, customerId, orderId, gameName, gameItemsName,
      gameItemCounts,itemsMoney,	sumMoney, logintype, acount, password, serverName, gameAccountName,
-      gameAccountId, gameAccountSid, customerSid, status) 
+      gameAccountId, gameAccountSid, customerSid, status, orderDateTime,remark) 
       VALUES 
       (:lineId, :customerId, :orderId, :gameName, :gameItemsName,
       :gameItemCounts,:itemsMoney,	:sumMoney, :logintype, :acount, :password, :serverName, :gameAccountName,
-      :gameAccountId, :gameAccountSid, :customerSid, :status)";
+      :gameAccountId, :gameAccountSid, :customerSid, :status, :orderDateTime,:remark)";
     //($lineId, $customerId, $orderId, 'gameName', $gameItemsName, $gameItemCounts, $logintype, $acount, $Password, $serverName, $gameAccountName, $gameAccountId, $gameAccountSid, $customerSid, NULL, NULL);";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':lineId', $lineId, PDO::PARAM_STR);
@@ -65,6 +65,8 @@ try {
     $stmt->bindParam(':gameAccountSid', $gameAccountSid, PDO::PARAM_STR);
     $stmt->bindParam(':customerSid', $customerSid, PDO::PARAM_STR);
     $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+    $stmt->bindParam(':orderDateTime', $orderDateTime, PDO::PARAM_STR);
+    $stmt->bindParam(':remark', $gameRemark, PDO::PARAM_STR);
     $stmt->execute();
 
 

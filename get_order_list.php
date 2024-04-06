@@ -17,6 +17,10 @@ if (!empty($lineId)) {
     $stmt->bindParam(':lineId', $lineId);
     $stmt->execute();
     $orderLists = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach($orderLists as $orderList){
+        $orderList['gameItemsName'] = json_decode($orderList['gameItemsName']);
+    }
 }else {
     // 若未選擇遊戲名稱，回傳空陣列
     $orderLists = [];

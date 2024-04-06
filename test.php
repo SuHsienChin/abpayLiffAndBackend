@@ -1,34 +1,22 @@
 <?php
-header("Access-Control-Allow-Origin:*");
 
-原文網址：https://kknews.cc/code/pb88nlz.html
-// require_once 'getApiJsonClass.php';
+// 檢查是否為 POST 請求
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // 接收 POST 資料
+    $postData = file_get_contents('php://input');
 
-// $url = 'http://www.adp.idv.tw/apiTest/GameList';
-// $curlRequest = new CurlRequest($url);
-// $response = $curlRequest->sendRequest();
-// echo $response;
-// $data = json_decode($response, true);
+    // 解析 JSON 資料
+    $data = json_decode($postData, true);
 
-// if ($data === null) {
-//     die("無法取得API資料");
-// }
+    // 假設我們要回傳接收到的資料
+    $response = array(
+        'status' => 'success',
+        'postData' => $data
+    );
 
-// header('Content-Type: application/json');
-// echo json_encode($data);
+    // 設定回傳的 Content-Type 為 JSON
+    header('Content-Type: application/json');
 
-echo (geturl('http://www.adp.idv.tw/apiTest/GameList'));
-
-function geturl($url){
-    $headerArray =array("Content-type:application/json;","Accept:application/json");
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); 
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE); 
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch,CURLOPT_HTTPHEADER,$headerArray);
-    $output = curl_exec($ch);
-    curl_close($ch);
-    $output = json_decode($output,true);
-    return $output;
+    // 將回應資料編碼為 JSON 並回傳
+    echo json_encode($response);
 }

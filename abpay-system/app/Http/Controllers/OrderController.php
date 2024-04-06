@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 
+
 use Illuminate\Http\Request;
+use GuzzleHttp\Client; 
+
+
 
 class OrderController extends Controller
 {
@@ -16,7 +20,7 @@ class OrderController extends Controller
 
     public function updateStatus(Request $request)
     {
-        
+
         $selectedOrders = $request->selected_orders;
         // 處理訂單狀態的更新
         // 檢查是否有選中的訂單
@@ -72,4 +76,18 @@ class OrderController extends Controller
 
         return $items;
     }
+
+
+
+    public function orderLists()
+    {
+        $url = 'http://abpay.tw/get_order_list.php?lineId=U628aae282e484f49fb905ac0d17dd860';
+        $client = new \GuzzleHttp\Client(); 
+        $request = $client->get($url); 
+        $response = $request->getBody()->getContents();
+        return $response;
+
+    }
+
+
 }

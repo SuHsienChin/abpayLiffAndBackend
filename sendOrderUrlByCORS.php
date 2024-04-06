@@ -1,26 +1,41 @@
 <?php
 require_once 'getApiJsonClass.php';
 
-$url = 'http://www.adp.idv.tw/apiTest/Order?';
+$url = 'http://www.adp.idv.tw/api/Order?';
 
+$request_body = file_get_contents('php://input');
+$post_data = json_decode($request_body, true);
 
-// 檢查是否有 GET 參數存在
-if (isset($_GET) && !empty($_GET)) {
-    // 迭代所有 GET 參數
-    foreach ($_GET as $key => $value) {
-        // 輸出每個 GET 參數的名稱和值
-        $url = $url . $key . '=' . $value . '&';
-    }
-    $url = substr($url, 0, -1);
-}
+$UserId = 'test02';
+$Password = '3345678';
+$Customer = $post_data['Customer'];
+$GameAccount = $post_data['GameAccount'];
+$Item = $post_data['Item'];
+$Count = $post_data['Count'];
+$Note0 = $_post_dataPOST['Note0'];
 
-$curlRequest = new CurlRequest($url);
-$response = $curlRequest->sendRequest();
+$fields = [
+    'UserId' => $UserId,
+    'Password' => $Password,
+    'Customer' => $Customer,
+    'GameAccount' => $GameAccount,
+    'Item' => $Item,
+    'Count' => $Count,
+    'Note0' => $Note0
+];
 
-$data = json_decode($response, true);
+$postdata = http_build_query($fields);
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$result = curl_exec($ch);
+
+$data = json_decode($result, true);
 
 if ($data === null) {
-    die("無法取得API資料");
+    die ("無法取得API資料");
 }
 ob_start();
 header('Content-Type: application/json');

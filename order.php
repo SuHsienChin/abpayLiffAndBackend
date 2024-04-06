@@ -18,6 +18,17 @@
                     <div class="card-header text-center">
                         <h3>遊戲下單</h3>
                     </div>
+                    <div id="loading" class="modal" style="display: none;">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card-body">
                         <form method="post" action="order_check.php">
                             <div class="form-group">
@@ -62,6 +73,13 @@
                                 </div>
                                 <br />
                             </div>
+                            <div class="form-group" id="gameItemsGroup">
+                                <label for="gameItem">備註</label>
+                                <div class="d-flex align-items-center">
+                                    <textarea id="gameRemark" name="gameRemark" rows="3" cols="50"></textarea>
+                                </div>
+                                <br />
+                            </div>
                             <button type="button" class="btn btn-primary btn-block mb-3"
                                 onclick="addGameItem()">新增遊戲商品</button>
                             <button type="button" class="btn btn-success btn-block"
@@ -82,6 +100,22 @@
     <!-- 以下是liff 要上線時需打開 -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
+
+        const loadingModal = new bootstrap.Modal(document.getElementById('loading'), {
+            backdrop: 'static',
+            keyboard: false
+        });
+
+        // 顯示 Loading 動畫
+        loadingModal.show();
+
+
+        $(function () {
+            //使用 LIFF_ID 初始化 LIFF 應用
+            initializeLiff('2000183731-BLmrAGPp');
+
+            sessionStorage.clear();
+        });
 
         function initializeLiff(myLiffId) {
             liff
@@ -110,6 +144,7 @@
                     sessionStorage.setItem('lineUserId', profile.userId);
                     const mylineId = $("#lineId").val(sessionStorage.getItem('lineUserId'));
                     customerBtn(profile.userId);
+
                 })
                 .catch((err) => {
                     console.log('error', err);
@@ -117,16 +152,12 @@
 
         }
 
-        //使用 LIFF_ID 初始化 LIFF 應用
-        initializeLiff('2000183731-BLmrAGPp');
-
-
         //一開始進來清除所有暫存資料
-        sessionStorage.clear();
+        //sessionStorage.clear();
 
         function customerBtn(mylineId) {
-            //const mylineId = $("#lineId").val();
-            console.log(mylineId);
+            // const mylineId = $("#lineId").val();
+
             //取得客人資料
             axios.get('getCustomer.php?lineId=' + mylineId)
                 .then(function (response) {
@@ -145,7 +176,17 @@
                     walletBalance.innerHTML = currentMoney + ' ' + customerData.Currency;
                     sessionStorage.setItem('customerData', JSON.stringify(response.data));
                     sessionStorage.setItem('lineId', lineId);
+
+                    //取得客人所有的遊戲帳號
                     getCustomerGameAccounts(customerData.Sid);
+
+                    //轉圈圈Loading隱藏
+                    loadingModal.hide();
+
+                    // if(currentMoney <= 0){
+                    //     alert('要自動下單\n請先至官方LINE\n找小編儲值錢包唷');
+                    //     $('.btn').hide();
+                    // }
                 })
                 .catch((error) => console.log(error))
         }
@@ -155,11 +196,22 @@
             axios.get('getGameAccount.php?Sid=' + Sid)
                 .then(function (response) {
                     const accountData = response.data;
+                    let uniqueGames = {};
+                    let filteredData = [];
+                    response.data.forEach(item => {
+                        // 如果這個遊戲 ID 還沒出現過，就將它加入 filteredData 並標記為已經出現過
+                        if (!uniqueGames[item.GameSid]) {
+                            uniqueGames[item.GameSid] = true;
+                            filteredData.push(item);
+                        }
+                    });
+                    console.log(filteredData);
                     //沒有遊戲資料的客人 要請小編建立
                     if (response.data.length === 0) {
-                        alert('您還沒建立遊戲資料，請洽小編建立資料');
+                        alert('您還沒建立遊戲資料\n請點確定後將LINE ID複製給小編\n請洽小編建立資料');
                     } else {
                         sessionStorage.setItem('customerGameAccounts', JSON.stringify(response.data));
+                        sessionStorage.setItem('customerGameNames', JSON.stringify(filteredData));
                         getCustomerGameLists();
                     }
 
@@ -169,7 +221,7 @@
 
         //取得客人所屬的遊戲
         function getCustomerGameLists() {
-            const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameAccounts'));
+            const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameNames'));
 
             axios.get('getGameList.php')
                 .then(function (response) {
@@ -183,7 +235,8 @@
                     $.each(customerGameAccounts, function (i, item) {
                         const gameData = searchGameBySid(parseInt(item.GameSid));
                         const selectedGame = document.getElementById("gameName")
-                        options += `<option value="${gameData.Sid}" data-gameRate="${gameData.GameRate}">${gameData.Name}</option>`;
+                        options +=
+                            `<option value="${gameData.Sid}" data-gameRate="${gameData.GameRate}">${gameData.Name}</option>`;
                         selectedGame.innerHTML = options;
                     });
 
@@ -223,7 +276,7 @@
                         data-server_name="${item.ServerName}" 
                         data-login_account_Sid="${item.Sid}" 
                         value="${item.LoginAccount}" 
-                        >${item.LoginAccount}-${item.Characters}</option>`;
+                        >${item.LoginAccount}　${item.Characters}</option>`;
                     gameItemDropdown.innerHTML = options;
                 }
             });
@@ -247,6 +300,9 @@
                     // 從回傳的資料中生成商品下拉選單選項
                     let gameItems = response.data;
 
+                    // 去掉商品底線後面的字
+                    gameItems = removeAfterOnderLineWords(gameItems);
+
                     //確認港幣客人只能顯示港幣商品
                     const hkdFlag = checkHkdCurrencyAndHkdGameItems(gameItems);
 
@@ -257,10 +313,11 @@
 
                     let options = '<option value="">請選擇遊戲商品</option>';
                     $.each(gameItems, function (i, item) {
-                        options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
-                        // if (item.Enable === 1) {
-                        //     options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
-                        // }
+                        //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
+                        if (item.Enable === 1) {
+                            options +=
+                                `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
+                        }
                     });
 
                     // 存這個遊戲的遊戲商品到sessionStorage
@@ -303,6 +360,9 @@
                     // 從回傳的資料中生成商品下拉選單選項
                     let gameItems = response.data;
 
+                    // 去掉商品底線後面的字
+                    gameItems = removeAfterOnderLineWords(gameItems);
+
                     //確認港幣客人只能顯示港幣商品
                     const hkdFlag = checkHkdCurrencyAndHkdGameItems(gameItems);
 
@@ -313,10 +373,11 @@
 
                     let options = '<option value="">請選擇遊戲商品</option>';
                     $.each(gameItems, function (i, item) {
-                        options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
-                        // if (item.Enable === 1) {
-                        //     options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
-                        // }
+                        //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
+                        if (item.Enable === 1) {
+                            options +=
+                                `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
+                        }
                     });
                     newGameItem.innerHTML = options;
                 })
@@ -397,7 +458,8 @@
                 console.log($('#gameAccount').find(':selected').attr('data-login_account'));
 
                 sessionStorage.setItem('gameAccount', document.getElementById("gameAccount").value);
-                sessionStorage.setItem('gameAccountSid', $('#gameAccount').find(':selected').attr('data-login_account_Sid'));
+                sessionStorage.setItem('gameAccountSid', $('#gameAccount').find(':selected').attr(
+                    'data-login_account_Sid'));
                 sessionStorage.setItem('login_account', $('#gameAccount').find(':selected').attr('data-login_account'));
                 sessionStorage.setItem('login_password', $('#gameAccount').find(':selected').attr('data-login_password'));
                 sessionStorage.setItem('login_type', $('#gameAccount').find(':selected').attr('data-login_type'));
@@ -408,6 +470,7 @@
                 sessionStorage.setItem('gameNameText', $('#gameName').find(':selected').text());
                 sessionStorage.setItem('name', document.getElementById("gameAccount").value);
                 sessionStorage.setItem('gameRate', $('#gameName').find(':selected').attr('data-gamerate'));
+                sessionStorage.setItem('gameRemark', document.getElementById("gameRemark").value);
                 setGameItemsToSessionStorage();
 
                 // 若使用者確認下單，則提交表單
@@ -421,10 +484,12 @@
         // 如果是港幣客人而且遊戲商品也有港幣專用的商品
         // 就回傳true 反之回傳 false
         function checkHkdCurrencyAndHkdGameItems(gameItems) {
-            const customerCurrency = '港幣(HKD)';
+            const customerCurrency = JSON.parse(sessionStorage.getItem('customerData')).Currency;
             const currency = "港";
             let currencyFlag = false;
             let itemFlag = false;
+
+            console.log(customerCurrency);
 
             if (customerCurrency.includes(currency)) {
                 currencyFlag = true;
@@ -460,6 +525,21 @@
                 // }
             });
             return returnGameItems;
+        }
+
+        // 去掉商品底線後面的字
+        function removeAfterOnderLineWords(gameItems) {
+            const returnItems = [];
+            $.each(gameItems, function (i, item) {
+
+                if (item.Name.split('_').length > 1) {
+                    item.Name = item.Name.split('_')[0];
+                    returnItems.push(item);
+                } else {
+                    returnItems.push(item);
+                }
+            });
+            return returnItems;
         }
     </script>
 </body>

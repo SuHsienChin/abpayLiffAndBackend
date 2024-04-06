@@ -43,3 +43,4 @@ Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::post('/orders/updateStatus', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 Route::get('/orders/get-order-details/{orderId}', [OrderController::class,'getOrderDetails'])->name('orders.getOrderDetails');
+Route::get('/orders/cros/orderLists', [OrderController::class, 'orderLists'])->name('orders.orderLists');
