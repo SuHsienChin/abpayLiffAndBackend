@@ -232,57 +232,53 @@
                 alert('組參數發生錯誤，請洽小編\n' + e);
             }
 
+            //把參數用的json格式
+            const params_json_data = {
+                "gameName": gameName,
+                "UserId": "test01",
+                "Password": "111111",
+                "Customer": customer,
+                "GameAccount": account,
+                "Item": item,
+                "Count": gameItemCounts,
+                "lineId": lineId,
+                "customerId": customerData.Id,
+                "gameItemsName": gameItemsName,
+                "gameItemCounts": gameItemCounts,
+                "logintype": customerGameAccounts.LoginType,
+                "acount": customerGameAccounts.LoginAccount,
+                "password": customerGameAccounts.LoginPassword,
+                "serverName": customerGameAccounts.ServerName,
+                "gameAccountName": customerGameAccounts.Characters,
+                "gameAccountId": customerGameAccounts.Id,
+                "gameAccountSid": customerGameAccounts.Sid,
+                "customerSid": customerGameAccounts.CustomerId,
+                "status": "訂單處理中",
+                "itemsMoney": itemMoney,
+                "sumMoney": sumMoney,
+                "orderDateTime": orderDateTime,
+                "gameRemark": gameRemark
+            };
+
 
             // 傳送訂單內容到官方LINE
-            sendMessagetoLineOfficial(params);
+            sendMessagetoLineOfficial(params_json_data);
 
 
             // 透過API下單
-            try {
-
-                axios.post('sendOrderUrlByCORS.php',
-                    {
-                        UserId: 'test02',
-                        Password: '3345678',
-                        Customer: customer,
-                        GameAccount: account,
-                        Item: item,
-                        Count: gameItemCounts,
-                        Note0: gameRemark
-                    })
-                    .then((response) => {
-                        const resdata = response.data
-                        let orderId = '';
-                        console.log(resdata);
-                        console.log(resdata.Status);
-                        if (resdata.Status == '1') {
-                            orderId = resdata.OrderId;
-                            params.append('orderId', orderId);
-                            insertOrderData(params);
-
-                            alert('下單成功');
-
-                            //sessionStorage.clear();
-                            window.location = "finishOrder.php?orderId=" + orderId;
-
-                        } else {
-                            alert('下單發生錯誤，請洽小編');
-                        }
-                    })
-                    .catch((error) => { 
-                        console.error(error) 
-                    })
-
-
-               
-            } catch (e) {
-                alert('API下單錯誤，請洽小編\n' + e);
-            }
-
-
             // try {
-            //     axios.get('sendOrderUrlByCORS.php?' + UrlParametersString)
-            //         .then(function (response) {
+
+            //     axios.post('sendOrderUrlByCORS.php',
+            //         {
+            //             UserId: 'test02',
+            //             Password: '3345678',
+            //             Customer: customer,
+            //             GameAccount: account,
+            //             Item: item,
+            //             Count: gameItemCounts,
+            //             Note0: gameRemark
+            //         })
+            //         .then((response) => {
             //             const resdata = response.data
             //             let orderId = '';
             //             console.log(resdata);
@@ -301,12 +297,44 @@
             //                 alert('下單發生錯誤，請洽小編');
             //             }
             //         })
-            //         .catch(function (error) {
-            //             console.error('Error fetching :', error);
-            //         });
+            //         .catch((error) => { 
+            //             console.error(error) 
+            //         })
+
+
+
             // } catch (e) {
             //     alert('API下單錯誤，請洽小編\n' + e);
             // }
+
+
+            try {
+                axios.get('sendOrderUrlByCORS.php?' + UrlParametersString)
+                    .then(function (response) {
+                        const resdata = response.data
+                        let orderId = '';
+                        console.log(resdata);
+                        console.log(resdata.Status);
+                        if (resdata.Status == '1') {
+                            orderId = resdata.OrderId;
+                            params.append('orderId', orderId);
+                            insertOrderData(params);
+
+                            alert('下單成功');
+
+                            //sessionStorage.clear();
+                            window.location = "finishOrder.php?orderId=" + orderId;
+
+                        } else {
+                            alert('下單發生錯誤，請洽小編');
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Error fetching :', error);
+                    });
+            } catch (e) {
+                alert('API下單錯誤，請洽小編\n' + e);
+            }
 
         }
 
@@ -355,10 +383,11 @@
         }
 
         // 傳送訂單內容到官方LINE
-        function sendMessagetoLineOfficial(params) {
+        function sendMessagetoLineOfficial(params_json_data) {
             try {
                 // 將 URLSearchParams 轉換為 JSON 對象
-                const jsonParams = Object.fromEntries(Array.from(params.entries()));
+                //const jsonParams = Object.fromEntries(Array.from(params.entries()));
+                const jsonParams = params_json_data;
 
 
                 // 計算下單商品價格後回傳商品格式跟價格還有總計
@@ -398,7 +427,7 @@
                         //alert('下單錯誤 請截圖洽小編' + err);
                     });
             } catch (e) {
-                alert('傳送訂單內容到官方LINE\n' + e);
+                alert('傳送訂單內容發生錯誤\n' + e);
             }
 
         }
