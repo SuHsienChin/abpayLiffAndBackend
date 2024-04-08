@@ -216,8 +216,7 @@
             //要比對 sessionStorage裡面的 gameAccount 需要跟 customerGameAccounts 一樣 才能放到 customerGameAccounts
 
             let customerGameAccount = filterGemeAccount(JSON.parse(sessionStorage.getItem('customerGameAccounts')), sessionStorage.getItem('gameAccountSid'));
-            console.log(customerGameAccount[0]);
-            const customerGameAccounts = customerGameAccount;
+            const customerGameAccounts = customerGameAccount[0];
             const orderDateTime = sessionStorage.getItem('orderDateTime');
             const gameRemark = sessionStorage.getItem('gameRemark');
             // const UrlParametersString = 'UserId=test01&Password=111111&Customer=' + customer +
