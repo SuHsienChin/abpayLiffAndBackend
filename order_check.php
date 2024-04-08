@@ -138,6 +138,40 @@
                 $('#sumMoney').html(itemArr.sumMoney);
                 $('#customerCurrency').html(itemArr.customerCurrency);
                 $('#gameRemark').html(sessionStorage.getItem('gameRemark').replaceAll('\n', '</br>'));
+
+
+                try {
+                    const params_json_data = {
+                        "gameName": sessionStorage.getItem('gameNameText'),
+                        "UserId": "test01",
+                        "Password": "111111",
+                        "GameAccount": sessionStorage.getItem('gameAccount'),
+                        "Item": itemArr.gameitemSLabelText,
+                        "Count": sessionStorage.getItem('gameItemCounts'),
+                        "lineId": sessionStorage.getItem('lineId'),
+                        "customerId": JSON.parse(sessionStorage.getItem('customerData')).Id,
+                        "gameItemsName": sessionStorage.getItem('gameItemSelectedTexts'),
+                        "gameItemCounts": sessionStorage.getItem('gameItemCounts'),
+                        "logintype": sessionStorage.getItem('login_type'),
+                        "acount": sessionStorage.getItem('login_account'),
+                        "password": sessionStorage.getItem('login_password'),
+                        "serverName": essionStorage.getItem('server_name'),
+                        "gameAccountName": sessionStorage.getItem('characters'),
+                        //"gameAccountId": customerGameAccounts.Id,
+                        "gameAccountSid": sessionStorage.getItem('gameAccountSid'),
+                        //"customerSid": customerGameAccounts.CustomerId,
+                        "status": "訂單處理中",
+                        "itemsMoney": itemArr.itemMoneyText,
+                        "sumMoney": itemArr.sumMoney,
+                        "orderDateTime": orderDateTime,
+                        "gameRemark": sessionStorage.getItem('gameRemark').replaceAll('\n', '</br>')
+                    };
+                    //紀錄使用者的參數log
+                    saveLogsToMysql('在order_check.php一進入時的訂單內容', params_json_data);
+                } catch (e) {
+                    console.log('第172行錯誤：\n' + e);
+                }
+
             })
             .catch((error) => console.log(error))
 
@@ -177,6 +211,7 @@
             const customerData = JSON.parse(sessionStorage.getItem('customerData'));
             const gameName = sessionStorage.getItem('gameNameText');
             const gameItemsName = String(JSON.parse(sessionStorage.getItem('gameItemSelectedTexts')));
+            //這裡有問題
             const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameAccounts'))[0];
             const orderDateTime = sessionStorage.getItem('orderDateTime');
             const gameRemark = sessionStorage.getItem('gameRemark');
@@ -260,53 +295,12 @@
                 "gameRemark": gameRemark
             };
 
+            //紀錄使用者的參數log
+            saveLogsToMysql('在傳送訂單到官方LINE之前的params_json_data', params_json_data);
+
 
             // 傳送訂單內容到官方LINE
             sendMessagetoLineOfficial(params_json_data);
-
-
-            // 透過API下單
-            // try {
-
-            //     axios.post('sendOrderUrlByCORS.php',
-            //         {
-            //             UserId: 'test02',
-            //             Password: '3345678',
-            //             Customer: customer,
-            //             GameAccount: account,
-            //             Item: item,
-            //             Count: gameItemCounts,
-            //             Note0: gameRemark
-            //         })
-            //         .then((response) => {
-            //             const resdata = response.data
-            //             let orderId = '';
-            //             console.log(resdata);
-            //             console.log(resdata.Status);
-            //             if (resdata.Status == '1') {
-            //                 orderId = resdata.OrderId;
-            //                 params.append('orderId', orderId);
-            //                 insertOrderData(params);
-
-            //                 alert('下單成功');
-
-            //                 //sessionStorage.clear();
-            //                 window.location = "finishOrder.php?orderId=" + orderId;
-
-            //             } else {
-            //                 alert('下單發生錯誤，請洽小編');
-            //             }
-            //         })
-            //         .catch((error) => { 
-            //             console.error(error) 
-            //         })
-
-
-
-            // } catch (e) {
-            //     alert('API下單錯誤，請洽小編\n' + e);
-            // }
-
 
             try {
                 axios.get('sendOrderUrlByCORS.php?' + UrlParametersString)

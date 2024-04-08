@@ -47,8 +47,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="gameName">遊戲名稱</label>
-                                <select class="form-control" id="gameName" name="gameName"
-                                    onchange="gameNameOnchange()">
+                                <select class="form-control" id="gameName" name="gameName" onchange="gameNameOnchange()">
                                     <option value="">請稍候...</option>
                                     <!-- 此處的選項會由前端 JavaScript 在 AJAX 回傳後動態生成 -->
                                 </select>
@@ -67,8 +66,7 @@
                                         <option value="">請先選擇遊戲名稱</option>
                                         <!-- 此處的選項會由前端 JavaScript 在 AJAX 回傳後動態生成 -->
                                     </select>
-                                    <input type="number" class="form-control mr-2 gameItemCount" id="quantity"
-                                        name="quantity" style="max-width: 70px;" placeholder="數量" value="1">
+                                    <input type="number" class="form-control mr-2 gameItemCount" id="quantity" name="quantity" style="max-width: 70px;" placeholder="數量" value="1">
                                     <!-- <button type="button" class="btn btn-danger">X</button> -->
                                 </div>
                                 <br />
@@ -80,10 +78,8 @@
                                 </div>
                                 <br />
                             </div>
-                            <button type="button" class="btn btn-primary btn-block mb-3"
-                                onclick="addGameItem()">新增遊戲商品</button>
-                            <button type="button" class="btn btn-success btn-block"
-                                onclick="confirmOrder()">確定送出</button>
+                            <button type="button" class="btn btn-primary btn-block mb-3" onclick="addGameItem()">新增遊戲商品</button>
+                            <button type="button" class="btn btn-success btn-block" onclick="confirmOrder()">確定送出</button>
                             <button type="button" class="btn btn-secondary btn-block mt-2">取消</button>
                         </form>
                     </div>
@@ -100,7 +96,6 @@
     <!-- 以下是liff 要上線時需打開 -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
-
         const loadingModal = new bootstrap.Modal(document.getElementById('loading'), {
             backdrop: 'static',
             keyboard: false
@@ -110,7 +105,7 @@
         loadingModal.show();
 
 
-        $(function () {
+        $(function() {
             //使用 LIFF_ID 初始化 LIFF 應用
             initializeLiff('2000183731-BLmrAGPp');
 
@@ -160,7 +155,7 @@
 
             //取得客人資料
             axios.get('getCustomer.php?lineId=' + mylineId)
-                .then(function (response) {
+                .then(function(response) {
                     const customerData = response.data;
                     const customer = document.getElementById("customerData");
                     const walletBalance = document.getElementById("walletBalance");
@@ -194,7 +189,7 @@
         //取得客人所有的遊戲帳號
         function getCustomerGameAccounts(Sid) {
             axios.get('getGameAccount.php?Sid=' + Sid)
-                .then(function (response) {
+                .then(function(response) {
                     const accountData = response.data;
                     let uniqueGames = {};
                     let filteredData = [];
@@ -224,7 +219,7 @@
             const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameNames'));
 
             axios.get('getGameList.php')
-                .then(function (response) {
+                .then(function(response) {
                     const allGameLists = response.data;
 
                     const searchGameBySid = (Sid) => {
@@ -232,7 +227,7 @@
                     };
 
                     let options = '<option value="">請選擇遊戲</option>';
-                    $.each(customerGameAccounts, function (i, item) {
+                    $.each(customerGameAccounts, function(i, item) {
                         const gameData = searchGameBySid(parseInt(item.GameSid));
                         const selectedGame = document.getElementById("gameName")
                         options +=
@@ -266,7 +261,7 @@
             removeElementsByClass("dropdownDiv");
 
             let options = '<option value="">請選擇帳號</option>';
-            $.each(customerGameAccounts, function (i, item) {
+            $.each(customerGameAccounts, function(i, item) {
                 if (item.GameSid === selectedGame) {
                     options += `<option 
                         data-login_account="${item.LoginAccount}" 
@@ -296,7 +291,7 @@
 
             // 使用axios進行後端請求
             axios.get('getGameItem.php?Sid=' + selectedGame)
-                .then(function (response) {
+                .then(function(response) {
                     // 從回傳的資料中生成商品下拉選單選項
                     let gameItems = response.data;
 
@@ -312,7 +307,7 @@
                     }
 
                     let options = '<option value="">請選擇遊戲商品</option>';
-                    $.each(gameItems, function (i, item) {
+                    $.each(gameItems, function(i, item) {
                         //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
                         if (item.Enable === 1) {
                             options +=
@@ -324,7 +319,7 @@
                     sessionStorage.setItem('gemeItems', JSON.stringify(gameItems));
                     gameItemDropdown.innerHTML = options;
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.error('Error fetching game items:', error);
                     gameItemDropdown.innerHTML = '<option value="">無法取得商品資料</option>';
                 });
@@ -348,7 +343,7 @@
             deleteButton.setAttribute("type", "button");
             deleteButton.classList.add("btn", "btn-danger", "delete-btn");
             deleteButton.innerText = "X";
-            deleteButton.onclick = function () {
+            deleteButton.onclick = function() {
                 deleteDropdown(dropdownDiv);
             };
 
@@ -356,7 +351,7 @@
             newGameItem.classList.add("form-control", "mr-2", "gameItems");
 
             axios.get('getGameItem.php?Sid=' + selectedGame)
-                .then(function (response) {
+                .then(function(response) {
                     // 從回傳的資料中生成商品下拉選單選項
                     let gameItems = response.data;
 
@@ -372,7 +367,7 @@
                     }
 
                     let options = '<option value="">請選擇遊戲商品</option>';
-                    $.each(gameItems, function (i, item) {
+                    $.each(gameItems, function(i, item) {
                         //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
                         if (item.Enable === 1) {
                             options +=
@@ -381,7 +376,7 @@
                     });
                     newGameItem.innerHTML = options;
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.error('Error fetching game items:', error);
                     newGameItem.innerHTML = '<option value="">無法取得商品資料</option>';
                 });
@@ -412,10 +407,10 @@
 
         function getGemeItemsDataToJson(selectedGame) {
             axios.get('getGameItem.php?Sid=' + selectedGame)
-                .then(function (response) {
+                .then(function(response) {
                     return response;
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.error('Error fetching game items:', error);
                     return '<option value="">無法取得商品資料</option>';
                     gameItemDropdown.innerHTML = '<option value="">無法取得商品資料</option>';
@@ -435,13 +430,13 @@
             //     gameItemSelectedTexts.push(gameItemSelect.options[gameItemSelect.selectedIndex].textContent);
             // });
 
-            $('.gameItems').each(function () {
+            $('.gameItems').each(function() {
                 gameItemSelectedValues.push($(this).find(':selected').val());
                 gameItemSelectedTexts.push($(this).find(':selected').text());
                 gameItemBouns.push($(this).find(':selected').attr('data-bouns'));
             });
 
-            $('.gameItemCount').each(function () {
+            $('.gameItemCount').each(function() {
                 gameItemCounts.push($(this).val());
             });
 
@@ -458,8 +453,7 @@
                 console.log($('#gameAccount').find(':selected').attr('data-login_account'));
 
                 sessionStorage.setItem('gameAccount', document.getElementById("gameAccount").value);
-                sessionStorage.setItem('gameAccountSid', $('#gameAccount').find(':selected').attr(
-                    'data-login_account_Sid'));
+                sessionStorage.setItem('gameAccountSid', $('#gameAccount').find(':selected').attr('data-login_account_Sid'));
                 sessionStorage.setItem('login_account', $('#gameAccount').find(':selected').attr('data-login_account'));
                 sessionStorage.setItem('login_password', $('#gameAccount').find(':selected').attr('data-login_password'));
                 sessionStorage.setItem('login_type', $('#gameAccount').find(':selected').attr('data-login_type'));
@@ -495,7 +489,7 @@
                 currencyFlag = true;
             }
 
-            $.each(gameItems, function (i, item) {
+            $.each(gameItems, function(i, item) {
                 if (item.Name.includes(currency)) {
                     itemFlag = true;
                 }
@@ -514,7 +508,7 @@
         function returnHkdGameItems(gameItems) {
             const returnGameItems = [];
             const currency = '港';
-            $.each(gameItems, function (i, item) {
+            $.each(gameItems, function(i, item) {
 
                 if (item.Name.includes(currency)) {
                     returnGameItems.push(item);
@@ -530,7 +524,7 @@
         // 去掉商品底線後面的字
         function removeAfterOnderLineWords(gameItems) {
             const returnItems = [];
-            $.each(gameItems, function (i, item) {
+            $.each(gameItems, function(i, item) {
 
                 if (item.Name.split('_').length > 1) {
                     item.Name = item.Name.split('_')[0];
