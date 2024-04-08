@@ -155,7 +155,7 @@
                         "logintype": sessionStorage.getItem('login_type'),
                         "acount": sessionStorage.getItem('login_account'),
                         "password": sessionStorage.getItem('login_password'),
-                        "serverName": essionStorage.getItem('server_name'),
+                        "serverName": sessionStorage.getItem('server_name'),
                         "gameAccountName": sessionStorage.getItem('characters'),
                         //"gameAccountId": customerGameAccounts.Id,
                         "gameAccountSid": sessionStorage.getItem('gameAccountSid'),
