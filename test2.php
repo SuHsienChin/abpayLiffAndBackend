@@ -51,10 +51,10 @@
         /*
         * 把要紀錄的logs存到資料庫裡面
         */
-        function saveLogsToMysql(params_json_data) {
+        function saveLogsToMysql(log_type,params_json_data) {
             try {
                 axios.post('saveLogsToMysql.php', {
-                        type: '送出',
+                        type: log_type,
                         JSON: JSON.stringify(params_json_data)
                     })
                     .then(function(response) {

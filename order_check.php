@@ -505,6 +505,27 @@
                 window.location.href = 'https://liff.line.me/2000183731-BLmrAGPp';
             }
         }
+
+
+        /*
+         * 把要紀錄的logs存到資料庫裡面
+         */
+        function saveLogsToMysql(log_type, params_json_data) {
+            try {
+                axios.post('saveLogsToMysql.php', {
+                        type: log_type,
+                        JSON: JSON.stringify(params_json_data)
+                    })
+                    .then(function(response) {
+                        console.log('1>', response.data);
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+            } catch (e) {
+                alert('錯誤，請洽小編\n' + e);
+            }
+        }
     </script>
 
 
