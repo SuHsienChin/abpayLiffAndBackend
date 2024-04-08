@@ -47,19 +47,25 @@
             "Item": 'item'
         };
 
-        try {
-            axios.post('saveLogsToMysql.php', {
-                    type: '送出',
-                    JSON: JSON.stringify(params_json_data)
-                })
-                .then(function(response) {
-                    console.log('1>', response.data);
-                })
-                .catch(function(error) {
-                    console.log(error);
-                });
-        } catch (e) {
-            alert('錯誤，請洽小編\n' + e);
+
+        /*
+        * 把要紀錄的logs存到資料庫裡面
+        */
+        function saveLogsToMysql(params_json_data) {
+            try {
+                axios.post('saveLogsToMysql.php', {
+                        type: '送出',
+                        JSON: JSON.stringify(params_json_data)
+                    })
+                    .then(function(response) {
+                        console.log('1>', response.data);
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+            } catch (e) {
+                alert('錯誤，請洽小編\n' + e);
+            }
         }
     </script>
     <script>
