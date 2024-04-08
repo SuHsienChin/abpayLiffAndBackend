@@ -513,7 +513,8 @@
             console.log(json_data);
             console.log(gameAccountSid);
             // 找出 Sid 等於 gameAccountSid
-            const result = json_data.find(item => item.Sid === gameAccountSid);
+            let result = json_data.find(item => item.Sid === gameAccountSid);
+            console.log(result);
             return result;
         }
 
