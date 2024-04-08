@@ -166,7 +166,7 @@
                         "orderDateTime": orderDateTime,
                         "gameRemark": sessionStorage.getItem('gameRemark').replaceAll('\n', '</br>')
                     };
-                    
+
                     //紀錄使用者的參數log
                     saveLogsToMysql('在order_check.php一進入時的訂單內容', params_json_data);
                 } catch (e) {
@@ -213,7 +213,11 @@
             const gameName = sessionStorage.getItem('gameNameText');
             const gameItemsName = String(JSON.parse(sessionStorage.getItem('gameItemSelectedTexts')));
             //這裡有問題
-            const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameAccounts'))[0];
+            //要比對 sessionStorage裡面的 gameAccount 需要跟 customerGameAccounts 一樣 才能放到 customerGameAccounts
+
+            let customerGameAccount = filterGemeAccount(JSON.parse(sessionStorage.getItem('customerGameAccounts')), sessionStorage.getItem('gameAccountSid'));
+            console.log('客人選的遊戲帳號：' + customerGameAccount);
+            const customerGameAccounts = customerGameAccount;
             const orderDateTime = sessionStorage.getItem('orderDateTime');
             const gameRemark = sessionStorage.getItem('gameRemark');
             // const UrlParametersString = 'UserId=test01&Password=111111&Customer=' + customer +
@@ -303,33 +307,33 @@
             // 傳送訂單內容到官方LINE
             sendMessagetoLineOfficial(params_json_data);
 
-            try {
-                axios.get('sendOrderUrlByCORS.php?' + UrlParametersString)
-                    .then(function(response) {
-                        const resdata = response.data
-                        let orderId = '';
-                        console.log(resdata);
-                        console.log(resdata.Status);
-                        if (resdata.Status == '1') {
-                            orderId = resdata.OrderId;
-                            params.append('orderId', orderId);
-                            insertOrderData(params);
+            // try {
+            //     axios.get('sendOrderUrlByCORS.php?' + UrlParametersString)
+            //         .then(function(response) {
+            //             const resdata = response.data
+            //             let orderId = '';
+            //             console.log(resdata);
+            //             console.log(resdata.Status);
+            //             if (resdata.Status == '1') {
+            //                 orderId = resdata.OrderId;
+            //                 params.append('orderId', orderId);
+            //                 insertOrderData(params);
 
-                            alert('下單成功');
+            //                 alert('下單成功');
 
-                            //sessionStorage.clear();
-                            window.location = "finishOrder.php?orderId=" + orderId;
+            //                 //sessionStorage.clear();
+            //                 window.location = "finishOrder.php?orderId=" + orderId;
 
-                        } else {
-                            alert('下單發生錯誤，請洽小編');
-                        }
-                    })
-                    .catch(function(error) {
-                        console.error('Error fetching :', error);
-                    });
-            } catch (e) {
-                alert('API下單錯誤，請洽小編\n' + e);
-            }
+            //             } else {
+            //                 alert('下單發生錯誤，請洽小編');
+            //             }
+            //         })
+            //         .catch(function(error) {
+            //             console.error('Error fetching :', error);
+            //         });
+            // } catch (e) {
+            //     alert('API下單錯誤，請洽小編\n' + e);
+            // }
 
         }
 
@@ -501,6 +505,14 @@
             }
         }
 
+        /*
+         *
+         */
+        function filterGemeAccount(json_data, gameAccountSid) {
+            // 找出 Sid 等於 gameAccountSid
+            const result = json_data.find(item => item.Sid === gameAccountSid);
+            return result;
+        }
 
         /*
          * 把要紀錄的logs存到資料庫裡面
