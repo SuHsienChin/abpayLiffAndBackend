@@ -216,7 +216,7 @@
             //要比對 sessionStorage裡面的 gameAccount 需要跟 customerGameAccounts 一樣 才能放到 customerGameAccounts
 
             let customerGameAccount = filterGemeAccount(JSON.parse(sessionStorage.getItem('customerGameAccounts')), sessionStorage.getItem('gameAccountSid'));
-            console.log('客人選的遊戲帳號：' + customerGameAccount);
+            console.log(customerGameAccount);
             const customerGameAccounts = customerGameAccount;
             const orderDateTime = sessionStorage.getItem('orderDateTime');
             const gameRemark = sessionStorage.getItem('gameRemark');
@@ -509,6 +509,7 @@
          *
          */
         function filterGemeAccount(json_data, gameAccountSid) {
+            console.log('進入找出gameAccountSid');
             // 找出 Sid 等於 gameAccountSid
             const result = json_data.find(item => item.Sid === gameAccountSid);
             return result;
