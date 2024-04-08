@@ -512,7 +512,7 @@
                         JSON: JSON.stringify(params_json_data)
                     })
                     .then(function(response) {
-                        console.log('1>', response.data);
+                        console.log('成功存資料庫 1>', response.data);
                     })
                     .catch(function(error) {
                         console.log(error);

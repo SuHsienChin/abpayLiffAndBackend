@@ -12,18 +12,18 @@ $data = json_decode($request_body, true);
 
 
 try {
-    
-var_dump( $data['JSON'] );
-    //插入資料到 "orders" 資料表
-    $sql = "INSERT INTO system_logs (type, JSON) 
+
+  var_dump($data['JSON']);
+  //插入資料到 "orders" 資料表
+  $sql = "INSERT INTO system_logs (type, JSON) 
       VALUES 
       (:type, :JSON)";
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':type', $data['type'], PDO::PARAM_STR);
-    $stmt->bindParam(':JSON', $data['JSON'], PDO::PARAM_STR);
-    $stmt->execute();
+  $stmt = $pdo->prepare($sql);
+  $stmt->bindParam(':type', $data['type'], PDO::PARAM_STR);
+  $stmt->bindParam(':JSON', $data['JSON'], PDO::PARAM_STR);
+  $stmt->execute();
 } catch (Exception $e) {
-    echo $e->getMessage();
+  echo "saveLogsToMysql.php發生錯誤" . $e->getMessage();
 }
 
 header('Content-Type: application/json');
