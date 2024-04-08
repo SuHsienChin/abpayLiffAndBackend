@@ -307,33 +307,33 @@
             // 傳送訂單內容到官方LINE
             sendMessagetoLineOfficial(params_json_data);
 
-            // try {
-            //     axios.get('sendOrderUrlByCORS.php?' + UrlParametersString)
-            //         .then(function(response) {
-            //             const resdata = response.data
-            //             let orderId = '';
-            //             console.log(resdata);
-            //             console.log(resdata.Status);
-            //             if (resdata.Status == '1') {
-            //                 orderId = resdata.OrderId;
-            //                 params.append('orderId', orderId);
-            //                 insertOrderData(params);
+            try {
+                axios.get('sendOrderUrlByCORS.php?' + UrlParametersString)
+                    .then(function(response) {
+                        const resdata = response.data
+                        let orderId = '';
+                        console.log(resdata);
+                        console.log(resdata.Status);
+                        if (resdata.Status == '1') {
+                            orderId = resdata.OrderId;
+                            params.append('orderId', orderId);
+                            insertOrderData(params);
 
-            //                 alert('下單成功');
+                            alert('下單成功');
 
-            //                 //sessionStorage.clear();
-            //                 window.location = "finishOrder.php?orderId=" + orderId;
+                            //sessionStorage.clear();
+                            window.location = "finishOrder.php?orderId=" + orderId;
 
-            //             } else {
-            //                 alert('下單發生錯誤，請洽小編');
-            //             }
-            //         })
-            //         .catch(function(error) {
-            //             console.error('Error fetching :', error);
-            //         });
-            // } catch (e) {
-            //     alert('API下單錯誤，請洽小編\n' + e);
-            // }
+                        } else {
+                            alert('下單發生錯誤，請洽小編');
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Error fetching :', error);
+                    });
+            } catch (e) {
+                alert('API下單錯誤，請洽小編\n' + e);
+            }
 
         }
 
@@ -393,7 +393,6 @@
                 const itemArr = calculateMoneyAndReturn();
 
                 // 輸出 JSON 對象
-                console.log(jsonParams);
                 let txt = "";
                 txt += "【自動下單】\n";
                 txt += "客戶編號: " + jsonParams.customerId + "\n";
