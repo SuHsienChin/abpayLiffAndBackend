@@ -37,10 +37,8 @@
                                 </fieldset>
 
                             </div>
-                            <button type="button" class="btn btn-success btn-block"
-                                onclick="confirmOrder()">確認下單</button>
-                            <button type="button" class="btn btn-secondary btn-block mt-2"
-                                onclick="window.history.go(-1);">回上一頁</button>
+                            <button type="button" class="btn btn-success btn-block" onclick="confirmOrder()">確認下單</button>
+                            <button type="button" class="btn btn-secondary btn-block mt-2" onclick="window.history.go(-1);">回上一頁</button>
                         </form>
                     </div>
                 </div>
@@ -50,13 +48,12 @@
 
     <!-- 引入Bootstrap 4的JS和jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"
-        integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js" integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- 以下是liff 要上線時需打開 -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
     <script>
         function initializeLiff(myLiffId) {
             liff
@@ -75,6 +72,7 @@
 
         function initializeApp() {
             console.log('啟動成功。');
+
             liff.getProfile()
                 .then(profile => {
                     // sessionStorage.setItem('lineUserId', profile.userId);
@@ -85,7 +83,7 @@
                 });
         }
 
-        $(function () {
+        $(function() {
             //使用 LIFF_ID 初始化 LIFF 應用
             initializeLiff('2000183731-BLmrAGPp');
         });
@@ -100,16 +98,16 @@
 
         //取得rate匯率
         axios.get('getRate.php')
-            .then(function (response) {
+            .then(function(response) {
 
-                setTimeout(function () {
+                setTimeout(function() {
                     // 在這裡執行您的程式碼
                 }, 1000); // 2000 毫秒 = 2 秒
 
                 const result = response.data.sort((a, b) => {
-                    return a.Sid > b.Sid
-                        ? 1
-                        : -1;
+                    return a.Sid > b.Sid ?
+                        1 :
+                        -1;
                 });
 
                 const orderDateTime = new Date().toLocaleString('en-ZA');
@@ -148,7 +146,9 @@
         function calculateMoney(gameRate, bouns, rateValue, count, customerCurrency) {
             //console.log('gameRate=' + gameRate + 'bouns=' + bouns + 'rateValue=' + rateValue + 'count=' + count);
 
-            roundUp = function (num, decimal) { return Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal); }
+            roundUp = function(num, decimal) {
+                return Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
+            }
 
             if (rateValue == 1) {
                 return Math.ceil(gameRate * bouns * rateValue) * count;
@@ -310,7 +310,7 @@
 
             try {
                 axios.get('sendOrderUrlByCORS.php?' + UrlParametersString)
-                    .then(function (response) {
+                    .then(function(response) {
                         const resdata = response.data
                         let orderId = '';
                         console.log(resdata);
@@ -329,7 +329,7 @@
                             alert('下單發生錯誤，請洽小編');
                         }
                     })
-                    .catch(function (error) {
+                    .catch(function(error) {
                         console.error('Error fetching :', error);
                     });
             } catch (e) {
@@ -342,11 +342,11 @@
         function insertOrderData(params) {
 
             axios.post('addOrderData.php', params)
-                .then(function (response) {
+                .then(function(response) {
                     console.log('資料新增成功', response.data);
                     console.log(response.data);
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.error('資料新增失敗', error);
                 });
 
@@ -359,7 +359,7 @@
 
             // 將 URLSearchParams 轉換為 JavaScript 物件
             const obj = {};
-            searchParams.forEach(function (value, key) {
+            searchParams.forEach(function(value, key) {
                 obj[key] = value;
             });
 
@@ -416,9 +416,9 @@
 
                 //傳送通知到官方LINE
                 liff.sendMessages([{
-                    type: "text",
-                    text: txt,
-                },])
+                        type: "text",
+                        text: txt,
+                    }, ])
                     .then(() => {
                         alert('訂單內容傳送到官方');
                     })
@@ -449,7 +449,7 @@
 
             //依客人幣別來比對匯率並取得匯率值
             let rateValue = 0.000;
-            $.each(rate, function (i, item) {
+            $.each(rate, function(i, item) {
                 if (item.includes(customerCurrency)) {
                     rateValue = item.split(",")[2];
                 }
@@ -465,7 +465,7 @@
             let itemMoneyText = '';
 
 
-            $.each(gameItemSelectedValues, function (i, item) {
+            $.each(gameItemSelectedValues, function(i, item) {
                 itemMoney = calculateMoney(gameRate, gameItemBouns[i], rateValue, gameItemCounts[i], customerCurrency);
                 sumMoney += itemMoney;
                 gameitemSLabelText += (i + 1) + '. ' + gameItemSelectedTexts[i] + ' X ' + gameItemCounts[i] + ' = ' + itemMoney + '<br />';
@@ -474,7 +474,12 @@
 
             itemMoneyText = itemMoneyText.slice(0, -1);
 
-            return { gameitemSLabelText, sumMoney, customerCurrency, itemMoneyText };
+            return {
+                gameitemSLabelText,
+                sumMoney,
+                customerCurrency,
+                itemMoneyText
+            };
         }
 
         // 看餘額夠不夠下單，不夠的話不給下單
@@ -500,8 +505,6 @@
                 window.location.href = 'https://liff.line.me/2000183731-BLmrAGPp';
             }
         }
-
-
     </script>
 
 
