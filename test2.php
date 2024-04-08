@@ -38,32 +38,28 @@
             JSON: '{"message": "This is an error log"}'
         };
 
+        const params_json_data = {
+            "gameName": 'gameName',
+            "UserId": "test01",
+            "Password": "111111",
+            "Customer": 'customer',
+            "GameAccount": 'account',
+            "Item": 'item'
+        };
+
         try {
-            axios.get('sendOrderUrlByCORS.php?' + UrlParametersString)
+            axios.post('saveLogsToMysql.php', {
+                    type: '送出',
+                    JSON: JSON.stringify(params_json_data)
+                })
                 .then(function(response) {
-                    const resdata = response.data
-                    let orderId = '';
-                    console.log(resdata);
-                    console.log(resdata.Status);
-                    if (resdata.Status == '1') {
-                        orderId = resdata.OrderId;
-                        params.append('orderId', orderId);
-                        insertOrderData(params);
-
-                        alert('下單成功');
-
-                        //sessionStorage.clear();
-                        window.location = "finishOrder.php?orderId=" + orderId;
-
-                    } else {
-                        alert('下單發生錯誤，請洽小編');
-                    }
+                    console.log('1>', response.data);
                 })
                 .catch(function(error) {
-                    console.error('Error fetching :', error);
+                    console.log(error);
                 });
         } catch (e) {
-            alert('API下單錯誤，請洽小編\n' + e);
+            alert('錯誤，請洽小編\n' + e);
         }
     </script>
     <script>
