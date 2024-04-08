@@ -166,6 +166,7 @@
                         "orderDateTime": orderDateTime,
                         "gameRemark": sessionStorage.getItem('gameRemark').replaceAll('\n', '</br>')
                     };
+                    
                     //紀錄使用者的參數log
                     saveLogsToMysql('在order_check.php一進入時的訂單內容', params_json_data);
                 } catch (e) {
