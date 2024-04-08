@@ -226,6 +226,8 @@
                         return allGameLists.find(allGameList => allGameList.Sid === Sid);
                     };
 
+                    console.log(searchGameBySid);
+
                     let options = '<option value="">請選擇遊戲</option>';
                     $.each(customerGameAccounts, function(i, item) {
                         const gameData = searchGameBySid(parseInt(item.GameSid));

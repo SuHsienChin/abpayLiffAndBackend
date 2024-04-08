@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
     <title>後台訂單管理</title>
 </head>
 
@@ -27,50 +30,29 @@
 
             <!-- 主要內容 -->
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-                <div
-                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">所有遊戲</h1>
                 </div>
 
-                <!-- 訂單表格 -->
-                <div class="table-responsive">
-                    <div class="container mt-5">
-                        <h2 class="text-center mb-4">顯示內容</h2>
-                        <form action="order_finish_display_messages_data.php" method="post">
-                            <?php
-                            // // 連接資料庫
-                            // require_once 'databaseConnection.php';
-                            // // 假设您已经连接到数据库
-                            
-                            // $connection = new DatabaseConnection();
-                            // $pdo = $connection->connect();
-                            // try {
-
-                            //     // 從資料庫獲取內容
-                            //     $query = $pdo->query("SELECT * FROM order_finish_display_messages");
-                            //     $result = $query->fetchAll(PDO::FETCH_ASSOC);
-
-                            //     // 釋放資料庫連接
-                            //     $conn = null;
-
-                            //     // 遍歷編輯器標題，並顯示內容
-                            //     $i = 1;
-                            //     foreach ($result as $data) {
-                            //         echo '<div class="form-group">';
-                            //         echo '<label for="editor' . ($i) . '">' . $data['title'] . '</label>';
-                            //         echo '<textarea class="form-control summernote" id="editor' . ($i) . '" name="editor[]">' . json_decode($data['content']) . '</textarea>';
-                            //         echo '<input type="hidden" id="title' . ($i) . '" name="title[] " value="' . $data['title'] . '" />';
-                            //         echo '</div>';
-                            //         $i++;
-                            //     }
-                            // } catch (PDOException $e) {
-                            //     echo "資料庫連接錯誤：" . $e->getMessage();
-                            // }
-                            ?>
-
-
-                            <button type="submit" class="btn btn-primary">送出</button>
-                        </form>
+                <!-- 遊戲列表 -->
+                <div class="container">
+                    <table class="table table-striped table-bordered" id="data-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gameTbody">
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <button class="btn btn-primary" id="select-all">全選</button>
+                            <button class="btn btn-default" id="deselect-all">全不選</button>
+                            <button class="btn btn-success" id="update-games">更新遊戲列表</button>
+                            <button class="btn btn-info" id="update-selected">更新選取項目</button>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -85,25 +67,111 @@
 
 </body>
 <script>
-    axios.get('../getGameList.php')
-        .then(function (response) {
-            const allGameLists = response.data;
+    $(document).ready(function() {
+        start();
+    });
 
-            const searchGameBySid = (Sid) => {
-                return allGameLists.find(allGameList => allGameList.Sid === Sid);
-            };
 
-            let options = '<option value="">請選擇遊戲</option>';
-            $.each(customerGameAccounts, function (i, item) {
-                const gameData = searchGameBySid(parseInt(item.GameSid));
-                const selectedGame = document.getElementById("gameName")
-                options +=
-                    `<option value="${gameData.Sid}" data-gameRate="${gameData.GameRate}">${gameData.Name}</option>`;
-                selectedGame.innerHTML = options;
+
+    function start() {
+
+        //資料庫有沒有資料，flase就是無資料，true就是有資料
+        dataNoEmptyFlag = false;
+
+        // 先看資料庫有沒有資料
+        getSwitchGameLists();
+    }
+
+    function getSwitchGameLists() {
+        axios.get('get_switch_game_lists.php')
+            .then(function(response) {
+
+                if (response.data === false) {
+                    //無資料
+                } else {
+                    dataNoEmptyFlag = true;
+
+                    setDataToTable(response.data);
+
+                }
+            })
+            .catch((error) => console.log(error))
+    }
+
+    function setDataToTable(data) {
+
+        // 先清空原本的資料
+        $('#data-table tbody').empty();
+
+        // 遍歷 JSON 資料並生成表格
+        $.each(data, function(index, item) {
+            var row = $('<tr>');
+            var checkbox = $('<input type="checkbox" name="selectedItems" value="' + item.Sid + '">');
+            if (item.flag == false) {
+                checkbox.prop('checked', false);
+            } else {
+                checkbox.prop('checked', true);
+            }
+
+            row.append($('<td>').append(checkbox));
+            row.append($('<td>').text(item.Name));
+
+            $('#data-table tbody').append(row);
+        });
+
+
+        let table = new DataTable('#data-table', {
+            // config options...
+        });
+    }
+
+    // 全選/全不選功能
+    $('#select-all').click(function() {
+        $('input[name="selectedItems"]').prop('checked', true);
+    });
+
+    $('#deselect-all').click(function() {
+        $('input[name="selectedItems"]').prop('checked', false);
+    });
+
+    // 更新遊戲列表功能
+    $('#update-games').click(function() {
+        axios.get('../getGameList.php')
+            .then(function(response) {
+                // 向 PHP 後端發送請求更新資料庫
+                axios.post('update_games.php', response.data)
+                    .then(function(response) {
+                        alert('遊戲列表已更新!');
+                        getSwitchGameLists();
+                    })
+                    .catch(function(error) {
+                        alert('更新遊戲列表時發生錯誤: ' + error);
+                    });
+            })
+            .catch(function(error) {
+                alert('無法獲取遊戲列表: ' + error);
             });
+    });
 
+    // 更新選取項目功能
+    $('#update-selected').click(function() {
+      var selectedItemSids = [];
+      var selectedItemFlags = [];
+      $('input[name="selectedItems"]').each(function() {
+        var sid = $(this).val();
+        var flag = $(this).prop('checked') ? 1 : 0;
+        selectedItemSids.push(sid);
+        selectedItemFlags.push(flag);
+      });
+
+      axios.post('update_switch_game_lists_selected.php', { selectedSids: selectedItemSids, selectedFlags: selectedItemFlags })
+        .then(function(response) {
+          alert('選取項目已更新!');
         })
-        .catch((error) => console.log(error))
+        .catch(function(error) {
+          alert('更新選取項目時發生錯誤: ' + error);
+        });
+    });
 </script>
 
 </html>

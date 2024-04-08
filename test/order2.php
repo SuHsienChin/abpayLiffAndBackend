@@ -189,9 +189,12 @@
                         return allGameLists.find(allGameList => allGameList.Sid === Sid);
                     };
 
+                    
+
                     let options = '<option value="">請選擇遊戲</option>';
                     $.each(customerGameAccounts, function (i, item) {
                         const gameData = searchGameBySid(parseInt(item.GameSid));
+                        console.log(gameData);
                         const selectedGame = document.getElementById("gameName")
                         options += `<option value="${gameData.Sid}" data-gameRate="${gameData.GameRate}">${gameData.Name}</option>`;
                         selectedGame.innerHTML = options;
