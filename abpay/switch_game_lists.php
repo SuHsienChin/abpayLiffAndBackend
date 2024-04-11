@@ -50,7 +50,7 @@
                         <div class="col-md-12 text-right">
                             <button class="btn btn-primary" id="select-all">全選</button>
                             <button class="btn btn-default" id="deselect-all">全不選</button>
-                            <button class="btn btn-success" id="update-games">更新遊戲列表</button>
+                            <!-- <button class="btn btn-success" id="update-games">更新遊戲列表</button> -->
                             <button class="btn btn-info" id="update-selected">更新選取項目</button>
                         </div>
                     </div>
