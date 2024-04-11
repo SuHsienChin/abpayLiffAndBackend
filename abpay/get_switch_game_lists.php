@@ -5,7 +5,7 @@ require_once 'databaseConnection.php';
 // 假设您已经连接到数据库
 
 $connection = new DatabaseConnection();
-$pdo = $connection->connect('utf8mb4');
+$pdo = $connection->connect();
 
 // 准备和执行查询
 $stmt = $pdo->prepare('SELECT * FROM switch_game_lists ');
