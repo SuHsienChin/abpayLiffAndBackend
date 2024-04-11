@@ -48,7 +48,7 @@
                             <div class="form-group">
                                 <label for="gameName">遊戲名稱</label>
                                 <select class="form-control" id="gameName" name="gameName" onchange="gameNameOnchange()">
-                                    <option value="">請稍候...</option>
+                                    <option value="">請選擇...</option>
                                     <!-- 此處的選項會由前端 JavaScript 在 AJAX 回傳後動態生成 -->
                                 </select>
                             </div>
@@ -218,27 +218,50 @@
         function getCustomerGameLists() {
             const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameNames'));
 
-            axios.get('getGameList.php')
-                .then(function(response) {
-                    const allGameLists = response.data;
+            // const showGameLists = switchGameLists();
+            // console.log('顯示遊戲的開關');
+            // console.log(showGameLists);
 
-                    const searchGameBySid = (Sid) => {
-                        return allGameLists.find(allGameList => allGameList.Sid === Sid);
-                    };
+            switchGameLists()
+                .then(function(switchGameListsData) {
+                    axios.get('getGameList.php')
+                        .then(function(response) {
+                            const allGameLists = response.data;
+                            const filterGameLists = filterGames(response.data, switchGameListsData);
+                            console.log(filterGameLists);
 
-                    console.log(searchGameBySid);
 
-                    let options = '<option value="">請選擇遊戲</option>';
-                    $.each(customerGameAccounts, function(i, item) {
-                        const gameData = searchGameBySid(parseInt(item.GameSid));
-                        const selectedGame = document.getElementById("gameName")
-                        options +=
-                            `<option value="${gameData.Sid}" data-gameRate="${gameData.GameRate}">${gameData.Name}</option>`;
-                        selectedGame.innerHTML = options;
-                    });
+                            let options = '<option value="">請選擇遊戲</option>';
+                            $.each(filterGameLists, function(i, item) {
+                                const selectedGame = document.getElementById("gameName")
+                                options +=
+                                    `<option value="${item.Sid}" data-gameRate="${item.GameRate}">${item.Name}</option>`;
+                                selectedGame.innerHTML = options;
+                            });
 
+                            //以下是原本還沒設定遊戲開關的程式碼
+                            // const searchGameBySid = (Sid) => {
+                            //     return allGameLists.find(allGameList => allGameList.Sid === Sid);
+                            // };
+
+                            // let options = '<option value="">請選擇遊戲</option>';
+                            // $.each(customerGameAccounts, function(i, item) {
+                            //     const gameData = searchGameBySid(parseInt(item.GameSid));
+
+                            //     const selectedGame = document.getElementById("gameName")
+                            //     options +=
+                            //         `<option value="${gameData.Sid}" data-gameRate="${gameData.GameRate}">${gameData.Name}</option>`;
+                            //     selectedGame.innerHTML = options;
+                            // });
+                            //以上是原本還沒設定遊戲開關的程式碼
+
+                        })
+                        .catch((error) => console.log(error))
                 })
-                .catch((error) => console.log(error))
+                .catch(function(error) {
+                    console.error(error);
+                });
+
         }
 
 
@@ -257,7 +280,7 @@
 
             const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameAccounts'));
             // 清空商品下拉選單
-            gameItemDropdown.innerHTML = '<option value="">請稍候...</option>';
+            gameItemDropdown.innerHTML = '<option value="">請選擇...</option>';
 
             // 清空新增的下拉選單
             removeElementsByClass("dropdownDiv");
@@ -286,7 +309,7 @@
 
 
             // 清空商品下拉選單
-            gameItemDropdown.innerHTML = '<option value="">請稍候...</option>';
+            gameItemDropdown.innerHTML = '<option value="">請選擇...</option>';
 
             // 清空新增的下拉選單
             removeElementsByClass("dropdownDiv");
@@ -536,6 +559,35 @@
                 }
             });
             return returnItems;
+        }
+
+        // 取得控制遊戲是否要顯示在下拉的遊戲清單
+        function switchGameLists() {
+            return axios.get('get_switch_game_lists.php')
+                .then(function(response) {
+                    return response.data;
+                })
+                .catch(function(error) {
+                    console.log('無法取得遊戲資料:', error);
+                    return ('無法取得遊戲資料:', error);
+                });
+        }
+
+        //篩選出有打開的遊戲
+        function filterGames(jsonA, jsonB) {
+            // 將 jsonB 轉換為以 Id 為 key 的物件
+            const jsonBMap = jsonB.reduce((acc, curr) => {
+                acc[curr.Id] = curr;
+                return acc;
+            }, {});
+
+            // 篩選出 jsonA 中 Id 對應到 jsonB 的 Id 且 jsonB 的 flag 為 1 的資料
+            const filteredJsonA = jsonA.filter(item => {
+                const jsonBItem = jsonBMap[item.Id];
+                return jsonBItem && jsonBItem.flag === 1;
+            });
+
+            return (filteredJsonA);
         }
     </script>
 </body>
