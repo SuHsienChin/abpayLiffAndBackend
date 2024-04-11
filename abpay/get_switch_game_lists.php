@@ -9,9 +9,9 @@ $pdo = $connection->connect();
 
 // 准备和执行查询
 $query = $pdo->prepare('SELECT * FROM switch_game_lists ');
-$query->execute();
-
-$game_lists = $query->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$game_lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // 將遊戲名稱以 JSON 格式回傳
 header('Content-Type: application/json');
