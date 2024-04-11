@@ -1,4 +1,9 @@
 <li class="nav-item">
+    <a class="nav-link active" href="switch_game_lists.php">
+    控制遊戲開關
+    </a>
+</li>
+<li class="nav-item">
     <a class="nav-link active" href="orderIndex.php">
         訂單管理
     </a>
