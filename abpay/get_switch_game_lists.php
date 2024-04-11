@@ -8,8 +8,7 @@ $connection = new DatabaseConnection();
 $pdo = $connection->connect();
 
 // 准备和执行查询
-$query = $pdo->prepare('SELECT * FROM switch_game_lists ');
-$stmt = $pdo->prepare($sql);
+$stmt = $pdo->prepare('SELECT * FROM switch_game_lists ');
 $stmt->execute();
 $game_lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
