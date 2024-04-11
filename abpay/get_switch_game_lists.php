@@ -13,5 +13,4 @@ $stmt->execute();
 $game_lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // 將遊戲名稱以 JSON 格式回傳
-header('Content-Type: application/json');
 echo json_encode($game_lists);
