@@ -26,7 +26,7 @@ class DatabaseConnection {
     }
 
     public function connect() {
-        $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->database}";
+        $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->database};charset=utf8mb4";
         try {
             $pdo = new PDO($dsn, $this->username, $this->password);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
