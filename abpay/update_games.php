@@ -8,7 +8,7 @@ require_once 'databaseConnection.php';
 try {
     $connection = new DatabaseConnection();
     $pdo = $connection->connect();
-
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 
     // 接收前端傳來的遊戲列表資料
@@ -16,6 +16,7 @@ try {
 
     // 先查詢資料庫中所有的遊戲資料
     $stmt = $pdo->prepare("SELECT * FROM switch_game_lists");
+    
     $stmt->execute();
     $database_games = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $database_games_by_sid = array_column($database_games, null, 'Sid');
