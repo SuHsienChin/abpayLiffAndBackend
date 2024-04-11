@@ -40,15 +40,15 @@ try {
 
         $stmt = $pdo->prepare("INSERT INTO switch_game_lists (Id, Name, SellNote, Enable, GameRate, Sid, flag, UpdateTime, UserSid) 
                            VALUES (:id, :name, :sellNote, :enable, :gameRate, :sid, :flag, :updateTime, :userSid)");
-        $stmt->bindParam(':id', $id);
-        $stmt->bindParam(':name', $name);
-        $stmt->bindParam(':sellNote', $sellNote);
-        $stmt->bindParam(':enable', $enable);
-        $stmt->bindParam(':gameRate', $gameRate);
-        $stmt->bindParam(':sid', $sid);
-        $stmt->bindParam(':flag', $flag);
-        $stmt->bindParam(':updateTime', $updateTime);
-        $stmt->bindParam(':userSid', $userSid);
+        $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+        $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+        $stmt->bindParam(':sellNote', $sellNote, PDO::PARAM_STR);
+        $stmt->bindParam(':enable', $enable, PDO::PARAM_STR);
+        $stmt->bindParam(':gameRate', $gameRate, PDO::PARAM_STR);
+        $stmt->bindParam(':sid', $sid, PDO::PARAM_STR);
+        $stmt->bindParam(':flag', $flag, PDO::PARAM_STR);
+        $stmt->bindParam(':updateTime', $updateTime, PDO::PARAM_STR);
+        $stmt->bindParam(':userSid', $userSid, PDO::PARAM_STR);
         $stmt->execute();
     }
 
