@@ -224,20 +224,36 @@
 
             switchGameLists()
                 .then(function(switchGameListsData) {
-                    axios.get('getGameList.php')
+                    axios.get('../getGameList.php')
                         .then(function(response) {
                             const allGameLists = response.data;
                             const filterGameLists = filterGames(response.data, switchGameListsData);
-                            console.log(filterGameLists);
 
+                            const searchGameBySid = (Sid) => {
+                                return filterGameLists.find(filterGameList => filterGameList.Sid === Sid);
+                            };
 
                             let options = '<option value="">請選擇遊戲</option>';
-                            $.each(filterGameLists, function(i, item) {
-                                const selectedGame = document.getElementById("gameName")
-                                options +=
-                                    `<option value="${item.Sid}" data-gameRate="${item.GameRate}">${item.Name}</option>`;
-                                selectedGame.innerHTML = options;
+                            $.each(customerGameAccounts, function(i, item) {
+                                const gameData = searchGameBySid(parseInt(item.GameSid));
+                                console.log(gameData);
+                                if (gameData != undefined) {
+                                    const selectedGame = document.getElementById("gameName")
+                                    options +=
+                                        `<option value="${gameData.Sid}" data-gameRate="${gameData.GameRate}">${gameData.Name}</option>`;
+                                    selectedGame.innerHTML = options;
+                                }
                             });
+
+
+                            // let options = '<option value="">請選擇遊戲</option>';
+                            // $.each(filterGameLists, function(i, item) {
+                            //     const selectedGame = document.getElementById("gameName")
+                            //     options +=
+                            //         `<option value="${item.Sid}" data-gameRate="${item.GameRate}">${item.Name}</option>`;
+                            //     selectedGame.innerHTML = options;
+                            // });
+
 
                             //以下是原本還沒設定遊戲開關的程式碼
                             // const searchGameBySid = (Sid) => {
@@ -263,6 +279,7 @@
                 });
 
         }
+
 
 
 
