@@ -37,10 +37,9 @@
                                 </fieldset>
 
                             </div>
-                            <button type="button" class="btn btn-success btn-block"
-                                onclick="confirmOrder()">確認下單</button>
-                            <button type="button" class="btn btn-secondary btn-block mt-2"
-                                onclick="window.history.go(-1);">回上一頁</button>
+                            <button type="button" class="btn btn-success btn-block" onclick="confirmOrder()">確認下單</button>
+                            <!-- <button type="button" class="btn btn-secondary btn-block mt-2" onclick="window.history.go(-1);">回上一頁</button> -->
+                            <button type="button" class="btn btn-secondary btn-block mt-2" onclick="goback()">回上一頁</button>
                         </form>
                     </div>
                 </div>
@@ -50,9 +49,7 @@
 
     <!-- 引入Bootstrap 4的JS和jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"
-        integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js" integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- 以下是liff 要上線時需打開 -->
@@ -534,6 +531,11 @@
             } catch (e) {
                 alert('錯誤，請洽小編\n' + e);
             }
+        }
+
+        function goback() {
+            window.location.href = 'order2.php';
+
         }
     </script>
 

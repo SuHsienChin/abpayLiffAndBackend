@@ -38,7 +38,8 @@
 
                             </div>
                             <button type="button" class="btn btn-success btn-block" onclick="confirmOrder()">確認下單</button>
-                            <button type="button" class="btn btn-secondary btn-block mt-2" onclick="window.history.go(-1);">回上一頁</button>
+                            <!-- <button type="button" class="btn btn-secondary btn-block mt-2" onclick="window.history.go(-1);">回上一頁</button> -->
+                            <button type="button" class="btn btn-secondary btn-block mt-2" onclick="goback()">回上一頁</button>
                         </form>
                     </div>
                 </div>
