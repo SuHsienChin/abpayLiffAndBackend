@@ -537,7 +537,7 @@
 
         
         function goback() {
-            window.location.href = 'order2.php';
+            window.location.href = 'https://liff.line.me/2000183731-BLmrAGPp';
         }
     </script>
 
