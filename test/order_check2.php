@@ -97,18 +97,19 @@
             }
         }
 
+
         //取得rate匯率
         axios.get('../getRate.php')
-            .then(function (response) {
+            .then(function(response) {
 
-                setTimeout(function () {
+                setTimeout(function() {
                     // 在這裡執行您的程式碼
                 }, 1000); // 2000 毫秒 = 2 秒
 
                 const result = response.data.sort((a, b) => {
-                    return a.Sid > b.Sid
-                        ? 1
-                        : -1;
+                    return a.Sid > b.Sid ?
+                        1 :
+                        -1;
                 });
 
                 const orderDateTime = new Date().toLocaleString('en-ZA');
@@ -139,6 +140,41 @@
                 $('#sumMoney').html(itemArr.sumMoney);
                 $('#customerCurrency').html(itemArr.customerCurrency);
                 $('#gameRemark').html(sessionStorage.getItem('gameRemark').replaceAll('\n', '</br>'));
+
+
+                try {
+                    const params_json_data = {
+                        "gameName": sessionStorage.getItem('gameNameText'),
+                        "UserId": "test01",
+                        "Password": "111111",
+                        "GameAccount": sessionStorage.getItem('gameAccount'),
+                        "Item": itemArr.gameitemSLabelText,
+                        "Count": sessionStorage.getItem('gameItemCounts'),
+                        "lineId": sessionStorage.getItem('lineId'),
+                        "customerId": JSON.parse(sessionStorage.getItem('customerData')).Id,
+                        "gameItemsName": JSON.stringify(sessionStorage.getItem('gameItemSelectedTexts')),
+                        "gameItemCounts": JSON.stringify(sessionStorage.getItem('gameItemCounts')),
+                        "logintype": sessionStorage.getItem('login_type'),
+                        "acount": sessionStorage.getItem('login_account'),
+                        "password": sessionStorage.getItem('login_password'),
+                        "serverName": sessionStorage.getItem('server_name'),
+                        "gameAccountName": sessionStorage.getItem('characters'),
+                        //"gameAccountId": customerGameAccounts.Id,
+                        "gameAccountSid": sessionStorage.getItem('gameAccountSid'),
+                        //"customerSid": customerGameAccounts.CustomerId,
+                        "status": "訂單處理中",
+                        "itemsMoney": itemArr.itemMoneyText,
+                        "sumMoney": itemArr.sumMoney,
+                        "orderDateTime": orderDateTime,
+                        "gameRemark": sessionStorage.getItem('gameRemark').replaceAll('\n', '</br>')
+                    };
+
+                    //紀錄使用者的參數log
+                    saveLogsToMysql('在order_check.php一進入時的訂單內容', params_json_data);
+                } catch (e) {
+                    console.log('第172行錯誤：\n' + e);
+                }
+
             })
             .catch((error) => console.log(error))
 
@@ -147,7 +183,9 @@
         function calculateMoney(gameRate, bouns, rateValue, count, customerCurrency) {
             //console.log('gameRate=' + gameRate + 'bouns=' + bouns + 'rateValue=' + rateValue + 'count=' + count);
 
-            roundUp = function (num, decimal) { return Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal); }
+            roundUp = function(num, decimal) {
+                return Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
+            }
 
             if (rateValue == 1) {
                 return Math.ceil(gameRate * bouns * rateValue) * count;
@@ -176,33 +214,18 @@
             const customerData = JSON.parse(sessionStorage.getItem('customerData'));
             const gameName = sessionStorage.getItem('gameNameText');
             const gameItemsName = String(JSON.parse(sessionStorage.getItem('gameItemSelectedTexts')));
-            const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameAccounts'))[0];
+            //這裡有問題
+            //要比對 sessionStorage裡面的 gameAccount 需要跟 customerGameAccounts 一樣 才能放到 customerGameAccounts
+
+            let customerGameAccount = filterGemeAccount(JSON.parse(sessionStorage.getItem('customerGameAccounts')), sessionStorage.getItem('gameAccountSid'));
+            const customerGameAccounts = customerGameAccount[0];
             const orderDateTime = sessionStorage.getItem('orderDateTime');
             const gameRemark = sessionStorage.getItem('gameRemark');
             // const UrlParametersString = 'UserId=test01&Password=111111&Customer=' + customer +
             const UrlParametersString = 'UserId=test02&Password=3345678&Customer=' + customer +
                 '&GameAccount=' + account +
                 '&Item=' + item +
-                '&Count=' + gameItemCounts
-                // '&lineId=' + lineId +
-                // '&customerId=' + customerData.Id +
-                // '&gameName=' + gameName +
-                // '&gameItemsName=' + gameItemsName +
-                // '&gameItemCounts=' + gameItemCounts +
-                // '&logintype=' + customerGameAccounts.LoginType +
-                // '&acount=' + customerGameAccounts.LoginAccount +
-                // '&password=' + customerGameAccounts.LoginPassword +
-                // '&serverName=' + customerGameAccounts.ServerName +
-                // '&gameAccountName=' + customerGameAccounts.Name +
-                // '&gameAccountId=' + customerGameAccounts.Id +
-                // '&gameAccountSid=' + customerGameAccounts.Sid +
-                // '&customerSid=' + customerGameAccounts.CustomerId
-                ;
-
-            // let addOrderDataParametersJson = transferQueryStringToJSON(UrlParametersString)
-            // orderId = (Math.random()*20000);
-            // addOrderDataParametersJson = addNewParameterToJson(orderId, addOrderDataParametersJson)
-            // insertOrderData(addOrderDataParametersJson);
+                '&Count=' + gameItemCounts;
 
             // 客人LINE的ID唯一值
             // 官方LINE的客編
@@ -247,18 +270,47 @@
                 params.append('orderDateTime', orderDateTime);
                 params.append('gameRemark', gameRemark);
             } catch (e) {
-                alert('參數發生錯誤，請洽小編\n' + e);
+                alert('組參數發生錯誤，請洽小編\n' + e);
             }
+
+            //把參數用的json格式
+            const params_json_data = {
+                "gameName": gameName,
+                "UserId": "test01",
+                "Password": "111111",
+                "Customer": customer,
+                "GameAccount": account,
+                "Item": item,
+                "Count": gameItemCounts,
+                "lineId": lineId,
+                "customerId": customerData.Id,
+                "gameItemsName": gameItemsName,
+                "gameItemCounts": gameItemCounts,
+                "logintype": customerGameAccounts.LoginType,
+                "acount": customerGameAccounts.LoginAccount,
+                "password": customerGameAccounts.LoginPassword,
+                "serverName": customerGameAccounts.ServerName,
+                "gameAccountName": customerGameAccounts.Characters,
+                "gameAccountId": customerGameAccounts.Id,
+                "gameAccountSid": customerGameAccounts.Sid,
+                "customerSid": customerGameAccounts.CustomerId,
+                "status": "訂單處理中",
+                "itemsMoney": itemMoney,
+                "sumMoney": sumMoney,
+                "orderDateTime": orderDateTime,
+                "gameRemark": gameRemark
+            };
+
+            //紀錄使用者的參數log
+            saveLogsToMysql('在傳送訂單到官方LINE之前的params_json_data', params_json_data);
 
 
             // 傳送訂單內容到官方LINE
-            sendMessagetoLineOfficial(params);
+            sendMessagetoLineOfficial(params_json_data);
 
-
-            // 透過API下單
             try {
-                axios.get('sendOrderUrlByCORS.php?' + UrlParametersString)
-                    .then(function (response) {
+                axios.get('../sendOrderUrlByCORS.php?' + UrlParametersString)
+                    .then(function(response) {
                         const resdata = response.data
                         let orderId = '';
                         console.log(resdata);
@@ -277,7 +329,7 @@
                             alert('下單發生錯誤，請洽小編');
                         }
                     })
-                    .catch(function (error) {
+                    .catch(function(error) {
                         console.error('Error fetching :', error);
                     });
             } catch (e) {
@@ -290,11 +342,11 @@
         function insertOrderData(params) {
 
             axios.post('addOrderData.php', params)
-                .then(function (response) {
+                .then(function(response) {
                     console.log('資料新增成功', response.data);
                     console.log(response.data);
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.error('資料新增失敗', error);
                 });
 
@@ -307,7 +359,7 @@
 
             // 將 URLSearchParams 轉換為 JavaScript 物件
             const obj = {};
-            searchParams.forEach(function (value, key) {
+            searchParams.forEach(function(value, key) {
                 obj[key] = value;
             });
 
@@ -331,17 +383,17 @@
         }
 
         // 傳送訂單內容到官方LINE
-        function sendMessagetoLineOfficial(params) {
+        function sendMessagetoLineOfficial(params_json_data) {
             try {
                 // 將 URLSearchParams 轉換為 JSON 對象
-                const jsonParams = Object.fromEntries(Array.from(params.entries()));
+                //const jsonParams = Object.fromEntries(Array.from(params.entries()));
+                const jsonParams = params_json_data;
 
 
                 // 計算下單商品價格後回傳商品格式跟價格還有總計
                 const itemArr = calculateMoneyAndReturn();
 
                 // 輸出 JSON 對象
-                console.log(jsonParams);
                 let txt = "";
                 txt += "【自動下單】\n";
                 txt += "客戶編號: " + jsonParams.customerId + "\n";
@@ -363,9 +415,9 @@
 
                 //傳送通知到官方LINE
                 liff.sendMessages([{
-                    type: "text",
-                    text: txt,
-                },])
+                        type: "text",
+                        text: txt,
+                    }, ])
                     .then(() => {
                         alert('訂單內容傳送到官方');
                     })
@@ -374,7 +426,7 @@
                         //alert('下單錯誤 請截圖洽小編' + err);
                     });
             } catch (e) {
-                alert('傳送訂單內容到官方LINE\n' + e);
+                alert('傳送訂單內容發生錯誤\n' + e);
             }
 
         }
@@ -396,7 +448,7 @@
 
             //依客人幣別來比對匯率並取得匯率值
             let rateValue = 0.000;
-            $.each(rate, function (i, item) {
+            $.each(rate, function(i, item) {
                 if (item.includes(customerCurrency)) {
                     rateValue = item.split(",")[2];
                 }
@@ -412,7 +464,7 @@
             let itemMoneyText = '';
 
 
-            $.each(gameItemSelectedValues, function (i, item) {
+            $.each(gameItemSelectedValues, function(i, item) {
                 itemMoney = calculateMoney(gameRate, gameItemBouns[i], rateValue, gameItemCounts[i], customerCurrency);
                 sumMoney += itemMoney;
                 gameitemSLabelText += (i + 1) + '. ' + gameItemSelectedTexts[i] + ' X ' + gameItemCounts[i] + ' = ' + itemMoney + '<br />';
@@ -421,7 +473,12 @@
 
             itemMoneyText = itemMoneyText.slice(0, -1);
 
-            return { gameitemSLabelText, sumMoney, customerCurrency, itemMoneyText };
+            return {
+                gameitemSLabelText,
+                sumMoney,
+                customerCurrency,
+                itemMoneyText
+            };
         }
 
         // 看餘額夠不夠下單，不夠的話不給下單
@@ -429,13 +486,13 @@
             // 客人的餘額
             let customerBalance = JSON.parse(sessionStorage.getItem('customerData')).CurrentMoney;
 
-            if (typeof customerBalance === "undefined"){
+            if (typeof customerBalance === "undefined") {
                 customerBalance = 0;
                 console.log("customerBalance=" + customerBalance);
-            }else{
+            } else {
                 customerBalance = JSON.parse(sessionStorage.getItem('customerData')).CurrentMoney;
             }
-                
+
 
             // 訂單總額
 
@@ -446,10 +503,38 @@
                 sessionStorage.clear();
                 window.location.href = 'https://liff.line.me/2000183731-BLmrAGPp';
             }
-
         }
 
+        /*
+         *
+         */
+        function filterGemeAccount(json_data, gameAccountSid) {
 
+            // 找出 Sid 等於 gameAccountSid
+            let result = json_data.filter(item => item.Sid == gameAccountSid);
+
+            return result;
+        }
+
+        /*
+         * 把要紀錄的logs存到資料庫裡面
+         */
+        function saveLogsToMysql(log_type, params_json_data) {
+            try {
+                axios.post('../saveLogsToMysql.php', {
+                        type: log_type,
+                        JSON: JSON.stringify(params_json_data)
+                    })
+                    .then(function(response) {
+                        console.log('成功存資料庫 1>', response.data);
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+            } catch (e) {
+                alert('錯誤，請洽小編\n' + e);
+            }
+        }
     </script>
 
 
