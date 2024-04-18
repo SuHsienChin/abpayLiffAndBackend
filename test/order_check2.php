@@ -535,7 +535,6 @@
 
         function goback() {
             window.location.href = 'order2.php';
-
         }
     </script>
 

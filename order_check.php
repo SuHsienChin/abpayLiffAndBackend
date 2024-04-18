@@ -534,6 +534,11 @@
                 alert('錯誤，請洽小編\n' + e);
             }
         }
+
+        
+        function goback() {
+            window.location.href = 'order2.php';
+        }
     </script>
 
 
