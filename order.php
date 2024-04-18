@@ -348,7 +348,7 @@
                         gameItems = returnHkdGameItems(gameItems);
                     }
 
-                    let options = '<option value="">請選擇遊戲商品</option>';
+                    let options = '<option value="-1">請選擇遊戲商品</option>';
                     $.each(gameItems, function(i, item) {
                         //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
                         if (item.Enable === 1) {
@@ -408,7 +408,7 @@
                         gameItems = returnHkdGameItems(gameItems);
                     }
 
-                    let options = '<option value="">請選擇遊戲商品</option>';
+                    let options = '<option value="-1">請選擇遊戲商品</option>';
                     $.each(gameItems, function(i, item) {
                         //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
                         if (item.Enable === 1) {
@@ -573,7 +573,7 @@
                 return false;
             }
 
-            
+
         }
 
         // 港幣客人只顯示港幣商品
