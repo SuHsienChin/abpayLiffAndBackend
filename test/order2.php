@@ -61,10 +61,14 @@
                                 <br />
                             </div>
                             <div class="form-group" id="gameItemsGroup">
-                                <label for="gameItem">備註</label>
+                                <label for="gameItem">禮包名稱(並請提供截圖於對話內)</label>
                                 <div class="d-flex align-items-center">
                                     <textarea id="gameRemark" name="gameRemark" rows="3" cols="50"></textarea>
                                 </div>
+                                <br />
+                            </div>
+                            <div class="form-group" id="gameItemsGroup">
+                               <h5 class="text-danger">❤️ 兌換介紹金請找小編 ❤️</h5>
                                 <br />
                             </div>
                             <button type="button" class="btn btn-primary btn-block mb-3" onclick="addGameItem()">新增遊戲商品</button>
