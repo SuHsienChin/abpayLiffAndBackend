@@ -72,10 +72,14 @@
                                 <br />
                             </div>
                             <div class="form-group" id="gameItemsGroup">
-                                <label for="gameItem">備註</label>
+                                <label for="gameItem">禮包名稱(並請提供截圖於對話內)</label>
                                 <div class="d-flex align-items-center">
                                     <textarea id="gameRemark" name="gameRemark" rows="3" cols="50"></textarea>
                                 </div>
+                                <br />
+                            </div>
+                            <div class="form-group" id="gameItemsGroup">
+                               <h5 class="text-danger">❤️ 兌換介紹金請找小編 ❤️</h5>
                                 <br />
                             </div>
                             <button type="button" class="btn btn-primary btn-block mb-3" onclick="addGameItem()">新增遊戲商品</button>
@@ -348,7 +352,7 @@
                         gameItems = returnHkdGameItems(gameItems);
                     }
 
-                    let options = '<option value="">請選擇遊戲商品</option>';
+                    let options = '<option value="-1">請選擇遊戲商品</option>';
                     $.each(gameItems, function(i, item) {
                         //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
                         if (item.Enable === 1) {
@@ -408,7 +412,7 @@
                         gameItems = returnHkdGameItems(gameItems);
                     }
 
-                    let options = '<option value="">請選擇遊戲商品</option>';
+                    let options = '<option value="-1">請選擇遊戲商品</option>';
                     $.each(gameItems, function(i, item) {
                         //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
                         if (item.Enable === 1) {
@@ -423,6 +427,7 @@
                     newGameItem.innerHTML = '<option value="">無法取得商品資料</option>';
                 });
 
+            //123
             dropdownDiv.appendChild(newGameItem);
             dropdownDiv.appendChild(count);
             dropdownDiv.appendChild(deleteButton);
@@ -577,7 +582,6 @@
             });
             return returnItems;
         }
-        //123
 
         // 取得控制遊戲是否要顯示在下拉的遊戲清單
         function switchGameLists() {
