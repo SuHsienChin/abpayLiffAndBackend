@@ -495,7 +495,7 @@
 
         // 確認是否下單
         function confirmOrder() {
-            if (confirm("確認下單？")) {
+            if (confirm("前往下一步？")) {
 
                 // 確認遊戲名稱是否有選擇
                 if (document.getElementById("gameName").value === "") {
