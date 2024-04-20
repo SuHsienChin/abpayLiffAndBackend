@@ -495,9 +495,67 @@
 
         // 確認是否下單
         function confirmOrder() {
-            if (confirm("前往下一步")) {
+            if (confirm("確認下單？")) {
 
-                console.log($('#gameAccount').find(':selected').attr('data-login_account'));
+                // 確認遊戲名稱是否有選擇
+                if (document.getElementById("gameName").value === "") {
+                    alert("請選擇遊戲名稱");
+                    return false;
+                }
+
+                // 確認遊戲帳號是否有選擇
+                if (document.getElementById("gameAccount").value === "") {
+                    alert("請選擇遊戲帳號");
+                    return false;
+                }
+
+                // 確認遊戲商品是否有選擇  
+                const gameItemSelects = document.querySelectorAll('.gameItems'); // 選取特定class的下拉選單
+                let gameItemSelectCount = 0;
+                gameItemSelects.forEach(gameItemSelect => {
+                    if (gameItemSelect.value !== "-1") {
+                        gameItemSelectCount++;
+                    }
+                });
+
+                if (gameItemSelectCount === 0) {
+                    alert("請選擇遊戲商品");
+                    return false;
+                }
+
+                // 確認遊戲商品數量是否有填寫
+                const gameItemCounts = document.querySelectorAll('.gameItemCount'); // 選取特定class的數量欄位
+                let gameItemCountCount = 0;
+
+                gameItemCounts.forEach(gameItemCount => {
+                    console.log(gameItemCount.value);
+                    if (parseInt(gameItemCount.value) > 0 && parseInt(gameItemCount.value) !== 0) {
+                        gameItemCountCount++;
+                    }
+                    console.log(gameItemCountCount);
+                });
+
+                if (gameItemCountCount === 0) {
+                    alert("請填寫遊戲商品數量");
+                    return false;
+                }
+
+                //移除無效的下拉選單商品
+                const gameItemsGroup = document.getElementById("gameItemsGroup");
+                const gameItems = gameItemsGroup.querySelectorAll('.gameItems');
+                gameItems.forEach(gameItem => {
+                    if (gameItem.value === "-1") {
+                        gameItem.parentNode.parentNode.removeChild(gameItem.parentNode);
+                    }
+                });
+
+                //移除遊戲店品數量為0的下拉選單商品
+                const removeGameItemCounts = document.querySelectorAll('.gameItemCount');
+                removeGameItemCounts.forEach(gameItemCount => {
+                    if (parseInt(gameItemCount.value) === 0) {
+                        gameItemCount.parentNode.parentNode.removeChild(gameItemCount.parentNode);
+                    }
+                });
 
                 sessionStorage.setItem('gameAccount', document.getElementById("gameAccount").value);
                 sessionStorage.setItem('gameAccountSid', $('#gameAccount').find(':selected').attr('data-login_account_Sid'));
@@ -520,6 +578,7 @@
                 return false;
             }
         }
+
 
         // 港幣客人只顯示港幣商品
         // 如果是港幣客人而且遊戲商品也有港幣專用的商品
