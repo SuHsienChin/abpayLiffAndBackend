@@ -577,6 +577,7 @@
             });
             return returnItems;
         }
+        //123
 
         // 取得控制遊戲是否要顯示在下拉的遊戲清單
         function switchGameLists() {
