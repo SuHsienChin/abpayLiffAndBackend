@@ -72,14 +72,10 @@
                                 <br />
                             </div>
                             <div class="form-group" id="gameItemsGroup">
-                                <label for="gameItem">禮包名稱(並請提供截圖於對話內)</label>
+                                <label for="gameItem">備註</label>
                                 <div class="d-flex align-items-center">
                                     <textarea id="gameRemark" name="gameRemark" rows="3" cols="50"></textarea>
                                 </div>
-                                <br />
-                            </div>
-                            <div class="form-group" id="gameItemsGroup">
-                               <h5 class="text-danger">❤️ 兌換介紹金請找小編 ❤️</h5>
                                 <br />
                             </div>
                             <button type="button" class="btn btn-primary btn-block mb-3" onclick="addGameItem()">新增遊戲商品</button>
@@ -352,7 +348,7 @@
                         gameItems = returnHkdGameItems(gameItems);
                     }
 
-                    let options = '<option value="-1">請選擇遊戲商品</option>';
+                    let options = '<option value="">請選擇遊戲商品</option>';
                     $.each(gameItems, function(i, item) {
                         //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
                         if (item.Enable === 1) {
@@ -412,7 +408,7 @@
                         gameItems = returnHkdGameItems(gameItems);
                     }
 
-                    let options = '<option value="-1">請選擇遊戲商品</option>';
+                    let options = '<option value="">請選擇遊戲商品</option>';
                     $.each(gameItems, function(i, item) {
                         //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
                         if (item.Enable === 1) {
@@ -494,67 +490,9 @@
 
         // 確認是否下單
         function confirmOrder() {
-            if (confirm("確認下單？")) {
+            if (confirm("前往下一步")) {
 
-                // 確認遊戲名稱是否有選擇
-                if (document.getElementById("gameName").value === "") {
-                    alert("請選擇遊戲名稱");
-                    return false;
-                }
-
-                // 確認遊戲帳號是否有選擇
-                if (document.getElementById("gameAccount").value === "") {
-                    alert("請選擇遊戲帳號");
-                    return false;
-                }
-
-                // 確認遊戲商品是否有選擇  
-                const gameItemSelects = document.querySelectorAll('.gameItems'); // 選取特定class的下拉選單
-                let gameItemSelectCount = 0;
-                gameItemSelects.forEach(gameItemSelect => {
-                    if (gameItemSelect.value !== "-1") {
-                        gameItemSelectCount++;
-                    }
-                });
-
-                if (gameItemSelectCount === 0) {
-                    alert("請選擇遊戲商品");
-                    return false;
-                }
-
-                // 確認遊戲商品數量是否有填寫
-                const gameItemCounts = document.querySelectorAll('.gameItemCount'); // 選取特定class的數量欄位
-                let gameItemCountCount = 0;
-
-                gameItemCounts.forEach(gameItemCount => {
-                    console.log(gameItemCount.value);
-                    if (parseInt(gameItemCount.value) > 0 && parseInt(gameItemCount.value) !== 0) {
-                        gameItemCountCount++;
-                    }
-                    console.log(gameItemCountCount);
-                });
-
-                if (gameItemCountCount === 0) {
-                    alert("請填寫遊戲商品數量");
-                    return false;
-                }
-
-                //移除無效的下拉選單商品
-                const gameItemsGroup = document.getElementById("gameItemsGroup");
-                const gameItems = gameItemsGroup.querySelectorAll('.gameItems');
-                gameItems.forEach(gameItem => {
-                    if (gameItem.value === "-1") {
-                        gameItem.parentNode.parentNode.removeChild(gameItem.parentNode);
-                    }
-                });
-
-                //移除遊戲店品數量為0的下拉選單商品
-                const removeGameItemCounts = document.querySelectorAll('.gameItemCount');
-                removeGameItemCounts.forEach(gameItemCount => {
-                    if (parseInt(gameItemCount.value) === 0) {
-                        gameItemCount.parentNode.parentNode.removeChild(gameItemCount.parentNode);
-                    }
-                });
+                console.log($('#gameAccount').find(':selected').attr('data-login_account'));
 
                 sessionStorage.setItem('gameAccount', document.getElementById("gameAccount").value);
                 sessionStorage.setItem('gameAccountSid', $('#gameAccount').find(':selected').attr('data-login_account_Sid'));
