@@ -494,12 +494,12 @@
             // 訂單總額
 
             // 訂單總額大於客人餘額不給下單
-            if (sumMoney > customerBalance) {
-                alert('您的餘額不足\n要自動下單\n請先至官方LINE\n找小編儲值錢包唷');
-                $('.btn').hide();
-                sessionStorage.clear();
-                window.location.href = 'https://liff.line.me/2000183731-BLmrAGPp';
-            }
+            // if (sumMoney > customerBalance) {
+            //     alert('您的餘額不足\n要自動下單\n請先至官方LINE\n找小編儲值錢包唷');
+            //     $('.btn').hide();
+            //     sessionStorage.clear();
+            //     window.location.href = 'https://liff.line.me/2000183731-BLmrAGPp';
+            // }
         }
 
         /*
