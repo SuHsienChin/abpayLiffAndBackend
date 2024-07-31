@@ -86,13 +86,28 @@
 <script>
     $(document).ready(function () {
         start();
+        // 設置全局攔截器
+        axios.interceptors.request.use(function (config) {
+            document.getElementById('loading').style.display = 'block'; // 顯示加載動畫
+            return config;
+        }, function (error) {
+            document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
+            return Promise.reject(error);
+        });
+
+        axios.interceptors.response.use(function (response) {
+            document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
+            return response;
+        }, function (error) {
+            document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
+            return Promise.reject(error);
+        });
+
     });
 
 
 
     function start() {
-
-        document.getElementById('loading').style.display = 'block'; // 顯示加載動畫
 
         //資料庫有沒有資料，flase就是無資料，true就是有資料
         dataNoEmptyFlag = false;
@@ -113,13 +128,10 @@
                     setDataToTable(response.data);
 
                 }
-
-                document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
             })
             .catch(function (error) {
                 // 處理錯誤F
                 console.error(error);
-                document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
             });
     }
 
@@ -163,29 +175,21 @@
     // 更新遊戲列表功能
     $('#update-games').click(function () {
 
-        document.getElementById('loading').style.display = 'block'; // 顯示加載動畫
-
         axios.get('../getGameList.php')
             .then(function (response) {
                 // 向 PHP 後端發送請求更新資料庫
                 axios.post('update_games.php', response.data)
                     .then(function (response) {
-
-                        document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
                         alert('遊戲列表已更新!');
                         //重新讀取datatable
                         getSwitchGameLists();
                     })
                     .catch(function (error) {
-
-                        document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
                         alert('更新遊戲列表時發生錯誤: ' + error);
                     });
             })
 
             .catch(function (error) {
-
-                document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
                 alert('無法獲取遊戲列表: ' + error);
             });
     });
