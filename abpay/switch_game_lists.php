@@ -122,7 +122,7 @@
 
 
         let table = new DataTable('#data-table', {
-
+            destroy: true,
             // config options...
         });
     }
@@ -144,11 +144,6 @@
                 axios.post('update_games.php', response.data)
                     .then(function (response) {
                         alert('遊戲列表已更新!');
-                        // 檢查DataTable實例是否存在，如果存在則銷毀
-                        if ($.fn.DataTable.isDataTable('#data-table')) {
-                            $('#data-table').DataTable().destroy();
-                        }
-
                         //重新讀取datatable
                         getSwitchGameLists();
                     })
