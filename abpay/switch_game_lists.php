@@ -147,7 +147,9 @@
                         // 檢查DataTable實例是否存在，如果存在則銷毀
                         if ($.fn.DataTable.isDataTable('#data-table')) {
                             $('#data-table').DataTable().destroy();
-                        } F
+                        }
+
+                        //重新讀取datatable
                         getSwitchGameLists();
                     })
                     .catch(function (error) {
