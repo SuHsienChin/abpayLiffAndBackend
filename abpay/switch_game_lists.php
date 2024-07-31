@@ -53,7 +53,6 @@
                 <div class="container">
                     <div id="loading" style="display: none;">讀取中...</div>
                     <div id="data"></div>
-                    <button onclick="fetchData()">點擊載入數據</button>
                     <table class="table table-striped table-bordered" id="data-table">
                         <thead>
                             <tr>
