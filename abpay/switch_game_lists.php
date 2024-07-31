@@ -115,7 +115,6 @@
 
                 }
 
-                document.getElementById('data').innerHTML = JSON.stringify(response.data);
                 document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
             })
             .catch(function (error) {
