@@ -30,7 +30,8 @@
 
             <!-- 主要內容 -->
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">控制遊戲開關</h1>
                 </div>
 
@@ -67,7 +68,7 @@
 
 </body>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         start();
     });
 
@@ -84,7 +85,7 @@
 
     function getSwitchGameLists() {
         axios.get('get_switch_game_lists.php')
-            .then(function(response) {
+            .then(function (response) {
 
                 if (response.data === false) {
                     //無資料
@@ -104,7 +105,7 @@
         $('#data-table tbody').empty();
 
         // 遍歷 JSON 資料並生成表格
-        $.each(data, function(index, item) {
+        $.each(data, function (index, item) {
             var row = $('<tr>');
             var checkbox = $('<input type="checkbox" name="selectedItems" value="' + item.Sid + '">');
             if (item.flag == false) {
@@ -121,56 +122,61 @@
 
 
         let table = new DataTable('#data-table', {
+
             // config options...
         });
     }
 
     // 全選/全不選功能
-    $('#select-all').click(function() {
+    $('#select-all').click(function () {
         $('input[name="selectedItems"]').prop('checked', true);
     });
 
-    $('#deselect-all').click(function() {
+    $('#deselect-all').click(function () {
         $('input[name="selectedItems"]').prop('checked', false);
     });
 
     // 更新遊戲列表功能
-    $('#update-games').click(function() {
+    $('#update-games').click(function () {
         axios.get('../getGameList.php')
-            .then(function(response) {
+            .then(function (response) {
                 // 向 PHP 後端發送請求更新資料庫
                 axios.post('update_games.php', response.data)
-                    .then(function(response) {
+                    .then(function (response) {
                         alert('遊戲列表已更新!');
+                        // 檢查DataTable實例是否存在，如果存在則銷毀
+                        if ($.fn.DataTable.isDataTable('#data-table')) {
+                            $('#data-table').DataTable().destroy();
+                        } F
                         getSwitchGameLists();
                     })
-                    .catch(function(error) {
+                    .catch(function (error) {
                         alert('更新遊戲列表時發生錯誤: ' + error);
                     });
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 alert('無法獲取遊戲列表: ' + error);
             });
     });
 
     // 更新選取項目功能
-    $('#update-selected').click(function() {
-      var selectedItemSids = [];
-      var selectedItemFlags = [];
-      $('input[name="selectedItems"]').each(function() {
-        var sid = $(this).val();
-        var flag = $(this).prop('checked') ? 1 : 0;
-        selectedItemSids.push(sid);
-        selectedItemFlags.push(flag);
-      });
-
-      axios.post('update_switch_game_lists_selected.php', { selectedSids: selectedItemSids, selectedFlags: selectedItemFlags })
-        .then(function(response) {
-          alert('選取項目已更新!');
-        })
-        .catch(function(error) {
-          alert('更新選取項目時發生錯誤: ' + error);
+    $('#update-selected').click(function () {
+        var selectedItemSids = [];
+        var selectedItemFlags = [];
+        $('input[name="selectedItems"]').each(function () {
+            var sid = $(this).val();
+            var flag = $(this).prop('checked') ? 1 : 0;
+            selectedItemSids.push(sid);
+            selectedItemFlags.push(flag);
         });
+
+        axios.post('update_switch_game_lists_selected.php', { selectedSids: selectedItemSids, selectedFlags: selectedItemFlags })
+            .then(function (response) {
+                alert('選取項目已更新!');
+            })
+            .catch(function (error) {
+                alert('更新選取項目時發生錯誤: ' + error);
+            });
     });
 </script>
 
