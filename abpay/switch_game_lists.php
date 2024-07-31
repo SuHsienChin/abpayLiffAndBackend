@@ -9,6 +9,20 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+    <style>
+        #loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+    </style>
     <title>後台訂單管理</title>
 </head>
 
@@ -37,6 +51,9 @@
 
                 <!-- 遊戲列表 -->
                 <div class="container">
+                    <div id="loading" style="display: none;">讀取中...</div>
+                    <div id="data"></div>
+                    <button onclick="fetchData()">點擊載入數據</button>
                     <table class="table table-striped table-bordered" id="data-table">
                         <thead>
                             <tr>
@@ -76,6 +93,8 @@
 
     function start() {
 
+        document.getElementById('loading').style.display = 'block'; // 顯示加載動畫
+
         //資料庫有沒有資料，flase就是無資料，true就是有資料
         dataNoEmptyFlag = false;
 
@@ -95,8 +114,15 @@
                     setDataToTable(response.data);
 
                 }
+
+                document.getElementById('data').innerHTML = JSON.stringify(response.data);
+                document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
             })
-            .catch((error) => console.log(error))
+            .catch(function (error) {
+            // 處理錯誤F
+            console.error(error);
+            document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
+        });
     }
 
     function setDataToTable(data) {
