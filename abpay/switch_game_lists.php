@@ -109,6 +109,9 @@
 
     function start() {
 
+
+        document.getElementById('loading').style.display = 'block'; // 顯示加載動畫
+
         //資料庫有沒有資料，flase就是無資料，true就是有資料
         dataNoEmptyFlag = false;
 
@@ -126,12 +129,13 @@
                     dataNoEmptyFlag = true;
 
                     setDataToTable(response.data);
-
+                    document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
                 }
             })
             .catch(function (error) {
-                // 處理錯誤F
+                // 處理錯誤
                 console.error(error);
+                document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
             });
     }
 
