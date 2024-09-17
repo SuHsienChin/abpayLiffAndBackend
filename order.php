@@ -708,7 +708,7 @@
             var hour = now.getHours(); // 取得小時
 
             // 判斷是否是星期二 且 時間在 7:00 到 8:00 之間
-            if (dayOfWeek === 3 && hour === 3) {
+            if (dayOfWeek === 2 && hour === 7) {
                 // 返回 true 表示維護時間內
                 return true;
             }
