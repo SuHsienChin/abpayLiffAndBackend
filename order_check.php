@@ -78,25 +78,6 @@
         function initializeApp() {
             console.log('啟動成功。');
 
-
-            /*
-                判斷當下時間是不是在星期二的早上7點整到8點整之間，是的話就alert顯示：<h2>系統正在維護，維護時間為早上7點到8點之間</h2>，並且關閉LIFF
-            */
-            // 使用函數並處理結果
-            if (isMaintenanceTime()) {
-                // 顯示提示訊息
-                alert('系統正在維護，維護時間為早上7點到8點之間');
-
-                // 檢查並關閉 LIFF 視窗
-                if (typeof liff !== 'undefined' && liff.closeWindow) {
-                    liff.closeWindow();
-                } else {
-                    console.log("LIFF 未初始化或不支援關閉功能");
-                }
-            } else {
-                console.log("系統未處於維護時間");
-            }
-
             liff.getProfile()
                 .then(profile => {
                     // sessionStorage.setItem('lineUserId', profile.userId);
@@ -563,25 +544,7 @@
             window.location.href = 'https://liff.line.me/2000183731-BLmrAGPp';
         }
 
-        /*
-            判斷是不是在早上7點到8點之間
-            是的話就顯示維護中且並關閉LIFF
-        */
-        function isMaintenanceTime() {
-            // 獲取當前時間
-            var now = new Date();
-            var dayOfWeek = now.getDay(); // 取得星期幾 (0 是星期天, 1 是星期一, 2 是星期二...)
-            var hour = now.getHours(); // 取得小時
-
-            // 判斷是否是星期二 且 時間在 7:00 到 8:00 之間
-            if (dayOfWeek === 3 && hour === 3) {
-                // 返回 true 表示維護時間內
-                return true;
-            }
-
-            // 返回 false 表示不在維護時間內
-            return false;
-        }
+    
 
 
 
