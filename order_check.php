@@ -37,9 +37,11 @@
                                 </fieldset>
 
                             </div>
-                            <button type="button" class="btn btn-success btn-block" onclick="confirmOrder()">確認下單</button>
+                            <button type="button" class="btn btn-success btn-block"
+                                onclick="confirmOrder()">確認下單</button>
                             <!-- <button type="button" class="btn btn-secondary btn-block mt-2" onclick="window.history.go(-1);">回上一頁</button> -->
-                            <button type="button" class="btn btn-secondary btn-block mt-2" onclick="goback()">回上一頁</button>
+                            <button type="button" class="btn btn-secondary btn-block mt-2"
+                                onclick="goback()">回上一頁</button>
                         </form>
                     </div>
                 </div>
@@ -49,7 +51,9 @@
 
     <!-- 引入Bootstrap 4的JS和jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js" integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"
+        integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- 以下是liff 要上線時需打開 -->
@@ -74,6 +78,25 @@
         function initializeApp() {
             console.log('啟動成功。');
 
+
+            /*
+                判斷當下時間是不是在星期二的早上7點整到8點整之間，是的話就alert顯示：<h2>系統正在維護，維護時間為早上7點到8點之間</h2>，並且關閉LIFF
+            */
+            // 使用函數並處理結果
+            if (isMaintenanceTime()) {
+                // 顯示提示訊息
+                alert('系統正在維護，維護時間為早上7點到8點之間');
+
+                // 檢查並關閉 LIFF 視窗
+                if (typeof liff !== 'undefined' && liff.closeWindow) {
+                    liff.closeWindow();
+                } else {
+                    console.log("LIFF 未初始化或不支援關閉功能");
+                }
+            } else {
+                console.log("系統未處於維護時間");
+            }
+
             liff.getProfile()
                 .then(profile => {
                     // sessionStorage.setItem('lineUserId', profile.userId);
@@ -84,7 +107,7 @@
                 });
         }
 
-        $(function() {
+        $(function () {
             //使用 LIFF_ID 初始化 LIFF 應用
             initializeLiff('2000183731-BLmrAGPp');
         });
@@ -99,9 +122,9 @@
 
         //取得rate匯率
         axios.get('getRate.php')
-            .then(function(response) {
+            .then(function (response) {
 
-                setTimeout(function() {
+                setTimeout(function () {
                     // 在這裡執行您的程式碼
                 }, 1000); // 2000 毫秒 = 2 秒
 
@@ -182,7 +205,7 @@
         function calculateMoney(gameRate, bouns, rateValue, count, customerCurrency) {
             //console.log('gameRate=' + gameRate + 'bouns=' + bouns + 'rateValue=' + rateValue + 'count=' + count);
 
-            roundUp = function(num, decimal) {
+            roundUp = function (num, decimal) {
                 return Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
             }
 
@@ -309,7 +332,7 @@
 
             try {
                 axios.get('sendOrderUrlByCORS.php?' + UrlParametersString)
-                    .then(function(response) {
+                    .then(function (response) {
                         const resdata = response.data
                         let orderId = '';
                         console.log(resdata);
@@ -328,7 +351,7 @@
                             alert('下單發生錯誤，請洽小編');
                         }
                     })
-                    .catch(function(error) {
+                    .catch(function (error) {
                         console.error('Error fetching :', error);
                     });
             } catch (e) {
@@ -341,11 +364,11 @@
         function insertOrderData(params) {
 
             axios.post('addOrderData.php', params)
-                .then(function(response) {
+                .then(function (response) {
                     console.log('資料新增成功', response.data);
                     console.log(response.data);
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error('資料新增失敗', error);
                 });
 
@@ -358,7 +381,7 @@
 
             // 將 URLSearchParams 轉換為 JavaScript 物件
             const obj = {};
-            searchParams.forEach(function(value, key) {
+            searchParams.forEach(function (value, key) {
                 obj[key] = value;
             });
 
@@ -414,9 +437,9 @@
 
                 //傳送通知到官方LINE
                 liff.sendMessages([{
-                        type: "text",
-                        text: txt,
-                    }, ])
+                    type: "text",
+                    text: txt,
+                },])
                     .then(() => {
                         alert('訂單內容傳送到官方');
                     })
@@ -447,7 +470,7 @@
 
             //依客人幣別來比對匯率並取得匯率值
             let rateValue = 0.000;
-            $.each(rate, function(i, item) {
+            $.each(rate, function (i, item) {
                 if (item.includes(customerCurrency)) {
                     rateValue = item.split(",")[2];
                 }
@@ -463,7 +486,7 @@
             let itemMoneyText = '';
 
 
-            $.each(gameItemSelectedValues, function(i, item) {
+            $.each(gameItemSelectedValues, function (i, item) {
                 itemMoney = calculateMoney(gameRate, gameItemBouns[i], rateValue, gameItemCounts[i], customerCurrency);
                 sumMoney += itemMoney;
                 gameitemSLabelText += (i + 1) + '. ' + gameItemSelectedTexts[i] + ' X ' + gameItemCounts[i] + ' = ' + itemMoney + '<br />';
@@ -521,13 +544,13 @@
         function saveLogsToMysql(log_type, params_json_data) {
             try {
                 axios.post('saveLogsToMysql.php', {
-                        type: log_type,
-                        JSON: JSON.stringify(params_json_data)
-                    })
-                    .then(function(response) {
+                    type: log_type,
+                    JSON: JSON.stringify(params_json_data)
+                })
+                    .then(function (response) {
                         console.log('成功存資料庫 1>', response.data);
                     })
-                    .catch(function(error) {
+                    .catch(function (error) {
                         console.log(error);
                     });
             } catch (e) {
@@ -535,10 +558,34 @@
             }
         }
 
-        
+
         function goback() {
             window.location.href = 'https://liff.line.me/2000183731-BLmrAGPp';
         }
+
+        /*
+            判斷是不是在早上7點到8點之間
+            是的話就顯示維護中且並關閉LIFF
+        */
+        function isMaintenanceTime() {
+            // 獲取當前時間
+            var now = new Date();
+            var dayOfWeek = now.getDay(); // 取得星期幾 (0 是星期天, 1 是星期一, 2 是星期二...)
+            var hour = now.getHours(); // 取得小時
+
+            // 判斷是否是星期二 且 時間在 7:00 到 8:00 之間
+            if (dayOfWeek === 3 && hour === 3) {
+                // 返回 true 表示維護時間內
+                return true;
+            }
+
+            // 返回 false 表示不在維護時間內
+            return false;
+        }
+
+
+
+
     </script>
 
 
