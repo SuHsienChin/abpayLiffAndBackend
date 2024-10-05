@@ -478,7 +478,7 @@
                 itemMoney = Math.round(itemMoney * 100) / 100;
                 console.log('itemMoney$=' + itemMoney);
                 sumMoney += itemMoney;
-                sumMoney = sumMoney.round(sumMoney * 100) / 100;
+                sumMoney = Math.round(sumMoney * 100) / 100;
                 console.log('小計=' + sumMoney + '項目$=' + itemMoney);
                 gameitemSLabelText += (i + 1) + '. ' + gameItemSelectedTexts[i] + ' X ' + gameItemCounts[i] + ' = ' + itemMoney + '<br />';
                 itemMoneyText += itemMoney + ','
