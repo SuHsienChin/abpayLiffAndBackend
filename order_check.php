@@ -476,7 +476,7 @@
             $.each(gameItemSelectedValues, function (i, item) {
                 itemMoney = calculateMoney(gameRate, gameItemBouns[i], rateValue, gameItemCounts[i], customerCurrency);
                 console.log('itemMoney$=' + itemMoney);
-                sumMoney += itemMoney;
+                sumMoney += parseInt(itemMoney);
                 console.log('小計=' + sumMoney + '項目$=' + itemMoney);
                 gameitemSLabelText += (i + 1) + '. ' + gameItemSelectedTexts[i] + ' X ' + gameItemCounts[i] + ' = ' + itemMoney + '<br />';
                 itemMoneyText += itemMoney + ','
