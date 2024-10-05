@@ -186,9 +186,13 @@
         function calculateMoney(gameRate, bouns, rateValue, count, customerCurrency) {
             console.log('計算每個商品乘上數量後的價格  gameRate=' + gameRate + 'bouns=' + bouns + 'rateValue=' + rateValue + 'count=' + count);
 
-            roundUp = function (num, decimal) {
-                console.log('進位='+Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal));
-                return Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
+            // roundUp = function (num, decimal) {
+            //     console.log('進位=' + Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal));
+            //     return Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
+            // }
+
+            roundUp = function roundUpTo1DecimalPlace(num) {
+                return Math.ceil(num * 10) / 10;
             }
 
             if (rateValue == 1) {
@@ -196,7 +200,7 @@
             } else {
 
                 if (customerCurrency.includes('新')) {
-                    return roundUp(gameRate * bouns / rateValue, 1) * count;
+                    return roundUp(gameRate * bouns / rateValue) * count;
                 }
                 return Math.ceil(gameRate * bouns / rateValue) * count;
             }
@@ -471,7 +475,7 @@
             $.each(gameItemSelectedValues, function (i, item) {
                 itemMoney = calculateMoney(gameRate, gameItemBouns[i], rateValue, gameItemCounts[i], customerCurrency);
                 sumMoney += itemMoney;
-                console.log('小計='+ sumMoney + '項目$=' + itemMoney);
+                console.log('小計=' + sumMoney + '項目$=' + itemMoney);
                 gameitemSLabelText += (i + 1) + '. ' + gameItemSelectedTexts[i] + ' X ' + gameItemCounts[i] + ' = ' + itemMoney + '<br />';
                 itemMoneyText += itemMoney + ','
             });
@@ -546,7 +550,7 @@
             window.location.href = 'https://liff.line.me/2000183731-BLmrAGPp';
         }
 
-    
+
 
 
 
