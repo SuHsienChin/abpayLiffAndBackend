@@ -184,9 +184,10 @@
 
         //計算每個商品乘上數量後的價格
         function calculateMoney(gameRate, bouns, rateValue, count, customerCurrency) {
-            //console.log('gameRate=' + gameRate + 'bouns=' + bouns + 'rateValue=' + rateValue + 'count=' + count);
+            console.log('計算每個商品乘上數量後的價格  gameRate=' + gameRate + 'bouns=' + bouns + 'rateValue=' + rateValue + 'count=' + count);
 
             roundUp = function (num, decimal) {
+                console.log('進位='+Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal));
                 return Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
             }
 
