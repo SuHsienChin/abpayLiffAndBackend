@@ -184,7 +184,7 @@
 
         //計算每個商品乘上數量後的價格
         function calculateMoney(gameRate, bouns, rateValue, count, customerCurrency) {
-            console.log('計算每個商品乘上數量後的價格  gameRate=' + gameRate + 'bouns=' + bouns + 'rateValue=' + rateValue + 'count=' + count);
+            //console.log('計算每個商品乘上數量後的價格  gameRate=' + gameRate + 'bouns=' + bouns + 'rateValue=' + rateValue + 'count=' + count);
 
             // roundUp = function (num, decimal) {
             //     console.log('進位=' + Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal));
@@ -200,6 +200,7 @@
             } else {
 
                 if (customerCurrency.includes('新')) {
+                    console.log('gameRate=' + gameRate + 'bouns=' + bouns + 'rateValue=' + rateValue + 'count=' + count + '計算新幣：' + roundUp(gameRate * bouns / rateValue) * count);
                     return roundUp(gameRate * bouns / rateValue) * count;
                 }
                 return Math.ceil(gameRate * bouns / rateValue) * count;
