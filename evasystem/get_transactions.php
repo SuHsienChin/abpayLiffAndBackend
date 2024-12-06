@@ -1,17 +1,17 @@
 <?php
-require 'config.php';
+require 'config.php'; // 包含資料庫連線設定
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $phone = $_GET['phone'];
     $pdo = getConnection();
 
-    // 查詢客戶
+    // 查詢客戶資料
     $stmt = $pdo->prepare("SELECT id, name, balance FROM customers WHERE phone = ?");
     $stmt->execute([$phone]);
     $customer = $stmt->fetch();
 
     if (!$customer) {
-        echo "找不到客戶！";
+        echo "<div class='alert alert-danger mt-3'>找不到此客戶！請檢查輸入的電話號碼。</div>";
         exit;
     }
 
@@ -21,9 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $transactions = $stmt->fetchAll();
 
     // 顯示結果
-    echo "<h3>客戶姓名：" . $customer['name'] . "（餘額：" . $customer['balance'] . "）</h3>";
-    echo "<table class='table table-bordered'>
-            <thead>
+    echo "<h4 class='mt-4'>客戶姓名：{$customer['name']}（餘額：{$customer['balance']}）</h4>";
+    echo "<table class='table table-bordered mt-3'>
+            <thead class='table-light'>
                 <tr>
                     <th>狀態</th>
                     <th>使用項目</th>
