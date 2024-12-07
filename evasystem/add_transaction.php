@@ -1,17 +1,18 @@
 <?php
-require 'config.php';
+require 'config.php'; // 引入資料庫連線設定
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = $_POST['phone'];
     $item = $_POST['item'];
     $amount = $_POST['amount'];
-    $signature = $_POST['signature']; // Base64 簽名數據
+    $signatureData = $_POST['signature']; // 接收簽名的 Base64 資料
 
     $pdo = getConnection();
+
     try {
         $pdo->beginTransaction();
 
-        // 查詢客戶
+        // 查詢客戶資料
         $stmt = $pdo->prepare("SELECT id, balance FROM customers WHERE phone = ?");
         $stmt->execute([$phone]);
         $customer = $stmt->fetch();
@@ -21,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // 檢查餘額
+        // 檢查餘額是否足夠
         if ($customer['balance'] < $amount) {
             echo "餘額不足！";
             exit;
@@ -32,13 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("UPDATE customers SET balance = ? WHERE id = ?");
         $stmt->execute([$new_balance, $customer['id']]);
 
-        // 處理簽名圖片
-        $signature = explode(',', $signature)[1]; // 移除 Base64 的 data URI 頭
-        $signature_binary = base64_decode($signature);
+        // 儲存簽名圖片
+        $signaturePath = null;
+        if ($signatureData) {
+            $signaturePath = saveSignatureToFile($signatureData, $customer['id']);
+        }
 
         // 新增交易記錄
         $stmt = $pdo->prepare("INSERT INTO transactions (customer_id, status, item, date, amount, balance, signature) VALUES (?, '消費', ?, NOW(), ?, ?, ?)");
-        $stmt->execute([$customer['id'], $item, $amount, $new_balance, $signature_binary]);
+        $stmt->execute([$customer['id'], $item, $amount, $new_balance, $signaturePath]);
 
         $pdo->commit();
         echo "消費記錄新增成功！";
@@ -47,27 +50,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "消費記錄新增失敗：" . $e->getMessage();
     }
 }
+
+/**
+ * 將簽名的 Base64 資料儲存為 JPG 檔案
+ *
+ * @param string $base64Data 簽名的 Base64 資料
+ * @param int $customerId 客戶 ID，用於生成唯一檔案名稱
+ * @return string 儲存的檔案路徑
+ */
+function saveSignatureToFile($base64Data, $customerId) {
+    // 檔案存放目錄
+    $uploadDir = __DIR__ . '/signatures/';
+    if (!file_exists($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
+
+    // 解碼 Base64 資料
+    $base64Data = str_replace('data:image/png;base64,', '', $base64Data);
+    $decodedData = base64_decode($base64Data);
+
+    if ($decodedData === false) {
+        throw new Exception("無效的簽名資料");
+    }
+
+    // 生成唯一檔案名稱
+    $filename = 'signature_' . $customerId . '_' . time() . '.jpg';
+    $filePath = $uploadDir . $filename;
+
+    // 儲存圖片檔案
+    file_put_contents($filePath, $decodedData);
+
+    // 返回檔案相對路徑
+    return 'signatures/' . $filename;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>消費</title>
+    <title>新增消費記錄</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://szimek.github.io/signature_pad/js/signature_pad.umd.min.js"></script>
     <style>
-        #signature-pad {
-            border: 1px solid #ced4da;
+        .signature-pad {
+            border: 1px solid #ccc;
             border-radius: 5px;
-            height: 200px;
         }
     </style>
 </head>
 <body class="bg-light">
     <div class="container py-5">
-        <h2 class="text-center mb-4">消費</h2>
-        <form action="add_transaction.php" method="POST" enctype="multipart/form-data" class="bg-white p-4 rounded shadow-sm">
+        <h2 class="text-center mb-4">新增消費記錄</h2>
+        <form id="transactionForm" action="add_transaction.php" method="POST">
             <div class="mb-3">
                 <label for="phone" class="form-label">客戶電話</label>
                 <input type="text" class="form-control" id="phone" name="phone" required>
@@ -81,34 +116,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="number" class="form-control" id="amount" name="amount" step="0.01" required>
             </div>
             <div class="mb-3">
-                <label for="signature" class="form-label">簽名</label>
-                <canvas id="signature-pad" width="500" height="200"></canvas>
-                <button type="button" id="clear-signature" class="btn btn-secondary mt-2">清除簽名</button>
-                <input type="hidden" id="signature-data" name="signature">
+                <label for="signatureCanvas" class="form-label">簽名</label>
+                <canvas id="signatureCanvas" class="signature-pad" width="400" height="200"></canvas>
+                <button type="button" id="clearSignature" class="btn btn-secondary mt-2">清除簽名</button>
+                <input type="hidden" name="signature" id="signatureInput">
             </div>
-            <button type="submit" class="btn btn-primary w-100">提交消費</button>
+            <button type="submit" class="btn btn-primary w-100">提交記錄</button>
         </form>
     </div>
 
     <script>
-        // 修正錯誤，正確初始化 canvas
-        const canvas = document.getElementById('signature-pad');
+        const canvas = document.getElementById('signatureCanvas');
         const signaturePad = new SignaturePad(canvas);
-        const clearButton = document.getElementById('clear-signature');
-        const signatureData = document.getElementById('signature-data');
+        const clearButton = document.getElementById('clearSignature');
+        const form = document.getElementById('transactionForm');
+        const signatureInput = document.getElementById('signatureInput');
 
         // 清除簽名
         clearButton.addEventListener('click', () => {
             signaturePad.clear();
         });
 
-        // 表單提交時，將簽名數據存到隱藏輸入欄位
-        document.querySelector('form').addEventListener('submit', (e) => {
-            if (signaturePad.isEmpty()) {
-                alert('請提供簽名');
-                e.preventDefault();
+        // 提交表單時存入簽名的 Base64 資料
+        form.addEventListener('submit', (e) => {
+            if (!signaturePad.isEmpty()) {
+                signatureInput.value = signaturePad.toDataURL('image/png');
             } else {
-                signatureData.value = signaturePad.toDataURL();
+                e.preventDefault();
+                alert('請提供簽名！');
             }
         });
     </script>
