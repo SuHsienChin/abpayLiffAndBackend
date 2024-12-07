@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                                             <td><?php echo htmlspecialchars($record['balance']); ?></td>
                                             <td>
                                                 <?php if ($record['signature']): ?>
-                                                    <a href="data:image/png;base64,<?php echo $record['signature']; ?>" target="_blank">查看</a>
+                                                    <img src="data:image/png;base64,<?php echo htmlspecialchars($record['signature']); ?>" alt="簽名圖片" class="img-fluid" style="max-width: 150px;">
                                                 <?php else: ?>
                                                     無
                                                 <?php endif; ?>
