@@ -68,7 +68,7 @@
                     <div class="card-body text-center">
                         <h5 class="card-title">消費記錄查詢</h5>
                         <p class="card-text text-muted">查看客戶的歷史消費與儲值記錄。</p>
-                        <a href="get_transactions.php" class="btn btn-primary">進入</a>
+                        <a href="admin_transactions.php" class="btn btn-primary">進入</a>
                     </div>
                 </div>
             </div>
