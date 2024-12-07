@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>消費</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad/dist/signature_pad.min.js"></script>
     <style>
         #signature-pad {
             border: 1px solid #ced4da;
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="mb-3">
                 <label for="signature" class="form-label">簽名</label>
-                <div id="signature-pad"></div>
+                <canvas id="signature-pad" width="500" height="200"></canvas>
                 <button type="button" id="clear-signature" class="btn btn-secondary mt-2">清除簽名</button>
                 <input type="hidden" id="signature-data" name="signature">
             </div>
@@ -91,7 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-        const wrapper = document.getElementById("signature-pad");
+        // 修正錯誤，正確初始化 canvas
+        const canvas = document.getElementById('signature-pad');
         const signaturePad = new SignaturePad(canvas);
         const clearButton = document.getElementById('clear-signature');
         const signatureData = document.getElementById('signature-data');
