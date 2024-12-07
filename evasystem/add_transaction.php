@@ -91,8 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-        const canvas = document.querySelector("signature-pad");
-        // const canvas = document.getElementById('signature-pad');
+        const wrapper = document.getElementById("signature-pad");
         const signaturePad = new SignaturePad(canvas);
         const clearButton = document.getElementById('clear-signature');
         const signatureData = document.getElementById('signature-data');
