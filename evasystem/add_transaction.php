@@ -1,6 +1,10 @@
 <?php
 require 'config.php'; // 引入資料庫連線設定
 
+$decodedData = base64_decode('aGVsbG8gd29ybGQ='); // "hello world" 的 Base64
+echo $decodedData;
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = $_POST['phone'];
     $item = $_POST['item'];
@@ -35,6 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // 儲存簽名圖片
         $signaturePath = null;
+        if (!$signatureData) {
+            throw new Exception("未接收到簽名資料");
+        }
+        
+        if (!str_starts_with($signatureData, 'data:image/png;base64,')) {
+            throw new Exception("簽名資料格式錯誤，應為 Base64 的 PNG 資料");
+        }
         if ($signatureData) {
             $signaturePath = saveSignatureToFile($signatureData, $customer['id']);
         }
@@ -83,6 +94,8 @@ function saveSignatureToFile($base64Data, $customerId) {
     // 返回檔案相對路徑
     return 'signatures/' . $filename;
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
