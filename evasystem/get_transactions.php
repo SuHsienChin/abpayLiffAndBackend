@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                                                 <?php if ($record['signature']): ?>
                                                     <img src="data:image/png;base64,<?php echo htmlspecialchars('data:image/png;base64,' . $record['signature']); ?>" alt="簽名圖片" class="img-fluid" style="max-width: 150px;">
 
-                                                    <!-- <img src="data:image/png;base64,<?php echo htmlspecialchars($record['signature']); ?>" alt="簽名圖片" class="img-fluid" style="max-width: 150px;"> -->
+                                                    <img src="data:image/png;base64,<?php echo htmlspecialchars($record['signature']); ?>" alt="簽名圖片" class="img-fluid" style="max-width: 150px;">
                                                 <?php else: ?>
                                                     無
                                                 <?php endif; ?>
