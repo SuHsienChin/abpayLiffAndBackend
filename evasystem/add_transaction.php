@@ -1,10 +1,6 @@
 <?php
 require 'config.php'; // 引入資料庫連線設定
 
-$decodedData = base64_decode('aGVsbG8gd29ybGQ='); // "hello world" 的 Base64
-echo $decodedData;
-
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = $_POST['phone'];
     $item = $_POST['item'];
