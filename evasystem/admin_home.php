@@ -46,7 +46,7 @@
                     <div class="card-body text-center">
                         <h5 class="card-title">建立客戶資料</h5>
                         <p class="card-text text-muted">新增新客戶的基本資料。</p>
-                        <a href="create_customer.php" class="btn btn-primary">進入</a>
+                        <a href="add_customer.php" class="btn btn-primary">進入</a>
                     </div>
                 </div>
             </div>
@@ -67,7 +67,7 @@
                 <div class="card">
                     <div class="card-body text-center">
                         <h5 class="card-title">消費記錄查詢</h5>
-                        <p class="card-text text-muted">查看客戶的歷史消費與儲值記錄。</p>
+                        <p class="card-text text-muted">查看客戶消費與儲值記錄。</p>
                         <a href="admin_transactions.php" class="btn btn-primary">進入</a>
                     </div>
                 </div>
