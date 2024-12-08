@@ -1,11 +1,3 @@
-<?php
-// session_start();
-// if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-//     header('Location: login.php');
-//     exit;
-// }
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,15 +9,18 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">後台管理</a>
+            <a class="navbar-brand" href="admin_home.php">後台管理</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="logout.php">登出</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="admin_home.php">首頁</a></li>
+                    <li class="nav-item"><a class="nav-link" href="create_customer.php">建立客戶資料</a></li>
+                    <li class="nav-item"><a class="nav-link" href="add_balance.php">增加餘額</a></li>
+                    <li class="nav-item"><a class="nav-link" href="add_transaction.php">消費</a></li>
+                    <li class="nav-item"><a class="nav-link" href="admin_transactions.php">消費記錄查詢</a></li>
+                    <li class="nav-item"><a class="nav-link text-danger" href="logout.php">登出</a></li>
                 </ul>
             </div>
         </div>
@@ -46,7 +41,7 @@
                     <div class="card-body text-center">
                         <h5 class="card-title">建立客戶資料</h5>
                         <p class="card-text text-muted">新增新客戶的基本資料。</p>
-                        <a href="add_customer.php" class="btn btn-primary">進入</a>
+                        <a href="create_customer.php" class="btn btn-primary">進入</a>
                     </div>
                 </div>
             </div>
