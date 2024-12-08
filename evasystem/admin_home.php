@@ -16,7 +16,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="admin_home.php">首頁</a></li>
-                    <li class="nav-item"><a class="nav-link" href="create_customer.php">建立客戶資料</a></li>
+                    <li class="nav-item"><a class="nav-link" href="add_customer.php">建立客戶資料</a></li>
                     <li class="nav-item"><a class="nav-link" href="add_balance.php">增加餘額</a></li>
                     <li class="nav-item"><a class="nav-link" href="add_transaction.php">消費</a></li>
                     <li class="nav-item"><a class="nav-link" href="admin_transactions.php">消費記錄查詢</a></li>
@@ -41,7 +41,7 @@
                     <div class="card-body text-center">
                         <h5 class="card-title">建立客戶資料</h5>
                         <p class="card-text text-muted">新增新客戶的基本資料。</p>
-                        <a href="create_customer.php" class="btn btn-primary">進入</a>
+                        <a href="add_customer.php" class="btn btn-primary">進入</a>
                     </div>
                 </div>
             </div>
@@ -82,7 +82,7 @@
     </div>
 
     <footer class="bg-dark text-white text-center py-3 mt-5">
-        <p class="mb-0">© 2024 Eva微妝美學. All rights reserved.</p>
+        <p class="mb-0">© 2024 Eva微妝美學. All rights reserved. </p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
