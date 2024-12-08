@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$signatureData) {
             throw new Exception("未接收到簽名資料");
         }
-        
+
         if (!str_starts_with($signatureData, 'data:image/png;base64,')) {
             throw new Exception("簽名資料格式錯誤，應為 Base64 的 PNG 資料");
         }
@@ -65,7 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  * @param int $customerId 客戶 ID，用於生成唯一檔案名稱
  * @return string 儲存的檔案路徑
  */
-function saveSignatureToFile($base64Data, $customerId) {
+function saveSignatureToFile($base64Data, $customerId)
+{
     // 檔案存放目錄
     $uploadDir = __DIR__ . '/signatures/';
     if (!file_exists($uploadDir)) {
@@ -95,6 +96,7 @@ function saveSignatureToFile($base64Data, $customerId) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -108,7 +110,27 @@ function saveSignatureToFile($base64Data, $customerId) {
         }
     </style>
 </head>
+
 <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="admin_home.php">後台管理</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="admin_home.php">首頁</a></li>
+                    <li class="nav-item"><a class="nav-link" href="add_customer.php">建立客戶資料</a></li>
+                    <li class="nav-item"><a class="nav-link" href="add_balance.php">增加餘額</a></li>
+                    <li class="nav-item"><a class="nav-link" href="add_transaction.php">消費</a></li>
+                    <li class="nav-item"><a class="nav-link" href="admin_transactions.php">消費記錄查詢</a></li>
+                    <li class="nav-item"><a class="nav-link text-danger" href="logout.php">登出</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div class="container py-5">
         <h2 class="text-center mb-4">新增消費記錄</h2>
         <form id="transactionForm" action="add_transaction.php" method="POST">
@@ -158,4 +180,5 @@ function saveSignatureToFile($base64Data, $customerId) {
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
