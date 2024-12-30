@@ -23,8 +23,8 @@ $redis->connect('127.0.0.1', 6379); // 連接到本地 Redis 伺服器
 
 // 設定 API 和快取相關參數
 $url = 'http://www.adp.idv.tw/api/GameList';
-$cacheKey = 'api_data';
-$cacheTime = 10; // 快取有效時間（秒）
+$cacheKey = 'gameList';
+$cacheTime = 1800; // 快取有效時間（秒）
 
 // 檢查 Redis 是否已有資料
 if (!$redis->exists($cacheKey)) {
