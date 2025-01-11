@@ -277,7 +277,7 @@
                 params.append('itemsMoney', itemMoney);
                 params.append('sumMoney', sumMoney);
                 params.append('orderDateTime', orderDateTime);
-                params.append('gameRemark', gameRemark);
+                //params.append('gameRemark', gameRemark);
             } catch (e) {
                 alert('組參數發生錯誤，請洽小編\n' + e);
             }
