@@ -380,7 +380,6 @@
 
                     let options = '<option value="-1">請選擇遊戲商品</option>';
                     $.each(gameItems, function (i, item) {
-                        //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
                         if (item.Enable === 1) {
                             options +=
                                 `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
@@ -399,7 +398,6 @@
 
         // 新增遊戲商品
         function addGameItem() {
-
             const selectedGame = document.getElementById("gameName").value;
 
             const dropdownDiv = document.createElement("div");
@@ -422,38 +420,38 @@
             const newGameItem = document.createElement("select");
             newGameItem.classList.add("form-control", "mr-2", "gameItems");
 
-            axios.get('getGameItem.php?Sid=' + selectedGame)
-                .then(function (response) {
-                    // 從回傳的資料中生成商品下拉選單選項
-                    let gameItems = response.data;
+            // 從 sessionStorage 取資料
+            const gameItemsFromSession = sessionStorage.getItem('gemeItems');
+            if (gameItemsFromSession) {
+                try {
+                    let gameItems = JSON.parse(gameItemsFromSession);
 
-                    // 去掉商品底線後面的字
+                    // 如果需要過濾商品，可在這裡進行處理
                     gameItems = removeAfterOnderLineWords(gameItems);
 
-                    //確認港幣客人只能顯示港幣商品
+                    // 確認港幣客人只能顯示港幣商品
                     const hkdFlag = checkHkdCurrencyAndHkdGameItems(gameItems);
 
-                    //回傳專用的港幣商品
                     if (hkdFlag === true) {
                         gameItems = returnHkdGameItems(gameItems);
                     }
 
                     let options = '<option value="-1">請選擇遊戲商品</option>';
                     $.each(gameItems, function (i, item) {
-                        //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
                         if (item.Enable === 1) {
-                            options +=
-                                `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
+                            options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
                         }
                     });
                     newGameItem.innerHTML = options;
-                })
-                .catch(function (error) {
-                    console.error('Error fetching game items:', error);
+                } catch (e) {
+                    console.error("Error parsing sessionStorage data:", e);
                     newGameItem.innerHTML = '<option value="">無法取得商品資料</option>';
-                });
+                }
+            } else {
+                console.error('No game items found in sessionStorage.');
+                newGameItem.innerHTML = '<option value="">無法取得商品資料</option>';
+            }
 
-            //123
             dropdownDiv.appendChild(newGameItem);
             dropdownDiv.appendChild(count);
             dropdownDiv.appendChild(deleteButton);
@@ -462,6 +460,71 @@
 
             document.getElementById("gameItemsGroup").appendChild(dropdownDiv);
         }
+
+        // function addGameItem() {
+
+        //     const selectedGame = document.getElementById("gameName").value;
+
+        //     const dropdownDiv = document.createElement("div");
+        //     dropdownDiv.classList.add("dropdownDiv", "d-flex", "align-items-center");
+
+        //     const count = document.createElement("input");
+        //     count.setAttribute("type", "number");
+        //     count.setAttribute("value", "1");
+        //     count.setAttribute("style", "max-width: 70px;");
+        //     count.classList.add("form-control", "mr-2", "gameItemCount");
+
+        //     const deleteButton = document.createElement("button");
+        //     deleteButton.setAttribute("type", "button");
+        //     deleteButton.classList.add("btn", "btn-danger", "delete-btn");
+        //     deleteButton.innerText = "X";
+        //     deleteButton.onclick = function () {
+        //         deleteDropdown(dropdownDiv);
+        //     };
+
+        //     const newGameItem = document.createElement("select");
+        //     newGameItem.classList.add("form-control", "mr-2", "gameItems");
+
+        //     axios.get('getGameItem.php?Sid=' + selectedGame)
+        //         .then(function (response) {
+        //             // 從回傳的資料中生成商品下拉選單選項
+        //             let gameItems = response.data;
+
+        //             // 去掉商品底線後面的字
+        //             gameItems = removeAfterOnderLineWords(gameItems);
+
+        //             //確認港幣客人只能顯示港幣商品
+        //             const hkdFlag = checkHkdCurrencyAndHkdGameItems(gameItems);
+
+        //             //回傳專用的港幣商品
+        //             if (hkdFlag === true) {
+        //                 gameItems = returnHkdGameItems(gameItems);
+        //             }
+
+        //             let options = '<option value="-1">請選擇遊戲商品</option>';
+        //             $.each(gameItems, function (i, item) {
+        //                 //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
+        //                 if (item.Enable === 1) {
+        //                     options +=
+        //                         `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
+        //                 }
+        //             });
+        //             newGameItem.innerHTML = options;
+        //         })
+        //         .catch(function (error) {
+        //             console.error('Error fetching game items:', error);
+        //             newGameItem.innerHTML = '<option value="">無法取得商品資料</option>';
+        //         });
+
+        //     //123
+        //     dropdownDiv.appendChild(newGameItem);
+        //     dropdownDiv.appendChild(count);
+        //     dropdownDiv.appendChild(deleteButton);
+        //     dropdownDiv.appendChild(document.createElement("br"));
+        //     dropdownDiv.appendChild(document.createElement("br"));
+
+        //     document.getElementById("gameItemsGroup").appendChild(dropdownDiv);
+        // }
 
         // 刪除下拉選單
         function deleteDropdown(dropdownDiv) {
