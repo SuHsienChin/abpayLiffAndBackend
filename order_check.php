@@ -230,6 +230,7 @@
             const customerGameAccounts = customerGameAccount[0];
             const orderDateTime = sessionStorage.getItem('orderDateTime');
             const gameRemark = sessionStorage.getItem('gameRemark');
+            const remark = '';
             // const UrlParametersString = 'UserId=test01&Password=111111&Customer=' + customer +
             const UrlParametersString = 'UserId=test02&Password=3345678&Customer=' + customer +
                 '&GameAccount=' + account +
@@ -277,7 +278,7 @@
                 params.append('itemsMoney', itemMoney);
                 params.append('sumMoney', sumMoney);
                 params.append('orderDateTime', orderDateTime);
-                params.append('gameRemark', "");
+                params.append('gameRemark', remark);
             } catch (e) {
                 alert('組參數發生錯誤，請洽小編\n' + e);
             }
