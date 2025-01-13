@@ -161,10 +161,10 @@
 
             liff.getProfile()
                 .then(profile => {
-                    console.log(profile.displayName);
-                    console.log(profile.userId);
-                    console.log(profile.statusMessage);
-                    console.log(profile);
+                    // console.log(profile.displayName);
+                    // console.log(profile.userId);
+                    // console.log(profile.statusMessage);
+                    // console.log(profile);
 
                     sessionStorage.setItem('lineUserId', profile.userId);
                     const mylineId = $("#lineId").val(sessionStorage.getItem('lineUserId'));
@@ -230,7 +230,7 @@
                             filteredData.push(item);
                         }
                     });
-                    console.log(filteredData);
+            
                     //沒有遊戲資料的客人 要請小編建立
                     if (response.data.length === 0) {
                         alert('您還沒建立遊戲資料\n請點確定後將LINE ID複製給小編\n請洽小編建立資料');
@@ -266,7 +266,7 @@
                             let options = '<option value="">請選擇遊戲</option>';
                             $.each(customerGameAccounts, function (i, item) {
                                 const gameData = searchGameBySid(parseInt(item.GameSid));
-                                console.log(gameData);
+                       
                                 if (gameData != undefined) {
                                     const selectedGame = document.getElementById("gameName")
                                     options +=
@@ -617,11 +617,11 @@
                 let gameItemCountCount = 0;
 
                 gameItemCounts.forEach(gameItemCount => {
-                    console.log(gameItemCount.value);
+               
                     if (parseInt(gameItemCount.value) > 0 && parseInt(gameItemCount.value) !== 0) {
                         gameItemCountCount++;
                     }
-                    console.log(gameItemCountCount);
+              
                 });
 
                 if (gameItemCountCount === 0) {
@@ -678,7 +678,7 @@
             let currencyFlag = false;
             let itemFlag = false;
 
-            console.log(customerCurrency);
+          
 
             if (customerCurrency.includes(currency)) {
                 currencyFlag = true;
