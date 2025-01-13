@@ -319,12 +319,19 @@
             sendMessagetoLineOfficial(params_json_data);
 
             try {
+                // 顯示讀取動畫
+                showLoadingAnimation();
+
                 axios.get('sendOrderUrlByCORS.php?' + UrlParametersString)
                     .then(function (response) {
-                        const resdata = response.data
+                        // 隱藏讀取動畫
+                        hideLoadingAnimation();
+
+                        const resdata = response.data;
                         let orderId = '';
                         console.log(resdata);
                         console.log(resdata.Status);
+
                         if (resdata.Status == '1') {
                             orderId = resdata.OrderId;
                             params.append('orderId', orderId);
@@ -340,13 +347,65 @@
                         }
                     })
                     .catch(function (error) {
+                        // 隱藏讀取動畫
+                        hideLoadingAnimation();
+
                         console.error('Error fetching :', error);
                     });
             } catch (e) {
+                // 隱藏讀取動畫
+                hideLoadingAnimation();
+
                 alert('API下單錯誤，請洽小編\n' + e);
             }
 
+
         }
+
+        //在 JavaScript 中定義兩個函式，用於顯示和隱藏讀取動畫
+        function showLoadingAnimation() {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loadingAnimation';
+            loadingDiv.style.position = 'fixed';
+            loadingDiv.style.top = '0';
+            loadingDiv.style.left = '0';
+            loadingDiv.style.width = '100%';
+            loadingDiv.style.height = '100%';
+            loadingDiv.style.background = 'rgba(0, 0, 0, 0.5)';
+            loadingDiv.style.zIndex = '9999';
+            loadingDiv.style.display = 'flex';
+            loadingDiv.style.alignItems = 'center';
+            loadingDiv.style.justifyContent = 'center';
+
+            const spinner = document.createElement('div');
+            spinner.style.border = '8px solid #f3f3f3';
+            spinner.style.borderTop = '8px solid #3498db';
+            spinner.style.borderRadius = '50%';
+            spinner.style.width = '50px';
+            spinner.style.height = '50px';
+            spinner.style.animation = 'spin 1s linear infinite';
+
+            loadingDiv.appendChild(spinner);
+            document.body.appendChild(loadingDiv);
+
+            // 定義動畫
+            const style = document.createElement('style');
+            style.innerHTML = `
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    `;
+            document.head.appendChild(style);
+        }
+
+        function hideLoadingAnimation() {
+            const loadingDiv = document.getElementById('loadingAnimation');
+            if (loadingDiv) {
+                document.body.removeChild(loadingDiv);
+            }
+        }
+
 
         // 新增訂單資料到資料庫
         function insertOrderData(params) {
