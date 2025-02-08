@@ -180,6 +180,10 @@
                     axios.get('getGameAccount.php?Sid=' + mylineId)
                 ]);
 
+                // 加入除錯訊息
+                console.log('遊戲帳號回應:', accountsResponse);
+                console.log('遊戲帳號資料:', accountsResponse.data);
+
                 const customerData = customerResponse.data;
                 
                 // 處理客戶資料
@@ -194,27 +198,24 @@
                 sessionStorage.setItem('customerData', JSON.stringify(customerData));
                 sessionStorage.setItem('lineId', mylineId);
 
-                // 處理遊戲帳號資料 - 修改這部分的判斷邏輯
-                if (!accountsResponse.data || !Array.isArray(accountsResponse.data) || accountsResponse.data.length === 0) {
-                    console.error('無遊戲帳號資料');
-                    alert('您還沒建立遊戲資料\n請點確定後將LINE ID複製給小編\n請洽小編建立資料');
-                    loadingModal.hide();
-                    return;
-                }
+                // 修改判斷邏輯
+                const gameAccounts = accountsResponse.data;
+                console.log('處理前的遊戲帳號:', gameAccounts);
 
-                // 處理遊戲帳號
-                const uniqueGames = {};
-                const filteredData = accountsResponse.data.filter(item => {
-                    if (!uniqueGames[item.GameSid]) {
-                        uniqueGames[item.GameSid] = true;
-                        return true;
-                    }
-                    return false;
-                });
+                if (gameAccounts && gameAccounts.length > 0) {
+                    // 處理遊戲帳號
+                    const uniqueGames = {};
+                    const filteredData = gameAccounts.filter(item => {
+                        if (item && item.GameSid && !uniqueGames[item.GameSid]) {
+                            uniqueGames[item.GameSid] = true;
+                            return true;
+                        }
+                        return false;
+                    });
 
-                // 確保有過濾後的資料
-                if (filteredData.length > 0) {
-                    sessionStorage.setItem('customerGameAccounts', JSON.stringify(accountsResponse.data));
+                    console.log('過濾後的遊戲帳號:', filteredData);
+
+                    sessionStorage.setItem('customerGameAccounts', JSON.stringify(gameAccounts));
                     sessionStorage.setItem('customerGameNames', JSON.stringify(filteredData));
                     
                     // 載入遊戲列表
@@ -222,8 +223,6 @@
                 } else {
                     console.error('無有效的遊戲帳號資料');
                     alert('無有效的遊戲帳號資料，請聯繫客服');
-                    loadingModal.hide();
-                    return;
                 }
                 
                 // 最後隱藏 loading
