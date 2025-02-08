@@ -1,0 +1,134 @@
+* [33m7b6f851[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m M
+*   [33m6de179f[m Merge branch 'main' of https://github.com/SuHsienChin/abpayLiffAndBackend
+[32m|[m[33m\[m  
+[32m|[m * [33ma2efc65[m M
+* [33m|[m [33md4e72e3[m M
+* [33m|[m [33me25d307[m 解決合併衝突
+[33m|[m[33m/[m  
+* [33md8bf1f7[m M
+* [33mdb1d629[m M
+* [33m9fb0df0[m U
+* [33m45ffd15[m U
+* [33m3cf281c[m U
+* [33mc0c90bf[m U
+* [33mc00e562[m U
+* [33m452cdce[m U
+* [33m6b09ab8[m DE
+* [33m71d0bcb[m U
+* [33m415f55c[m U
+* [33m75d7b97[m U
+* [33m664f020[m U
+* [33me3c991f[m 測試Redis
+* [33ma4b7827[m U
+* [33m3615850[m U
+* [33me15fc6a[m U
+* [33m2cc8f9d[m U
+* [33ma39390c[m U
+* [33m9f2eb64[m U
+* [33m950e2ce[m U
+* [33m7781b56[m U
+* [33m9b8d657[m U
+* [33m33819d4[m U
+* [33md99b694[m U
+* [33me728fab[m U
+* [33m69ae267[m U
+* [33m1425949[m U
+* [33me777a38[m U
+* [33m11ff106[m U
+* [33m9fd5a84[m U
+* [33m9d700e7[m U
+* [33md6367de[m U
+* [33m1ff5b53[m U
+* [33mb5a67fb[m update
+* [33m6558382[m update
+* [33mf84d7ad[m update
+* [33m33b6603[m update
+* [33m54fe791[m update
+* [33m9c212ac[m update
+* [33mff2075e[m update
+* [33mcd14312[m add evasystem
+* [33m01184d9[m 1
+* [33m017b73b[m 1
+* [33mf7db255[m 1
+* [33m8d1fba9[m 123
+* [33mdefbdf4[m 1
+* [33md09d920[m update
+* [33md859297[m 123
+* [33m6029e76[m update
+* [33medef655[m UPDATE
+* [33me207ca3[m 測
+* [33m942a50c[m UPDATE
+* [33me57f49b[m 判斷當下時間是不是在星期二的早上7點整到8點整之間，是的話就alert顯示：<h2>系統正在維護，維護時間為早上7點到8點之間</h2>，並且關閉LIFF
+* [33medff6f4[m 判斷當下時間是不是在星期二的早上7點整到8點整之間，是的話就alert顯示：<h2>系統正在維護，維護時間為早上7點到8點之間</h2>，並且關閉LIFF
+* [33mdc36f9b[m add index.php
+* [33mf2b3b20[m modify
+* [33m9b07535[m modify
+* [33mc87de8a[m modify
+* [33m55c752d[m modify
+* [33m2dc75f1[m update
+* [33m231ab0d[m 加入讀取中特效
+* [33mc333292[m update
+* [33ma8e1c1e[m update
+* [33m658930a[m update
+* [33m6f5ba68[m 後台-打開更新遊戲列表
+* [33m128bac7[m UPDATE
+* [33m2a65a62[m update
+* [33m9596378[m update
+* [33m5ea376e[m M
+* [33m4df3c45[m M
+*   [33mabaa4d1[m Merge branch 'main' of https://github.com/SuHsienChin/abpayLiffAndBackend
+[34m|[m[35m\[m  
+[34m|[m * [33mf6fe0ec[m M123
+[34m|[m * [33mdf3f413[m M123
+[34m|[m *   [33m2d961e1[m Merge branch 'main' of https://github.com/SuHsienChin/abpayLiffAndBackend into main
+[34m|[m [36m|[m[1;31m\[m  
+[34m|[m [36m|[m * [33m4450a15[m M
+[34m|[m * [1;31m|[m [33m0b97dfc[m M
+[34m|[m [1;31m|[m[1;31m/[m  
+[34m|[m * [33m810b476[m m
+[34m|[m * [33m699988a[m m
+* [1;31m|[m [33mf38b225[m reset e7989f3
+[1;31m|[m[1;31m/[m  
+* [33me7989f3[m M
+* [33m44e83d8[m M
+* [33ma39fe35[m M
+* [33mfd88ce1[m M
+* [33m5761cf5[m 修改客人下單時，遊戲商品的下拉選單選擇錯誤。
+* [33m834a857[m M
+* [33mb135e51[m M
+* [33mfcdf161[m m
+* [33m901e0ef[m m
+* [33m7df8b53[m M
+* [33m22c531e[m M
+* [33md943898[m M
+* [33m0e59012[m M
+* [33m0153232[m M
+* [33m388154c[m M
+* [33m98d5b68[m M
+* [33m9aae8ed[m M
+* [33m95556da[m M
+* [33m2a4f0bf[m M
+* [33ma6003a0[m m
+* [33m7b3c9af[m 新增是否在line裡面把篩選後的遊戲放到下拉選單
+* [33m1bb7ddf[m 後台紀錄遊戲開關，用以客人下單時要不要顯示在下拉選單
+* [33m294bf3a[m del test files
+* [33m7c4265b[m m
+* [33m172f4ec[m 修正下單後 資料傳到官方LINE是錯誤的
+* [33me735474[m m
+* [33m9d1ab39[m m
+* [33m0d9168a[m m
+* [33mf67882b[m m
+* [33m5e2e48d[m m
+* [33m4053696[m m
+* [33m7430e34[m modify
+* [33m11cb31c[m update
+* [33mc91ed14[m update
+* [33m307571e[m update
+* [33maf41850[m 增加紀錄logs的地方
+* [33m5b5cd3f[m 增加function的參數
+* [33mfaed30b[m 把紀錄logs的程式改寫成function
+* [33m66ba420[m 測試寫入logs到資料庫
+* [33mbaddc2c[m 修改傳參數到API的方式為get
+* [33m177a07e[m 傳送訂單內容的params改成一般陣列傳送到sendMessagetoLineOfficial
+* [33m7be5c24[m 專案完成
+* [33mc70cbcf[m make it better
