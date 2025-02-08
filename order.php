@@ -180,8 +180,10 @@
                     axios.get('getGameAccount.php?Sid=' + mylineId)
                 ]);
 
-                // 加入除錯訊息
+                // 詳細的除錯訊息
+                console.log('客戶資料:', customerResponse.data);
                 console.log('遊戲帳號回應:', accountsResponse);
+                console.log('遊戲帳號資料型別:', typeof accountsResponse.data);
                 console.log('遊戲帳號資料:', accountsResponse.data);
 
                 const customerData = customerResponse.data;
@@ -198,32 +200,65 @@
                 sessionStorage.setItem('customerData', JSON.stringify(customerData));
                 sessionStorage.setItem('lineId', mylineId);
 
-                // 修改判斷邏輯
+                // 修改判斷邏輯，更嚴謹的檢查
                 const gameAccounts = accountsResponse.data;
-                console.log('處理前的遊戲帳號:', gameAccounts);
-
-                if (gameAccounts && gameAccounts.length > 0) {
-                    // 處理遊戲帳號
-                    const uniqueGames = {};
-                    const filteredData = gameAccounts.filter(item => {
-                        if (item && item.GameSid && !uniqueGames[item.GameSid]) {
-                            uniqueGames[item.GameSid] = true;
-                            return true;
-                        }
-                        return false;
-                    });
-
-                    console.log('過濾後的遊戲帳號:', filteredData);
-
-                    sessionStorage.setItem('customerGameAccounts', JSON.stringify(gameAccounts));
-                    sessionStorage.setItem('customerGameNames', JSON.stringify(filteredData));
-                    
-                    // 載入遊戲列表
-                    await loadGameLists(filteredData);
-                } else {
-                    console.error('無有效的遊戲帳號資料');
-                    alert('無有效的遊戲帳號資料，請聯繫客服');
+                
+                // 檢查是否為有效的遊戲帳號資料
+                if (!gameAccounts) {
+                    console.error('遊戲帳號資料為空');
+                    alert('無法取得遊戲帳號資料，請聯繫客服');
+                    loadingModal.hide();
+                    return;
                 }
+
+                // 確保資料是陣列
+                if (!Array.isArray(gameAccounts)) {
+                    console.error('遊戲帳號資料格式不正確');
+                    alert('遊戲帳號資料格式不正確，請聯繫客服');
+                    loadingModal.hide();
+                    return;
+                }
+
+                // 檢查陣列是否為空
+                if (gameAccounts.length === 0) {
+                    console.error('無遊戲帳號資料');
+                    alert('您還沒有任何遊戲帳號，請聯繫客服建立');
+                    loadingModal.hide();
+                    return;
+                }
+
+                // 處理遊戲帳號
+                const uniqueGames = {};
+                const filteredData = gameAccounts.filter(item => {
+                    // 檢查必要欄位
+                    if (!item || !item.GameSid) {
+                        console.error('無效的遊戲帳號資料:', item);
+                        return false;
+                    }
+                    
+                    if (!uniqueGames[item.GameSid]) {
+                        uniqueGames[item.GameSid] = true;
+                        return true;
+                    }
+                    return false;
+                });
+
+                console.log('過濾後的遊戲帳號:', filteredData);
+
+                // 確認過濾後是否還有資料
+                if (filteredData.length === 0) {
+                    console.error('過濾後無有效的遊戲帳號資料');
+                    alert('無有效的遊戲帳號資料，請聯繫客服');
+                    loadingModal.hide();
+                    return;
+                }
+
+                // 儲存有效資料
+                sessionStorage.setItem('customerGameAccounts', JSON.stringify(gameAccounts));
+                sessionStorage.setItem('customerGameNames', JSON.stringify(filteredData));
+                
+                // 載入遊戲列表
+                await loadGameLists(filteredData);
                 
                 // 最後隱藏 loading
                 loadingModal.hide();
