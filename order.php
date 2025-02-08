@@ -145,28 +145,21 @@
         }
 
         function initializeApp() {
-            console.log('啟動成功。');
-            
-            // 檢查維護時間
             if (isMaintenanceTime()) {
                 alert('系統正在維護，維護時間為早上7點到8點之間');
-                if (typeof liff !== 'undefined' && liff.closeWindow) {
+                if (liff?.closeWindow) {
                     liff.closeWindow();
                 }
                 return;
             }
-            
-            // 取得用戶資料
+
             liff.getProfile()
                 .then(profile => {
                     sessionStorage.setItem('lineUserId', profile.userId);
                     $("#lineId").val(profile.userId);
-                    return customerBtn(profile.userId);
+                    customerBtn(profile.userId);
                 })
-                .catch(err => {
-                    console.error('初始化錯誤:', err);
-                    loadingModal.hide();
-                });
+                .catch(err => console.log('error', err));
         }
 
         //一開始進來清除所有暫存資料
