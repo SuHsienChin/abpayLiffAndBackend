@@ -110,7 +110,7 @@
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
         let loadingModal;
-        //test
+        
         // 等待 DOM 完全載入後再初始化 Bootstrap Modal
         $(document).ready(function() {
             loadingModal = new bootstrap.Modal(document.getElementById('loading'), {
