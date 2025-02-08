@@ -8,8 +8,6 @@
     <!-- 引入 Bootstrap 的 CSS 檔案 -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link rel="preconnect" href="https://maxcdn.bootstrapcdn.com">
-    <link rel="preconnect" href="https://static.line-scdn.net">
 </head>
 
 <body>
@@ -36,8 +34,6 @@
                             <div class="form-group">
                                 <label>LineId：</label>
                                 <input id="lineId" value=""></input>
-                                <!-- <input id="lineId" value="" readonly></input> 上線再改readonly -->
-                                <!-- <button type="button" class="btn btn-primary" onclick="customerBtn()">確定</button> -->
                             </div>
                             <div class="form-group">
                                 <label>客戶名稱：</label>
@@ -52,14 +48,12 @@
                                 <select class="form-control" id="gameName" name="gameName"
                                     onchange="gameNameOnchange()">
                                     <option value="">請選擇...</option>
-                                    <!-- 此處的選項會由前端 JavaScript 在 AJAX 回傳後動態生成 -->
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label>遊戲帳號</label>
                                 <select class="form-control" id="gameAccount" name="gameAccount">
                                     <option value="">請選擇</option>
-                                    <!-- 此處的選項會由前端 JavaScript 在 AJAX 回傳後動態生成 -->
                                 </select>
                             </div>
                             <div class="form-group" id="gameItemsGroup">
@@ -67,11 +61,9 @@
                                 <div class="d-flex align-items-center">
                                     <select class="form-control mr-2 gameItems" id="gameItem" name="gameItem">
                                         <option value="">請先選擇遊戲名稱</option>
-                                        <!-- 此處的選項會由前端 JavaScript 在 AJAX 回傳後動態生成 -->
                                     </select>
                                     <input type="number" class="form-control mr-2 gameItemCount" id="quantity"
                                         name="quantity" style="max-width: 70px;" placeholder="數量" value="1">
-                                    <!-- <button type="button" class="btn btn-danger">X</button> -->
                                 </div>
                                 <br />
                             </div>
@@ -101,213 +93,192 @@
         </div>
     </div>
 
-    <!-- 引入 Bootstrap 的 JavaScript 檔案（注意順序：先引入 jQuery，再引入 Bootstrap 的 JS） -->
+    <!-- 引入 Bootstrap 的 JavaScript 檔案 -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <!-- 以下是liff 要上線時需打開 -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
-        let loadingModal;
-        
-        // 等待 DOM 完全載入後再初始化 Bootstrap Modal
-        $(document).ready(function() {
-            loadingModal = new bootstrap.Modal(document.getElementById('loading'), {
-                backdrop: 'static',
-                keyboard: false
-            });
-            
-            // 顯示 Loading 動畫
-            loadingModal.show();
+        // 建立快取對象
+        const cache = {
+            gameItems: {},
+            gameAccounts: {},
+            customerData: null,
+            gameList: null
+        };
+
+        const loadingModal = new bootstrap.Modal(document.getElementById('loading'), {
+            backdrop: 'static',
+            keyboard: false
         });
 
-        $(function () {
-            //使用 LIFF_ID 初始化 LIFF 應用
-            initializeLiff('2000183731-BLmrAGPp');
+        loadingModal.show();
 
+        $(function() {
+            initializeLiff('2000183731-BLmrAGPp');
             sessionStorage.clear();
         });
 
         function initializeLiff(myLiffId) {
-            liff
-                .init({
-                    liffId: myLiffId,
-                    withLoginOnExternalBrowser: true, // Enable automatic login process
-                })
-                .then(() => {
-                    initializeApp();
-                })
-                .catch((err) => {
-                    console.log(err);
-                    console.log('啟動失敗。');
-                });
+            liff.init({
+                liffId: myLiffId,
+                withLoginOnExternalBrowser: true,
+            })
+            .then(() => {
+                initializeApp();
+            })
+            .catch((err) => {
+                console.log('啟動失敗。', err);
+            });
         }
 
         function initializeApp() {
-            console.log('啟動成功。');
-            
-            // 檢查維護時間
             if (isMaintenanceTime()) {
                 alert('系統正在維護，維護時間為早上7點到8點之間');
-                if (typeof liff !== 'undefined' && liff.closeWindow) {
+                if (liff?.closeWindow) {
                     liff.closeWindow();
                 }
                 return;
             }
-            
-            // 取得用戶資料
+
             liff.getProfile()
                 .then(profile => {
                     sessionStorage.setItem('lineUserId', profile.userId);
                     $("#lineId").val(profile.userId);
-                    return customerBtn(profile.userId);
+                    customerBtn(profile.userId);
                 })
-                .catch(err => {
-                    console.error('初始化錯誤:', err);
-                    loadingModal.hide();
-                });
+                .catch(err => console.log('error', err));
         }
-
-        //一開始進來清除所有暫存資料
-        //sessionStorage.clear();
 
         async function customerBtn(mylineId) {
             try {
-                const [customerResponse, accountsResponse] = await Promise.all([
-                    axios.get('getCustomer.php?lineId=' + mylineId),
-                    axios.get('getGameAccount.php?Sid=' + mylineId)
-                ]);
+                // 如果快取中有客戶資料，直接使用
+                if (cache.customerData) {
+                    updateCustomerDisplay(cache.customerData);
+                    return;
+                }
+
+                const response = await axios.get('getCustomer.php?lineId=' + mylineId);
+                const customerData = response.data;
                 
-                const customerData = customerResponse.data;
-                processCustomerData(customerData);
-                processGameAccounts(accountsResponse.data);
+                // 儲存到快取
+                cache.customerData = customerData;
+                
+                updateCustomerDisplay(customerData);
+                await getCustomerGameAccounts(customerData.Sid);
                 
                 loadingModal.hide();
             } catch (error) {
-                console.error('載入資料錯誤:', error);
+                console.error('取得客戶資料失敗:', error);
                 loadingModal.hide();
             }
         }
 
-        //取得客人所有的遊戲帳號
-        function getCustomerGameAccounts(Sid) {
-            axios.get('getGameAccount.php?Sid=' + Sid)
-                .then(function (response) {
-                    const accountData = response.data;
-                    let uniqueGames = {};
-                    let filteredData = [];
-                    response.data.forEach(item => {
-                        // 如果這個遊戲 ID 還沒出現過，就將它加入 filteredData 並標記為已經出現過
-                        if (!uniqueGames[item.GameSid]) {
-                            uniqueGames[item.GameSid] = true;
-                            filteredData.push(item);
-                        }
-                    });
+        function updateCustomerDisplay(customerData) {
+            const currentMoney = typeof customerData.CurrentMoney === 'undefined' ? 0 : customerData.CurrentMoney;
             
-                    //沒有遊戲資料的客人 要請小編建立
-                    if (response.data.length === 0) {
-                        alert('您還沒建立遊戲資料\n請點確定後將LINE ID複製給小編\n請洽小編建立資料');
-                    } else {
-                        sessionStorage.setItem('customerGameAccounts', JSON.stringify(response.data));
-                        sessionStorage.setItem('customerGameNames', JSON.stringify(filteredData));
-                        getCustomerGameLists();
-                    }
-
-                })
-                .catch((error) => console.log(error))
+            document.getElementById("customerData").innerHTML = customerData.Id + ' ' + customerData.Name;
+            document.getElementById("walletBalance").innerHTML = currentMoney + ' ' + customerData.Currency;
+            
+            sessionStorage.setItem('customerData', JSON.stringify(customerData));
+            sessionStorage.setItem('lineId', $('#lineId').val());
         }
 
-        //取得客人所屬的遊戲
-        function getCustomerGameLists() {
-            const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameNames'));
+        async function getCustomerGameAccounts(Sid) {
+            try {
+                // 檢查快取
+                if (cache.gameAccounts[Sid]) {
+                    processGameAccounts(cache.gameAccounts[Sid]);
+                    return;
+                }
 
-            // const showGameLists = switchGameLists();
-            // console.log('顯示遊戲的開關');
-            // console.log(showGameLists);
-
-            switchGameLists()
-                .then(function (switchGameListsData) {
-                    axios.get('../getGameList.php')
-                        .then(function (response) {
-                            const allGameLists = response.data;
-                            const filterGameLists = filterGames(response.data, switchGameListsData);
-
-                            const searchGameBySid = (Sid) => {
-                                return filterGameLists.find(filterGameList => filterGameList.Sid === Sid);
-                            };
-
-                            let options = '<option value="">請選擇遊戲</option>';
-                            $.each(customerGameAccounts, function (i, item) {
-                                const gameData = searchGameBySid(parseInt(item.GameSid));
-                       
-                                if (gameData != undefined) {
-                                    const selectedGame = document.getElementById("gameName")
-                                    options +=
-                                        `<option value="${gameData.Sid}" data-gameRate="${gameData.GameRate}">${gameData.Name}</option>`;
-                                    selectedGame.innerHTML = options;
-                                }
-                            });
-
-
-                            // let options = '<option value="">請選擇遊戲</option>';
-                            // $.each(filterGameLists, function(i, item) {
-                            //     const selectedGame = document.getElementById("gameName")
-                            //     options +=
-                            //         `<option value="${item.Sid}" data-gameRate="${item.GameRate}">${item.Name}</option>`;
-                            //     selectedGame.innerHTML = options;
-                            // });
-
-
-                            //以下是原本還沒設定遊戲開關的程式碼
-                            // const searchGameBySid = (Sid) => {
-                            //     return allGameLists.find(allGameList => allGameList.Sid === Sid);
-                            // };
-
-                            // let options = '<option value="">請選擇遊戲</option>';
-                            // $.each(customerGameAccounts, function(i, item) {
-                            //     const gameData = searchGameBySid(parseInt(item.GameSid));
-
-                            //     const selectedGame = document.getElementById("gameName")
-                            //     options +=
-                            //         `<option value="${gameData.Sid}" data-gameRate="${gameData.GameRate}">${gameData.Name}</option>`;
-                            //     selectedGame.innerHTML = options;
-                            // });
-                            //以上是原本還沒設定遊戲開關的程式碼
-
-                        })
-                        .catch((error) => console.log(error))
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-
+                const response = await axios.get('getGameAccount.php?Sid=' + Sid);
+                const accountData = response.data;
+                
+                // 儲存到快取
+                cache.gameAccounts[Sid] = accountData;
+                
+                processGameAccounts(accountData);
+            } catch (error) {
+                console.error('取得遊戲帳號失敗:', error);
+            }
         }
 
+        function processGameAccounts(accountData) {
+            if (accountData.length === 0) {
+                alert('您還沒建立遊戲資料\n請點確定後將LINE ID複製給小編\n請洽小編建立資料');
+                return;
+            }
 
+            let uniqueGames = {};
+            let filteredData = accountData.filter(item => {
+                if (!uniqueGames[item.GameSid]) {
+                    uniqueGames[item.GameSid] = true;
+                    return true;
+                }
+                return false;
+            });
 
+            sessionStorage.setItem('customerGameAccounts', JSON.stringify(accountData));
+            sessionStorage.setItem('customerGameNames', JSON.stringify(filteredData));
+            
+            getCustomerGameLists();
+        }
 
+        async function getCustomerGameLists() {
+            try {
+                const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameNames'));
+                
+                // 檢查快取
+                if (!cache.gameList) {
+                    const [switchGameListsData, response] = await Promise.all([
+                        switchGameLists(),
+                        axios.get('../getGameList.php')
+                    ]);
+                    
+                    cache.gameList = {
+                        all: response.data,
+                        filtered: filterGames(response.data, switchGameListsData)
+                    };
+                }
 
-        // 遊戲名稱選項變更時執行的function
+                updateGameNameDropdown(customerGameAccounts, cache.gameList.filtered);
+            } catch (error) {
+                console.error('取得遊戲清單失敗:', error);
+            }
+        }
+
+        function updateGameNameDropdown(customerGameAccounts, filterGameLists) {
+            const searchGameBySid = (Sid) => filterGameLists.find(game => game.Sid === Sid);
+            
+            let options = '<option value="">請選擇遊戲</option>';
+            customerGameAccounts.forEach(item => {
+                const gameData = searchGameBySid(parseInt(item.GameSid));
+                if (gameData) {
+                    options += `<option value="${gameData.Sid}" data-gameRate="${gameData.GameRate}">${gameData.Name}</option>`;
+                }
+            });
+            
+            document.getElementById("gameName").innerHTML = options;
+        }
+
         function gameNameOnchange() {
             getGameAccounts();
             getGameItems();
         }
 
-        //取得遊戲裡面的帳密資料
         function getGameAccounts() {
             const selectedGame = document.getElementById("gameName").value;
-            const gameItemDropdown = document.getElementById("gameAccount");
-
             const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameAccounts'));
-            // 清空商品下拉選單
-            gameItemDropdown.innerHTML = '<option value="">請選擇...</option>';
-
-            // 清空新增的下拉選單
+            
+            updateGameAccountsDropdown(selectedGame, customerGameAccounts);
             removeElementsByClass("dropdownDiv");
+        }
 
+        function updateGameAccountsDropdown(selectedGame, accounts) {
             let options = '<option value="">請選擇帳號</option>';
-            $.each(customerGameAccounts, function (i, item) {
+            accounts.forEach(item => {
                 if (item.GameSid === selectedGame) {
                     options += `<option 
                         data-login_account="${item.LoginAccount}" 
@@ -316,33 +287,111 @@
                         data-characters="${item.Characters}" 
                         data-server_name="${item.ServerName}" 
                         data-login_account_Sid="${item.Sid}" 
-                        value="${item.LoginAccount}" 
-                        >${item.LoginAccount}　${item.Characters}</option>`;
-                    gameItemDropdown.innerHTML = options;
+                        value="${item.LoginAccount}">${item.LoginAccount}　${item.Characters}</option>`;
                 }
             });
+            
+            document.getElementById("gameAccount").innerHTML = options;
         }
 
-        //取得遊戲下的所有商品
-        function getGameItems() {
+        async function getGameItems() {
             const selectedGame = document.getElementById("gameName").value;
             const gameItemDropdown = document.getElementById("gameItem");
-            
-            // 檢查快取
-            const cachedItems = sessionStorage.getItem(`gameItems_${selectedGame}`);
-            if (cachedItems) {
-                processGameItems(JSON.parse(cachedItems));
-                return;
+
+            gameItemDropdown.innerHTML = '<option value="">請選擇...</option>';
+            removeElementsByClass("dropdownDiv");
+
+            try {
+                // 檢查快取
+                if (!cache.gameItems[selectedGame]) {
+                    const response = await axios.get('getGameItem.php?Sid=' + selectedGame);
+                    cache.gameItems[selectedGame] = response.data;
+                }
+
+                let gameItems = cache.gameItems[selectedGame];
+                gameItems = removeAfterOnderLineWords(gameItems);
+
+                const hkdFlag = checkHkdCurrencyAndHkdGameItems(gameItems);
+                if (hkdFlag) {
+                    gameItems = returnHkdGameItems(gameItems);
+                }
+
+                updateGameItemsDropdown(gameItems);
+                sessionStorage.setItem('gemeItems', JSON.stringify(gameItems));
+            } catch (error) {
+                console.error('取得遊戲商品失敗:', error);
+                gameItemDropdown.innerHTML = '<option value="">無法取得商品資料</option>';
             }
-            
+        }
+
+        function updateGameItemsDropdown(gameItems) {
+            let options = '<option value="-1">請選擇遊戲商品</option>';
+            gameItems.forEach(item => {
+                if (item.Enable === 1) {
+                    options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
+                }
+            });
+            document.getElementById("gameItem").innerHTML = options;
+        }
+
+        function addGameItem() {
+            const dropdownDiv = document.createElement("div");
+            dropdownDiv.classList.add("dropdownDiv", "d-flex", "align-items-center");
+
+            const count = createCountInput();
+            const deleteButton = createDeleteButton(dropdownDiv);
+            const newGameItem = createGameItemSelect();
+
+            dropdownDiv.appendChild(newGameItem);
+            dropdownDiv.appendChild(count);
+            dropdownDiv.appendChild(deleteButton);
+            dropdownDiv.appendChild(document.createElement("br"));
+            dropdownDiv.appendChild(document.createElement("br"));
+
+            document.getElementById("gameItemsGroup").appendChild(dropdownDiv);
+        }
+
+        function createCountInput() {
+            const count = document.createElement("input");
+            count.setAttribute("type", "number");
+            count.setAttribute("value", "1");
+            count.setAttribute("style", "max-width: 70px;");
+            gameItemDropdown.innerHTML = '<option value="">請選擇...</option>';
+
+            // 清空新增的下拉選單
+            removeElementsByClass("dropdownDiv");
+
+            // 使用axios進行後端請求
             axios.get('getGameItem.php?Sid=' + selectedGame)
-                .then(response => {
-                    // 儲存到快取
-                    sessionStorage.setItem(`gameItems_${selectedGame}`, JSON.stringify(response.data));
-                    processGameItems(response.data);
+                .then(function (response) {
+                    // 從回傳的資料中生成商品下拉選單選項
+                    let gameItems = response.data;
+
+                    // 去掉商品底線後面的字
+                    gameItems = removeAfterOnderLineWords(gameItems);
+
+                    //確認港幣客人只能顯示港幣商品
+                    const hkdFlag = checkHkdCurrencyAndHkdGameItems(gameItems);
+
+                    //回傳專用的港幣商品
+                    if (hkdFlag === true) {
+                        gameItems = returnHkdGameItems(gameItems);
+                    }
+
+                    let options = '<option value="-1">請選擇遊戲商品</option>';
+                    $.each(gameItems, function (i, item) {
+                        if (item.Enable === 1) {
+                            options +=
+                                `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
+                        }
+                    });
+
+                    // 存這個遊戲的遊戲商品到sessionStorage
+                    sessionStorage.setItem('gemeItems', JSON.stringify(gameItems));
+                    gameItemDropdown.innerHTML = options;
                 })
-                .catch(error => {
-                    console.error('Error:', error);
+                .catch(function (error) {
+                    console.error('Error fetching game items:', error);
                     gameItemDropdown.innerHTML = '<option value="">無法取得商品資料</option>';
                 });
         }
@@ -411,6 +460,71 @@
 
             document.getElementById("gameItemsGroup").appendChild(dropdownDiv);
         }
+
+        // function addGameItem() {
+
+        //     const selectedGame = document.getElementById("gameName").value;
+
+        //     const dropdownDiv = document.createElement("div");
+        //     dropdownDiv.classList.add("dropdownDiv", "d-flex", "align-items-center");
+
+        //     const count = document.createElement("input");
+        //     count.setAttribute("type", "number");
+        //     count.setAttribute("value", "1");
+        //     count.setAttribute("style", "max-width: 70px;");
+        //     count.classList.add("form-control", "mr-2", "gameItemCount");
+
+        //     const deleteButton = document.createElement("button");
+        //     deleteButton.setAttribute("type", "button");
+        //     deleteButton.classList.add("btn", "btn-danger", "delete-btn");
+        //     deleteButton.innerText = "X";
+        //     deleteButton.onclick = function () {
+        //         deleteDropdown(dropdownDiv);
+        //     };
+
+        //     const newGameItem = document.createElement("select");
+        //     newGameItem.classList.add("form-control", "mr-2", "gameItems");
+
+        //     axios.get('getGameItem.php?Sid=' + selectedGame)
+        //         .then(function (response) {
+        //             // 從回傳的資料中生成商品下拉選單選項
+        //             let gameItems = response.data;
+
+        //             // 去掉商品底線後面的字
+        //             gameItems = removeAfterOnderLineWords(gameItems);
+
+        //             //確認港幣客人只能顯示港幣商品
+        //             const hkdFlag = checkHkdCurrencyAndHkdGameItems(gameItems);
+
+        //             //回傳專用的港幣商品
+        //             if (hkdFlag === true) {
+        //                 gameItems = returnHkdGameItems(gameItems);
+        //             }
+
+        //             let options = '<option value="-1">請選擇遊戲商品</option>';
+        //             $.each(gameItems, function (i, item) {
+        //                 //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
+        //                 if (item.Enable === 1) {
+        //                     options +=
+        //                         `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
+        //                 }
+        //             });
+        //             newGameItem.innerHTML = options;
+        //         })
+        //         .catch(function (error) {
+        //             console.error('Error fetching game items:', error);
+        //             newGameItem.innerHTML = '<option value="">無法取得商品資料</option>';
+        //         });
+
+        //     //123
+        //     dropdownDiv.appendChild(newGameItem);
+        //     dropdownDiv.appendChild(count);
+        //     dropdownDiv.appendChild(deleteButton);
+        //     dropdownDiv.appendChild(document.createElement("br"));
+        //     dropdownDiv.appendChild(document.createElement("br"));
+
+        //     document.getElementById("gameItemsGroup").appendChild(dropdownDiv);
+        // }
 
         // 刪除下拉選單
         function deleteDropdown(dropdownDiv) {
@@ -651,12 +765,19 @@
             是的話就顯示維護中且並關閉LIFF
         */
         function isMaintenanceTime() {
-            const now = new Date();
-            const dayOfWeek = now.getDay(); // 0-6, 0 是星期日
-            const hour = now.getHours();
-            
-            // 判斷是否為星期二(2)且時間是早上 7 點
-            return dayOfWeek === 2 && hour === 7;
+            // 獲取當前時間
+            var now = new Date();
+            var dayOfWeek = now.getDay(); // 取得星期幾 (0 是星期天, 1 是星期一, 2 是星期二...)
+            var hour = now.getHours(); // 取得小時
+
+            // 判斷是否是星期二 且 時間在 7:00 到 8:00 之間
+            if (dayOfWeek === 2 && hour === 7) {
+                // 返回 true 表示維護時間內
+                return true;
+            }
+
+            // 返回 false 表示不在維護時間內
+            return false;
         }
     </script>
 </body>
