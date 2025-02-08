@@ -112,37 +112,37 @@
         let loadingModal;
         let cachedGameLists = null; // 新增遊戲列表快取
         
-        // 等待 DOM 完全載入後再初始化
+        // 移除重複的初始化代碼
         $(document).ready(function() {
+            // 初始化 loading modal
             loadingModal = new bootstrap.Modal(document.getElementById('loading'), {
                 backdrop: 'static',
                 keyboard: false
             });
             
-            initializeLiff('2000183731-BLmrAGPp');
+            // 清除舊的 session 資料
             sessionStorage.clear();
-        });
-
-        $(function () {
-            //使用 LIFF_ID 初始化 LIFF 應用
+            
+            // 初始化 LIFF
             initializeLiff('2000183731-BLmrAGPp');
-
-            sessionStorage.clear();
         });
 
         function initializeLiff(myLiffId) {
-            liff
-                .init({
-                    liffId: myLiffId,
-                    withLoginOnExternalBrowser: true, // Enable automatic login process
-                })
-                .then(() => {
-                    initializeApp();
-                })
-                .catch((err) => {
-                    console.log(err);
-                    console.log('啟動失敗。');
-                });
+            liff.init({
+                liffId: myLiffId,
+                withLoginOnExternalBrowser: true
+            })
+            .then(() => {
+                // 顯示 loading
+                loadingModal.show();
+                
+                // 初始化應用
+                return initializeApp();
+            })
+            .catch((err) => {
+                console.error('LIFF 初始化失敗:', err);
+                alert('系統初始化失敗，請重新整理頁面');
+            });
         }
 
         function initializeApp() {
@@ -158,21 +158,20 @@
             }
             
             // 取得用戶資料
-            liff.getProfile()
+            return liff.getProfile()
                 .then(profile => {
                     sessionStorage.setItem('lineUserId', profile.userId);
                     $("#lineId").val(profile.userId);
                     return customerBtn(profile.userId);
                 })
                 .catch(err => {
-                    console.error('初始化錯誤:', err);
+                    console.error('取得用戶資料失敗:', err);
                     loadingModal.hide();
+                    alert('無法取得用戶資料，請重新整理頁面');
                 });
         }
 
-        //一開始進來清除所有暫存資料
-        //sessionStorage.clear();
-
+        // customerBtn 函數修改為回傳 Promise
         async function customerBtn(mylineId) {
             try {
                 // 平行請求客戶資料和遊戲帳號
@@ -182,11 +181,12 @@
                 ]);
 
                 const customerData = customerResponse.data;
-                const customer = document.getElementById("customerData");
-                const walletBalance = document.getElementById("walletBalance");
                 
                 // 處理客戶資料
-                let currentMoney = customerData.CurrentMoney || 0;
+                const customer = document.getElementById("customerData");
+                const walletBalance = document.getElementById("walletBalance");
+                const currentMoney = customerData.CurrentMoney || 0;
+                
                 customer.innerHTML = customerData.Id + ' ' + customerData.Name;
                 walletBalance.innerHTML = currentMoney + ' ' + customerData.Currency;
                 
@@ -197,27 +197,32 @@
                 // 處理遊戲帳號資料
                 if (accountsResponse.data.length === 0) {
                     alert('您還沒建立遊戲資料\n請點確定後將LINE ID複製給小編\n請洽小編建立資料');
-                } else {
-                    const uniqueGames = {};
-                    const filteredData = accountsResponse.data.filter(item => {
-                        if (!uniqueGames[item.GameSid]) {
-                            uniqueGames[item.GameSid] = true;
-                            return true;
-                        }
-                        return false;
-                    });
-
-                    sessionStorage.setItem('customerGameAccounts', JSON.stringify(accountsResponse.data));
-                    sessionStorage.setItem('customerGameNames', JSON.stringify(filteredData));
-                    
-                    // 載入遊戲列表
-                    await loadGameLists(filteredData);
+                    loadingModal.hide();
+                    return;
                 }
 
+                // 處理遊戲帳號
+                const uniqueGames = {};
+                const filteredData = accountsResponse.data.filter(item => {
+                    if (!uniqueGames[item.GameSid]) {
+                        uniqueGames[item.GameSid] = true;
+                        return true;
+                    }
+                    return false;
+                });
+
+                sessionStorage.setItem('customerGameAccounts', JSON.stringify(accountsResponse.data));
+                sessionStorage.setItem('customerGameNames', JSON.stringify(filteredData));
+                
+                // 載入遊戲列表
+                await loadGameLists(filteredData);
+                
+                // 最後隱藏 loading
                 loadingModal.hide();
             } catch (error) {
                 console.error('載入資料錯誤:', error);
                 loadingModal.hide();
+                alert('載入資料失敗，請重新整理頁面');
             }
         }
 
