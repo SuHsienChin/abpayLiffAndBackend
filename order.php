@@ -619,7 +619,7 @@
             return returnItems;
         }
 
-        // 取得控制遊戲是否要顯示在下拉的遊戲清單
+        // 取得控制遊戲是否要顯示在下拉的遊戲清單12
         function switchGameLists() {
             return axios.get('get_switch_game_lists.php')
                 .then(function (response) {
