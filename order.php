@@ -631,7 +631,7 @@
                 });
         }
 
-        //篩選出有打開的遊戲
+        //篩選出有打開的遊戲 000
         function filterGames(jsonA, jsonB) {
             // 將 jsonB 轉換為以 Id 為 key 的物件
             const jsonBMap = jsonB.reduce((acc, curr) => {
