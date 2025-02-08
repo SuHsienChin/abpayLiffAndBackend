@@ -171,7 +171,7 @@
                 });
         }
 
-        // customerBtn 函數修改為回傳 Promise
+        // customerBtn 函數修改
         async function customerBtn(mylineId) {
             try {
                 // 平行請求客戶資料和遊戲帳號
@@ -194,8 +194,9 @@
                 sessionStorage.setItem('customerData', JSON.stringify(customerData));
                 sessionStorage.setItem('lineId', mylineId);
 
-                // 處理遊戲帳號資料
-                if (accountsResponse.data.length === 0) {
+                // 處理遊戲帳號資料 - 修改這部分的判斷邏輯
+                if (!accountsResponse.data || !Array.isArray(accountsResponse.data) || accountsResponse.data.length === 0) {
+                    console.error('無遊戲帳號資料');
                     alert('您還沒建立遊戲資料\n請點確定後將LINE ID複製給小編\n請洽小編建立資料');
                     loadingModal.hide();
                     return;
@@ -211,11 +212,19 @@
                     return false;
                 });
 
-                sessionStorage.setItem('customerGameAccounts', JSON.stringify(accountsResponse.data));
-                sessionStorage.setItem('customerGameNames', JSON.stringify(filteredData));
-                
-                // 載入遊戲列表
-                await loadGameLists(filteredData);
+                // 確保有過濾後的資料
+                if (filteredData.length > 0) {
+                    sessionStorage.setItem('customerGameAccounts', JSON.stringify(accountsResponse.data));
+                    sessionStorage.setItem('customerGameNames', JSON.stringify(filteredData));
+                    
+                    // 載入遊戲列表
+                    await loadGameLists(filteredData);
+                } else {
+                    console.error('無有效的遊戲帳號資料');
+                    alert('無有效的遊戲帳號資料，請聯繫客服');
+                    loadingModal.hide();
+                    return;
+                }
                 
                 // 最後隱藏 loading
                 loadingModal.hide();
