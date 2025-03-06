@@ -90,7 +90,7 @@
                             <button type="button" class="btn btn-primary btn-block mb-3"
                                 onclick="addGameItem()">新增遊戲商品</button>
                             <button type="button" class="btn btn-success btn-block"
-                                onclick="confirmOrder()">確定送出</button>
+                                onclick="confirmOrder()">查看價格</button>
                             <button type="button" class="btn btn-secondary btn-block mt-2">取消</button>
                         </form>
                     </div>
