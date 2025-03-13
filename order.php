@@ -107,8 +107,7 @@
     <!-- 以下是liff 要上線時需打開 -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
-         // 顯示 Loading 動畫
-        loadingModal.show();
+
 
         $(function () {
             //使用 LIFF_ID 初始化 LIFF 應用
@@ -120,6 +119,9 @@
             backdrop: 'static',
             keyboard: false
             });
+
+            // 顯示 Loading 動畫
+            loadingModal.show();
             
         });
 
