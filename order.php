@@ -33,7 +33,7 @@
                         <form method="post" action="order_check.php">
                             <div class="form-group">
                                 <label>LineId：</label>
-                                <input id="lineId" value=""></input>
+                                <input id="lineId" value="" readonly></input>
                                 <!-- <input id="lineId" value="" readonly></input> 上線再改readonly -->
                                 <!-- <button type="button" class="btn btn-primary" onclick="customerBtn()">確定</button> -->
                             </div>
@@ -100,7 +100,7 @@
     </div>
 
     <!-- 引入 Bootstrap 的 JavaScript 檔案（注意順序：先引入 jQuery，再引入 Bootstrap 的 JS） -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
@@ -149,7 +149,7 @@
             console.log('啟動成功。');
 
             /*
-               判斷當下時間是不是在星期二的早上7點整到8點整之間，是的話就alert顯示：<h2>系統正在維護，維護時間為早上7點到8點之間</h2>，並且關閉LIFF
+            判斷當下時間是不是在星期二的早上7點整到8點整之間，是的話就alert顯示：<h2>系統正在維護，維護時間為早上7點到8點之間</h2>，並且關閉LIFF
            */
             // 使用函數並處理結果
             if (isMaintenanceTime()) {
