@@ -8,6 +8,7 @@
     <!-- 引入Bootstrap 4的CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/userActionLogger.js"></script>
 </head>
 
 <body>
@@ -22,7 +23,7 @@
                         <div class="form-group">
                             <fieldset class="border p-4">
                                 <h4>訂單編號：
-                                    <?php echo ($_GET["orderId"]) ?>
+                                    <?php echo htmlspecialchars($_GET["orderId"], ENT_QUOTES, 'UTF-8'); ?>
                                 </h4>
                                 <label id='order_finish_display_message'></label>
                             </fieldset>
@@ -41,32 +42,37 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        // 在頁面載入時記錄
+        $(document).ready(function() {
+            logUserAction('finish_order', '完成下單', {
+                orderId: new URLSearchParams(window.location.search).get('orderId')
+            });
+        });
+
         axios.get('get_order_finish_display_messages.php')
-            .then(function (response) {
+            .then(function(response) {
                 //console.log(JSON.parse(response.data[0].content));
 
                 //取得客人資料
                 const customerData = JSON.parse(sessionStorage.getItem('customerData'));
-
                 const groupCode = customerData.Id.charAt(0);
 
-
                 if (groupCode === 'S') {
-                    response.data.forEach(function (item, i) {
+                    response.data.forEach(function(item, i) {
                         if (item.title === '晴子') {
                             $('#order_finish_display_message').text(JSON.parse(item.content))
                         }
                     });
                 }
                 if (groupCode === 'W') {
-                    response.data.forEach(function (item, i) {
+                    response.data.forEach(function(item, i) {
                         if (item.title === '沐沐代儲') {
                             $('#order_finish_display_message').text(JSON.parse(item.content))
                         }
                     });
                 }
                 if (groupCode === 'A') {
-                    response.data.forEach(function (item, i) {
+                    response.data.forEach(function(item, i) {
                         if (item.title === '艾比代') {
                             $('#order_finish_display_message').text(JSON.parse(item.content))
                         }

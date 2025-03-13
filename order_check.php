@@ -7,6 +7,8 @@
     <title>確認下單</title>
     <!-- 引入Bootstrap 4的CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
+    <script src="js/userActionLogger.js"></script>
+
 </head>
 
 <body>
@@ -91,10 +93,16 @@
         $(function () {
             //使用 LIFF_ID 初始化 LIFF 應用
             initializeLiff('2000183731-BLmrAGPp');
+
+            logUserAction('order_check', '進入確認頁面', {
+                gameItems: sessionStorage.getItem('gameItemSelectedTexts'),
+                sumMoney: sessionStorage.getItem('sumMoney')
+            });
         });
     </script>
     <script>
         function confirmOrder() {
+            logUserAction('order_check', '確認下單');
             if (confirm("確認下單？")) {
                 sendOrder();
             }

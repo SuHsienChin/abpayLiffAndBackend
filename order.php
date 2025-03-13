@@ -8,6 +8,7 @@
     <!-- 引入 Bootstrap 的 CSS 檔案 -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/userActionLogger.js"></script>
 </head>
 
 <body>
@@ -121,11 +122,7 @@
         $(function () {
             //使用 LIFF_ID 初始化 LIFF 應用
             initializeLiff('2000183731-BLmrAGPp');
-
             sessionStorage.clear();
-
-
-            
         });
 
 
@@ -187,9 +184,13 @@
         //一開始進來清除所有暫存資料
         //sessionStorage.clear();
 
-        function customerBtn(mylineId) {
-            // const mylineId = $("#lineId").val();
 
+        
+        // 在各個函數中加入記錄
+        function customerBtn(mylineId) {
+            logUserAction('order', '進入訂單頁面', { lineId: mylineId });
+            // const mylineId = $("#lineId").val();
+        
             //取得客人資料
             axios.get('getCustomer.php?lineId=' + mylineId)
                 .then(function (response) {
@@ -317,12 +318,13 @@
 
         }
 
-
-
-
-
         // 遊戲名稱選項變更時執行的function
         function gameNameOnchange() {
+
+        logUserAction('order', '選擇遊戲', {
+            gameName: $('#gameName option:selected').text(),
+            gameValue: $('#gameName').val()
+        });
             getGameAccounts();
             getGameItems();
         }
@@ -406,7 +408,7 @@
 
         // 新增遊戲商品
         function addGameItem() {
-
+            logUserAction('order', '新增遊戲商品');
             const selectedGame = document.getElementById("gameName").value;
 
             const dropdownDiv = document.createElement("div");
