@@ -73,14 +73,14 @@
                                 </div>
                                 <br />
                             </div>
-                            <div class="form-group" id="gameItemsGroup">
+                            <div class="form-group">
                                 <label for="gameItem">禮包名稱(並請提供截圖於對話內)</label>
                                 <div class="d-flex align-items-center">
                                     <textarea id="gameRemark" name="gameRemark" rows="3" cols="50"></textarea>
                                 </div>
                                 <br />
                             </div>
-                            <div class="form-group" id="gameItemsGroup">
+                            <div class="form-group">
                                 <h5 class="text-danger">無餘額：<br />下單成功➡️等候小編提供收款帳戶➡️收到款項後安排儲值</h5>
                                 <h5 class="text-danger">有餘額：<br />下單成功➡️直接安排儲值</h5>
                                 <br />
@@ -107,20 +107,20 @@
     <!-- 以下是liff 要上線時需打開 -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
-        const loadingModal = new bootstrap.Modal(document.getElementById('loading'), {
-            backdrop: 'static',
-            keyboard: false
-        });
-
-        // 顯示 Loading 動畫
+         // 顯示 Loading 動畫
         loadingModal.show();
-
 
         $(function () {
             //使用 LIFF_ID 初始化 LIFF 應用
             initializeLiff('2000183731-BLmrAGPp');
 
             sessionStorage.clear();
+
+            const loadingModal = new bootstrap.Modal(document.getElementById('loading'), {
+            backdrop: 'static',
+            keyboard: false
+            });
+            
         });
 
         function initializeLiff(myLiffId) {
@@ -708,7 +708,7 @@
             var hour = now.getHours(); // 取得小時
 
             // 判斷是否是星期二 且 時間在 7:00 到 8:00 之間
-            if (dayOfWeek === 3 && hour === 3) {
+            if (dayOfWeek === 2 && hour >= 7 && hour < 8) {
                 // 返回 true 表示維護時間內
                 return true;
             }
