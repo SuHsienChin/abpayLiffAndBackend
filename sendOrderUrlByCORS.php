@@ -1,27 +1,43 @@
 <?php
 require_once 'getApiJsonClass.php';
 
-$url = 'http://www.adp.idv.tw/api/Order?';
+$baseUrl = 'http://www.adp.idv.tw/api/Order';
+$params = [];
 
 // 檢查是否有 GET 參數存在
-if (isset($_GET) && !empty($_GET)) {
-    // 迭代所有 GET 參數
+if (!empty($_GET)) {
+    // 過濾並驗證參數
     foreach ($_GET as $key => $value) {
-        // 輸出每個 GET 參數的名稱和值
-        $url = $url . $key . '=' . $value . '&';
+        // 對參數進行 URL 編碼
+        $params[htmlspecialchars($key)] = $value;
     }
-    $url = substr($url, 0, -1);
 }
 
-$curlRequest = new CurlRequest($url);
-$response = $curlRequest->sendRequest();
-
-$data = json_decode($response, true);
-
-if ($data === null) {
-    die("無法取得API資料");
+try {
+    // 構建 URL
+    $url = $baseUrl . '?' . http_build_query($params);
+    
+    $curlRequest = new CurlRequest($url);
+    $response = $curlRequest->sendRequest();
+    
+    $data = json_decode($response, true);
+    
+    if ($data === null) {
+        throw new Exception("API 回傳資料格式錯誤");
+    }
+    
+    // 設定 HTTP 標頭
+    header('Content-Type: application/json; charset=utf-8');
+    header('X-Content-Type-Options: nosniff');
+    
+    // 輸出 JSON 資料
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    
+} catch (Exception $e) {
+    // 錯誤處理
+    header('HTTP/1.1 500 Internal Server Error');
+    echo json_encode([
+        'error' => true,
+        'message' => $e->getMessage()
+    ]);
 }
-ob_start();
-header('Content-Type: application/json');
-ob_end_flush();
-echo json_encode($data);
