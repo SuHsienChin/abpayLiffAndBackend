@@ -25,6 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($user && password_verify($password, $user['password'])) {
+        // 檢查使用者狀態
+        if ($user['status'] === 'inactive') {
+            header('Location: index.php?error=1&message=' . urlencode('帳號已被停用'));
+            exit;
+        }
+        
+        // 更新最後登入時間
+        $stmt = $conn->prepare("UPDATE admin_users SET last_login = CURRENT_TIMESTAMP WHERE id = :id");
+        $stmt->execute([':id' => $user['id']]);
+        
         $_SESSION['admin_id'] = $user['id'];
         $_SESSION['admin_username'] = $user['username'];
         header('Location: dashboard.php');
