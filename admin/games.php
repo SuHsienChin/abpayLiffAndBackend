@@ -185,6 +185,9 @@ if (!isset($_SESSION['admin_id'])) {
 <!-- Page specific script -->
 <script>
 $(document).ready(function() {
+
+    $.fn.DataTable.ext.errMode = 'throw';
+
     $('#games-table').DataTable({
         "responsive": true,
         "autoWidth": false,
