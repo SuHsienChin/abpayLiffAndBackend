@@ -7,6 +7,8 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 require_once '../databaseConnection.php';
+$dbConnection = new DatabaseConnection();
+$pdo = $dbConnection->connect();
 
 // DataTables 伺服器端處理
 $draw = isset($_GET['draw']) ? intval($_GET['draw']) : 1;
@@ -14,30 +16,45 @@ $start = isset($_GET['start']) ? intval($_GET['start']) : 0;
 $length = isset($_GET['length']) ? intval($_GET['length']) : 10;
 $search = isset($_GET['search']['value']) ? $_GET['search']['value'] : '';
 
-// 計算總記錄數
-$total_query = "SELECT COUNT(*) as count FROM games";
-$total_result = $conn->query($total_query);
-$total_row = $total_result->fetch_assoc();
-$total_records = $total_row['count'];
+try {
+    // 計算總記錄數
+    $total_query = "SELECT COUNT(*) as count FROM games";
+    $stmt = $pdo->prepare($total_query);
+    $stmt->execute();
+    $total_row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $total_records = $total_row['count'];
 
-// 搜尋條件
-$where = '';
-if (!empty($search)) {
-    $where = " WHERE game_name LIKE '%$search%'";
-}
+    // 搜尋條件
+    $where = '';
+    $params = [];
+    if (!empty($search)) {
+        $where = " WHERE game_name LIKE :search";
+        $params[':search'] = "%$search%";
+    }
 
-// 計算過濾後的記錄數
-$filtered_query = "SELECT COUNT(*) as count FROM games" . $where;
-$filtered_result = $conn->query($filtered_query);
-$filtered_row = $filtered_result->fetch_assoc();
-$filtered_records = $filtered_row['count'];
+    // 計算過濾後的記錄數
+    $filtered_query = "SELECT COUNT(*) as count FROM games" . $where;
+    $stmt = $pdo->prepare($filtered_query);
+    if (!empty($params)) {
+        $stmt->execute($params);
+    } else {
+        $stmt->execute();
+    }
+    $filtered_row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $filtered_records = $filtered_row['count'];
 
-// 獲取遊戲數據
-$query = "SELECT * FROM games" . $where . " LIMIT $start, $length";
-$result = $conn->query($query);
+    // 獲取遊戲數據
+    $query = "SELECT * FROM games" . $where . " LIMIT :start, :length";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':start', $start, PDO::PARAM_INT);
+    $stmt->bindParam(':length', $length, PDO::PARAM_INT);
+    if (!empty($params)) {
+        $stmt->bindParam(':search', $params[':search'], PDO::PARAM_STR);
+    }
+    $stmt->execute();
 
-$data = [];
-while ($row = $result->fetch_assoc()) {
+    $data = [];
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     // 格式化狀態
     $status = $row['status'] ? 
         '<span class="badge badge-success">啟用</span>' : 
