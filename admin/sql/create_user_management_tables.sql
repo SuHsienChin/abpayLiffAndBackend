@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS admin_roles (
     role_name VARCHAR(50) NOT NULL UNIQUE,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at DATETIME
 );
 
 -- 創建管理員權限表
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS admin_permissions (
     permission_name VARCHAR(50) NOT NULL UNIQUE,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at DATETIME
 );
 
 -- 創建角色權限關聯表
@@ -32,7 +32,7 @@ ADD COLUMN role_id INT,
 ADD COLUMN status ENUM('active', 'inactive') DEFAULT 'active',
 ADD COLUMN last_login TIMESTAMP NULL,
 ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ADD COLUMN updated_at DATETIME,
 ADD FOREIGN KEY (role_id) REFERENCES admin_roles(id);
 
 -- 創建管理員操作日誌表
