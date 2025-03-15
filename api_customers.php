@@ -8,7 +8,7 @@ class AuthMiddleware {
     private $requestCount;
 
     public function __construct() {
-        $this->apiKey = $_ENV['API_KEY'] ?? 'your-default-api-key';
+        $this->apiKey = $_ENV['API_KEY'] ?? 'k3345678';
         $this->requestLimit = 100; // 每個時間窗口的最大請求數
         $this->timeWindow = 3600; // 時間窗口（秒）
         $this->requestCount = [];
@@ -16,7 +16,7 @@ class AuthMiddleware {
 
     public function authenticate() {
         // 驗證 API 密鑰
-        $providedApiKey = $_SERVER['HTTP_X_API_KEY'] ?? '';
+        $providedApiKey = $_GET['X_API_KEY'] ?? $_POST['X_API_KEY'] ?? $_SERVER['X_API_KEY'] ?? '';
         if ($providedApiKey !== $this->apiKey) {
             http_response_code(401);
             echo json_encode(['error' => '未授權的訪問'], JSON_UNESCAPED_UNICODE);
