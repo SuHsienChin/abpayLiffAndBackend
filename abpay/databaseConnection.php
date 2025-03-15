@@ -21,7 +21,7 @@ class DatabaseConnection {
         $this->host = $_ENV['DB_HOST'] ?? 'localhost';
         $this->port = $_ENV['DB_PORT'] ?? '3306';
         $this->database = $_ENV['DB_DATABASE'] ?? 'abpaytw_abpay';
-        $this->username = $_ENV['DB_USERNAME'] ?? 'abpaytw_abpay';
+        $this->username = $_ENV['DB_USERNAME'] ?? 'abpay';
         $this->password = $_ENV['DB_PASSWORD'] ?? 'Aa.730216';
     }
 
