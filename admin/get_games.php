@@ -19,12 +19,12 @@ $orderColumn = isset($_GET['order'][0]['column']) ? intval($_GET['order'][0]['co
 $orderDir = isset($_GET['order'][0]['dir']) ? strtoupper($_GET['order'][0]['dir']) : 'ASC';
 
 // 定義可排序的列
-$columns = ['id', 'game_name', 'status', 'updated_at'];
+$columns = ['Sid', 'Name', 'flag', 'UpdateIime'];
 $orderBy = isset($columns[$orderColumn]) ? $columns[$orderColumn] : 'id';
 
 try {
     // 計算總記錄數
-    $total_query = "SELECT COUNT(*) as count FROM games";
+    $total_query = "SELECT COUNT(*) as count FROM switch_game_lists";
     $stmt = $pdo->prepare($total_query);
     $stmt->execute();
     $total_row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -39,7 +39,7 @@ try {
     }
 
     // 計算過濾後的記錄數
-    $filtered_query = "SELECT COUNT(*) as count FROM games" . $where;
+    $filtered_query = "SELECT COUNT(*) as count FROM switch_game_lists" . $where;
     $stmt = $pdo->prepare($filtered_query);
     if (!empty($params)) {
         $stmt->execute($params);
@@ -50,7 +50,7 @@ try {
     $filtered_records = $filtered_row['count'];
 
     // 獲取遊戲數據
-    $query = "SELECT * FROM games" . $where . " ORDER BY " . $orderBy . " " . $orderDir . " LIMIT :start, :length";
+    $query = "SELECT * FROM switch_game_lists" . $where . " ORDER BY " . $orderBy . " " . $orderDir . " LIMIT :start, :length";
     $stmt = $pdo->prepare($query);
     if (!empty($params)) {
         $stmt->bindValue(':search', $params[':search'], PDO::PARAM_STR);
@@ -62,7 +62,7 @@ try {
     $data = [];
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         // 格式化狀態
-        $status = $row['status'] ? 
+        $status = $row['flag'] ? 
             '<span class="badge badge-success">啟用</span>' : 
             '<span class="badge badge-danger">停用</span>';
 
@@ -72,10 +72,10 @@ try {
             '<button type="button" class="btn btn-sm btn-danger" onclick="deleteGame(' . $row['id'] . ')">刪除</button>';
 
         $data[] = [
-            'game_id' => $row['id'],
-            'game_name' => $row['game_name'],
+            'Sid' => $row['Sid'],
+            'Name' => $row['Name'],
             'status' => $status,
-            'updated_at' => date('Y-m-d H:i:s', strtotime($row['updated_at'])),
+            'UpdateIime' => date('Y-m-d H:i:s', strtotime($row['UpdateIime'])),
             'actions' => $actions
         ];
     }
