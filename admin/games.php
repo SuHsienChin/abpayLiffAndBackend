@@ -195,10 +195,10 @@ $(document).ready(function() {
         "serverSide": true,
         "ajax": "get_games.php",
         "columns": [
-            { "data": "game_id" },
-            { "data": "game_name" },
-            { "data": "status" },
-            { "data": "updated_at" },
+            { "data": "Sid" },
+            { "data": "Name" },
+            { "data": "flag" },
+            { "data": "UpdateTime" },
             { "data": "actions" }
         ]
     });

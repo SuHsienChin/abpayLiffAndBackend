@@ -75,7 +75,7 @@ try {
             'Sid' => $row['Sid'],
             'Name' => $row['Name'],
             'status' => $status,
-            'UpdateIime' => date('Y-m-d H:i:s', strtotime($row['UpdateIime'])),
+            'UpdateTime' => date('Y-m-d H:i:s', strtotime($row['UpdateTime'])),
             'actions' => $actions
         ];
     }
