@@ -12,6 +12,16 @@
     <link rel="stylesheet" href="plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="dist/css/adminlte.min.css">
+    <script>
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            const message = urlParams.get('message');
+            if (error === '1' && message) {
+                alert(decodeURIComponent(message));
+            }
+        };
+    </script>
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
