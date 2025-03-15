@@ -203,6 +203,7 @@ $(document).ready(function() {
         ]
     });
 
+    
     $('#add-game-form').on('submit', function(e) {
         e.preventDefault();
         $.ajax({

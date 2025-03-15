@@ -74,12 +74,13 @@ try {
         $data[] = [
             'Sid' => $row['Sid'],
             'Name' => $row['Name'],
-            'status' => $status,
+            'flag' => $status,
             'UpdateTime' => date('Y-m-d H:i:s', strtotime($row['UpdateTime'])),
             'actions' => $actions
         ];
     }
 
+    
     // 返回 JSON 響應
     $response = [
         'draw' => $draw,
