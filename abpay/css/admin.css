@@ -1,0 +1,164 @@
+/* 後台管理系統樣式 */
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #858796;
+    --success-color: #1cc88a;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-color: #f8f9fc;
+    --dark-color: #5a5c69;
+    --sidebar-width: 250px;
+}
+
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background-color: #f8f9fc;
+}
+
+/* 側邊欄樣式 */
+#sidebar {
+    min-height: 100vh;
+    background-color: var(--primary-color) !important;
+    transition: all 0.3s;
+    width: var(--sidebar-width);
+    position: fixed;
+    z-index: 100;
+}
+
+#sidebar .sidebar-sticky {
+    padding-top: 2rem;
+}
+
+#sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 1rem 1.5rem;
+    font-size: 0.85rem;
+    border-left: 3px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.2s ease-in-out;
+}
+
+#sidebar .nav-link:hover,
+#sidebar .nav-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left-color: #fff;
+    transform: translateX(5px);
+}
+
+/* 主要內容區域 */
+main {
+    margin-left: var(--sidebar-width);
+    padding: 2rem;
+    transition: all 0.3s;
+}
+
+/* 頁面標題 */
+.page-title {
+    color: var(--dark-color);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+/* 卡片樣式 */
+.card {
+    border: none;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.15);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #e3e6f0;
+    padding: 1rem 1.25rem;
+}
+
+/* 表格樣式 */
+.table {
+    background-color: #fff;
+    border-radius: 0.35rem;
+}
+
+.table thead th {
+    background-color: #f8f9fc;
+    border-bottom: 2px solid #e3e6f0;
+    color: var(--dark-color);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+.table td {
+    vertical-align: middle;
+    border-top: 1px solid #e3e6f0;
+    color: var(--secondary-color);
+}
+
+/* 按鈕樣式 */
+.btn {
+    border-radius: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+/* 加載動畫 */
+#loading {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 0.35rem;
+    font-size: 1rem;
+}
+
+/* DataTables 樣式優化 */
+.dataTables_wrapper {
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.15);
+}
+
+.dataTables_length,
+.dataTables_filter {
+    margin-bottom: 1rem;
+}
+
+.dataTables_info,
+.dataTables_paginate {
+    margin-top: 1rem;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: calc(-1 * var(--sidebar-width));
+    }
+    
+    main {
+        margin-left: 0;
+    }
+    
+    #sidebar.active {
+        margin-left: 0;
+    }
+    
+    main.active {
+        margin-left: var(--sidebar-width);
+    }
+}
