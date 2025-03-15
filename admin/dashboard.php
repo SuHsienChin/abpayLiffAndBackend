@@ -65,6 +65,12 @@ if (!isset($_SESSION['admin_id'])) {
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="users.php" class="nav-link">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>使用者管理</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="games.php" class="nav-link">
                             <i class="nav-icon fas fa-gamepad"></i>
                             <p>遊戲管理</p>
@@ -103,11 +109,76 @@ if (!isset($_SESSION['admin_id'])) {
                         </div>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
-                        <div class="info-box">
+                        <div class="info-box mb-3">
                             <span class="info-box-icon bg-success elevation-1"><i class="fas fa-check-circle"></i></span>
                             <div class="info-box-content">
                                 <span class="info-box-text">已完成訂單</span>
                                 <span class="info-box-number" id="completed-orders">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box mb-3">
+                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">用戶數量</span>
+                                <span class="info-box-number" id="total-users">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box mb-3">
+                            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-gamepad"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">遊戲數量</span>
+                                <span class="info-box-number" id="total-games">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Main row -->
+                <div class="row">
+                    <!-- Left col -->
+                    <div class="col-md-8">
+                        <!-- TABLE: LATEST ORDERS -->
+                        <div class="card">
+                            <div class="card-header border-transparent">
+                                <h3 class="card-title">最新訂單</h3>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table m-0">
+                                        <thead>
+                                            <tr>
+                                                <th>訂單編號</th>
+                                                <th>遊戲</th>
+                                                <th>狀態</th>
+                                                <th>金額</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="latest-orders">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card-footer clearfix">
+                                <a href="orders.php" class="btn btn-sm btn-secondary float-right">查看所有訂單</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Right col -->
+                    <div class="col-md-4">
+                        <!-- PRODUCT LIST -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">熱門遊戲</h3>
+                            </div>
+                            <div class="card-body p-0">
+                                <ul class="products-list product-list-in-card pl-2 pr-2" id="popular-games">
+                                </ul>
+                            </div>
+                            <div class="card-footer text-center">
+                                <a href="games.php" class="uppercase">查看所有遊戲</a>
                             </div>
                         </div>
                     </div>

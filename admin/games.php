@@ -66,6 +66,12 @@ if (!isset($_SESSION['admin_id'])) {
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="users.php" class="nav-link">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>使用者管理</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="games.php" class="nav-link active">
                             <i class="nav-icon fas fa-gamepad"></i>
                             <p>遊戲管理</p>

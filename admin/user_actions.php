@@ -5,6 +5,7 @@ if (!isset($_SESSION['admin_id'])) {
     exit;
 }
 
+
 require_once '../databaseConnection.php';
 $dbConnection = new DatabaseConnection();
 $conn = $dbConnection->connect();
