@@ -19,7 +19,7 @@ $orderColumn = isset($_GET['order'][0]['column']) ? intval($_GET['order'][0]['co
 $orderDir = isset($_GET['order'][0]['dir']) ? strtoupper($_GET['order'][0]['dir']) : 'ASC';
 
 // 定義可排序的列
-$columns = ['Sid', 'Name', 'flag', 'UpdateIime'];
+$columns = ['Sid', 'Name', 'flag', 'UpdateTime'];
 $orderBy = isset($columns[$orderColumn]) ? $columns[$orderColumn] : 'id';
 
 try {
