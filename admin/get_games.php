@@ -44,15 +44,13 @@ try {
     $filtered_records = $filtered_row['count'];
 
     // 獲取遊戲數據
-    $query = "SELECT * FROM games" . $where . " LIMIT ?, ?";
+    $query = "SELECT * FROM games" . $where . " LIMIT :start, :length";
     $stmt = $pdo->prepare($query);
-    $paramIndex = 1;
     if (!empty($params)) {
-        $stmt->bindValue(1, $params[':search'], PDO::PARAM_STR);
-        $paramIndex++;
+        $stmt->bindValue(':search', $params[':search'], PDO::PARAM_STR);
     }
-    $stmt->bindValue($paramIndex++, $start, PDO::PARAM_INT);
-    $stmt->bindValue($paramIndex, $length, PDO::PARAM_INT);
+    $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+    $stmt->bindValue(':length', $length, PDO::PARAM_INT);
     $stmt->execute();
 
     $data = [];
