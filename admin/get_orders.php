@@ -7,6 +7,8 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 require_once '../databaseConnection.php';
+$dbConnection = new DatabaseConnection();
+$conn = $dbConnection->connect();
 
 // DataTables 伺服器端處理
 $draw = isset($_GET['draw']) ? intval($_GET['draw']) : 1;
@@ -16,8 +18,9 @@ $search = isset($_GET['search']['value']) ? $_GET['search']['value'] : '';
 
 // 計算總記錄數
 $total_query = "SELECT COUNT(*) as count FROM orders";
-$total_result = $conn->query($total_query);
-$total_row = $total_result->fetch_assoc();
+$stmt = $conn->prepare($total_query);
+$stmt->execute();
+$total_row = $stmt->fetch(PDO::FETCH_ASSOC);
 $total_records = $total_row['count'];
 
 // 搜尋條件
@@ -28,16 +31,27 @@ if (!empty($search)) {
 
 // 計算過濾後的記錄數
 $filtered_query = "SELECT COUNT(*) as count FROM orders" . $where;
-$filtered_result = $conn->query($filtered_query);
-$filtered_row = $filtered_result->fetch_assoc();
+$stmt = $conn->prepare($filtered_query);
+if (!empty($search)) {
+    $searchValue = "%$search%";
+    $stmt->bindParam(':search', $searchValue, PDO::PARAM_STR);
+}
+$stmt->execute();
+$filtered_row = $stmt->fetch(PDO::FETCH_ASSOC);
 $filtered_records = $filtered_row['count'];
 
 // 獲取訂單數據
-$query = "SELECT * FROM orders" . $where . " LIMIT $start, $length";
-$result = $conn->query($query);
+$query = "SELECT * FROM orders" . $where . " LIMIT :start, :length";
+$stmt = $conn->prepare($query);
+$stmt->bindParam(':start', $start, PDO::PARAM_INT);
+$stmt->bindParam(':length', $length, PDO::PARAM_INT);
+if (!empty($search)) {
+    $stmt->bindParam(':search', $searchValue, PDO::PARAM_STR);
+}
+$stmt->execute();
 
 $data = [];
-while ($row = $result->fetch_assoc()) {
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     // 格式化狀態
     $status = '';
     switch ($row['status']) {
