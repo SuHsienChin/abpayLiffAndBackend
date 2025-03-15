@@ -16,7 +16,8 @@ class AuthMiddleware {
 
     public function authenticate() {
         // 驗證 API 密鑰
-        $providedApiKey = $_GET['X_API_KEY'] ?? $_POST['X_API_KEY'] ?? $_SERVER['X_API_KEY'] ?? '';
+        // 支持兩種格式的請求標頭
+        $providedApiKey = $_SERVER['HTTP_X_API_KEY'] ?? $_SERVER['HTTP_X_API_KEY'] ?? '';
         if ($providedApiKey !== $this->apiKey) {
             http_response_code(401);
             echo json_encode(['error' => '未授權的訪問'], JSON_UNESCAPED_UNICODE);
