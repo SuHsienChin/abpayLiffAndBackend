@@ -1,0 +1,14 @@
+-- 創建遊戲表
+CREATE TABLE IF NOT EXISTS games (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    game_name VARCHAR(100) NOT NULL,
+    status BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 插入測試數據
+INSERT INTO games (game_name, status) VALUES
+('遊戲 A', TRUE),
+('遊戲 B', TRUE),
+('遊戲 C', FALSE);
