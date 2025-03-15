@@ -65,15 +65,15 @@ $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="users.php" class="nav-link active">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>使用者管理</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a href="orders.php" class="nav-link">
                             <i class="nav-icon fas fa-shopping-cart"></i>
                             <p>訂單管理</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="users.php" class="nav-link active">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>使用者管理</p>
                         </a>
                     </li>
                     <li class="nav-item">
