@@ -11,21 +11,21 @@ $dbConnection = new DatabaseConnection();
 $pdo = $dbConnection->connect();
 
 // 檢查必要參數
-if (!isset($_POST['game_id']) || !isset($_POST['status'])) {
+if (!isset($_POST['Sid']) || !isset($_POST['flag'])) {
     header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => '缺少必要參數']);
     exit;
 }
 
-$game_id = intval($_POST['game_id']);
-$status = intval($_POST['status']);
+$game_id = intval($_POST['Sid']);
+$status = intval($_POST['flag']);
 
 try {
     // 更新遊戲狀態
-    $query = "UPDATE games SET status = :status, updated_at = NOW() WHERE id = :game_id";
+    $query = "UPDATE switch_game_lists SET flag = :flag, updateTime = NOW() WHERE Sid = :Sid";
     $stmt = $pdo->prepare($query);
-    $stmt->bindValue(':status', $status, PDO::PARAM_INT);
-    $stmt->bindValue(':game_id', $game_id, PDO::PARAM_INT);
+    $stmt->bindValue(':flag', $status, PDO::PARAM_INT);
+    $stmt->bindValue(':Sid', $game_id, PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result) {
