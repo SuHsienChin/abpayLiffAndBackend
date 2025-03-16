@@ -220,7 +220,7 @@ if (!isset($_SESSION['admin_id'])) {
 <script>
 function editGame(gameId) {
     $.ajax({
-        url: 'get_game.php',
+        url: 'get_games.php',
         type: 'GET',
         data: { id: gameId },
         success: function(response) {
