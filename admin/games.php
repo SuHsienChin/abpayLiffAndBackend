@@ -223,11 +223,17 @@ function editGame(Sid) {
         url: 'get_games.php',
         type: 'GET',
         data: { id: Sid },
+        dataType: 'json',
         success: function(response) {
-            $('#edit-game-id').val(response.Sid);
-            $('#edit-game-name').val(response.Name);
-            $('#edit-game-status').val(response.flag);
-            $('#edit-game-modal').modal('show');
+            if (response && response.data && response.data.length > 0) {
+                var game = response.data[0];
+                $('#edit-game-id').val(game.Sid);
+                $('#edit-game-name').val(game.Name);
+                $('#edit-game-status').val(game.flag_value || 0);
+                $('#edit-game-modal').modal('show');
+            } else {
+                alert('無法獲取遊戲資訊');
+            }
         },
         error: function(xhr, status, error) {
             alert('獲取遊戲資訊失敗：' + error);
@@ -240,11 +246,12 @@ function toggleGameStatus(gameId, newStatus) {
         url: 'update_game_status.php',
         type: 'POST',
         data: { game_id: gameId, status: newStatus },
+        dataType: 'json',
         success: function(response) {
             if (response.success) {
                 $('#games-table').DataTable().ajax.reload();
             } else {
-                alert('更新遊戲狀態失敗：' + response.message);
+                alert('更新遊戲狀態失敗：' + (response.message || '未知錯誤'));
             }
         },
         error: function(xhr, status, error) {
@@ -270,6 +277,9 @@ $(document).ready(function() {
             { "data": "UpdateTime" },
             { "data": "actions" }
         ],
+        "error": function(xhr, error, thrown) {
+            console.error('DataTables error:', error, thrown);
+        },
         "drawCallback": function() {
             $('.edit-game-btn').on('click', function() {
                 editGame($(this).data('Sid'));
@@ -277,8 +287,8 @@ $(document).ready(function() {
             
             // 綁定狀態切換按鈕點擊事件
             $('.toggle-status').on('click', function() {
-                var gameId = $(this).data('Sid');
-                var newStatus = $(this).data('flag');
+                var gameId = $(this).data('id');
+                var newStatus = $(this).data('status');
                 toggleGameStatus(gameId, newStatus);
             });
         }

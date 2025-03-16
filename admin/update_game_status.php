@@ -11,14 +11,14 @@ $dbConnection = new DatabaseConnection();
 $pdo = $dbConnection->connect();
 
 // 檢查必要參數
-if (!isset($_POST['Sid']) || !isset($_POST['flag'])) {
+if (!isset($_POST['game_id']) || !isset($_POST['status'])) {
     header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => '缺少必要參數']);
     exit;
 }
 
-$game_id = intval($_POST['Sid']);
-$status = intval($_POST['flag']);
+$game_id = intval($_POST['game_id']);
+$status = intval($_POST['status']);
 
 try {
     // 更新遊戲狀態

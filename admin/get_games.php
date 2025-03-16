@@ -49,7 +49,7 @@ try {
     $filtered_records = $filtered_row['count'];
 
     // 獲取遊戲數據
-    $query = "SELECT * FROM switch_game_lists" . $where . " LIMIT :start, :length";
+    $query = "SELECT * FROM switch_game_lists" . $where . " ORDER BY $orderBy $orderDir LIMIT :start, :length";
     $stmt = $pdo->prepare($query);
     if (!empty($params)) {
         $stmt->bindValue(':search', $params[':search'], PDO::PARAM_STR);
@@ -68,14 +68,15 @@ try {
 
     // 格式化操作按鈕
     $actions = 
-        '<button type="button" class="btn btn-sm btn-info mr-1" onclick="editGame(' . $row['Sid'] . ')">編輯</button>' .
+        '<button type="button" class="btn btn-sm btn-info mr-1 edit-game-btn" data-Sid="' . $row['Sid'] . '">編輯</button>' .
         '<button type="button" class="btn btn-sm btn-danger" onclick="deleteGame(' . $row['Sid'] . ')">刪除</button>';
 
     $data[] = [
-        'game_id' => $row['Sid'],
-        'game_name' => $row['Name'],
-        'status' => $status,
-        'updated_at' => date('Y-m-d H:i:s', strtotime($row['UpdateTime'])),
+        'Sid' => $row['Sid'],
+        'Name' => $row['Name'],
+        'flag' => $status,
+        'flag_value' => $row['flag'],
+        'UpdateTime' => date('Y-m-d H:i:s', strtotime($row['UpdateTime'])),
         'actions' => $actions
     ];
 }
