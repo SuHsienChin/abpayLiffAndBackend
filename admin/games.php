@@ -218,11 +218,11 @@ if (!isset($_SESSION['admin_id'])) {
 <script src="https://adminlte.io/themes/v3/dist/js/adminlte.js?v=3.2.0"></script>
 <!-- Page specific script -->
 <script>
-function editGame(gameId) {
+function editGame(Sid) {
     $.ajax({
         url: 'get_games.php',
         type: 'GET',
-        data: { id: gameId },
+        data: { id: Sid },
         success: function(response) {
             $('#edit-game-id').val(response.Sid);
             $('#edit-game-name').val(response.Name);
@@ -272,13 +272,13 @@ $(document).ready(function() {
         ],
         "drawCallback": function() {
             $('.edit-game-btn').on('click', function() {
-                editGame($(this).data('id'));
+                editGame($(this).data('Sid'));
             });
             
             // 綁定狀態切換按鈕點擊事件
             $('.toggle-status').on('click', function() {
-                var gameId = $(this).data('id');
-                var newStatus = $(this).data('status');
+                var gameId = $(this).data('Sid');
+                var newStatus = $(this).data('flag');
                 toggleGameStatus(gameId, newStatus);
             });
         }

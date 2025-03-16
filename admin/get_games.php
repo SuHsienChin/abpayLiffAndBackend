@@ -75,7 +75,7 @@ try {
         'game_id' => $row['Sid'],
         'game_name' => $row['Name'],
         'status' => $status,
-        'updated_at' => date('Y-m-d H:i:s', strtotime($row['updateTime'])),
+        'updated_at' => date('Y-m-d H:i:s', strtotime($row['UpdateTime'])),
         'actions' => $actions
     ];
 }
