@@ -11,29 +11,38 @@ $dbConnection = new DatabaseConnection();
 $pdo = $dbConnection->connect();
 
 // 檢查必要參數
-if (!isset($_POST['Sid']) || !isset($_POST['flag'])) {
+if (!isset($_POST['game_id']) || !isset($_POST['game_name'])) {
     header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => '缺少必要參數']);
     exit;
 }
 
-$game_id = intval($_POST['Sid']);
-$status = intval($_POST['flag']);
+$game_id = intval($_POST['game_id']);
+$game_name = trim($_POST['game_name']);
+$status = isset($_POST['status']) ? intval($_POST['status']) : 1;
+
+// 驗證數據
+if (empty($game_name)) {
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'message' => '遊戲名稱不能為空']);
+    exit;
+}
 
 try {
-    // 更新遊戲狀態
-    $query = "UPDATE switch_game_lists SET flag = :flag, updateTime = NOW() WHERE Sid = :Sid";
+    // 更新遊戲信息
+    $query = "UPDATE switch_game_lists SET Name = :name, flag = :flag, UpdateTime = NOW() WHERE Sid = :Sid";
     $stmt = $pdo->prepare($query);
+    $stmt->bindValue(':name', $game_name, PDO::PARAM_STR);
     $stmt->bindValue(':flag', $status, PDO::PARAM_INT);
     $stmt->bindValue(':Sid', $game_id, PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result) {
         header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'message' => '遊戲狀態已更新']);
+        echo json_encode(['success' => true, 'message' => '遊戲信息已更新']);
     } else {
         header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => '更新遊戲狀態失敗']);
+        echo json_encode(['success' => false, 'message' => '更新遊戲信息失敗']);
     }
 } catch (PDOException $e) {
     header('Content-Type: application/json');

@@ -220,13 +220,11 @@ if (!isset($_SESSION['admin_id'])) {
 <script>
 function editGame(Sid) {
     $.ajax({
-        url: 'get_games.php',
-        type: 'GET',
-        data: { id: Sid },
+        url: 'get_games.php?Sid=' + Sid,
         dataType: 'json',
         success: function(response) {
-            if (response && response.data && response.data.length > 0) {
-                var game = response.data[0];
+            if (response && response.game) {
+                var game = response.game;
                 $('#edit-game-id').val(game.Sid);
                 $('#edit-game-name').val(game.Name);
                 $('#edit-game-status').val(game.flag_value || 0);
@@ -245,7 +243,7 @@ function toggleGameStatus(gameId, newStatus) {
     $.ajax({
         url: 'update_game_status.php',
         type: 'POST',
-        data: { game_id: gameId, status: newStatus },
+        data: { Sid: gameId, flag: newStatus },
         dataType: 'json',
         success: function(response) {
             if (response.success) {
@@ -282,7 +280,7 @@ $(document).ready(function() {
         },
         "drawCallback": function() {
             $('.edit-game-btn').on('click', function() {
-                editGame($(this).data('Sid'));
+                editGame($(this).data('sid'));
             });
             
             // 綁定狀態切換按鈕點擊事件

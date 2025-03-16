@@ -124,9 +124,9 @@ $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <tbody>
                                         <?php foreach ($users as $user): ?>
                                         <tr>
-                                            <td><?php echo htmlspecialchars($user['id']); ?></td>
-                                            <td><?php echo htmlspecialchars($user['username']); ?></td>
-                                            <td><?php echo htmlspecialchars($user['role_name']); ?></td>
+                                            <td><?php echo htmlspecialchars($user['id'] ?? ''); ?></td>
+                                            <td><?php echo htmlspecialchars($user['username'] ?? ''); ?></td>
+                                            <td><?php echo htmlspecialchars($user['role_name'] ?? ''); ?></td>
                                             <td>
                                                 <span class="badge badge-<?php echo $user['status'] === 'active' ? 'success' : 'danger'; ?>">
                                                     <?php echo $user['status'] === 'active' ? '啟用' : '停用'; ?>
