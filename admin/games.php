@@ -171,6 +171,40 @@ if (!isset($_SESSION['admin_id'])) {
     </div>
 </div>
 
+<!-- Edit Game Modal -->
+<div class="modal fade" id="edit-game-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">編輯遊戲</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="edit-game-form">
+                <input type="hidden" id="edit-game-id" name="game_id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="edit-game-name">遊戲名稱</label>
+                        <input type="text" class="form-control" id="edit-game-name" name="game_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-game-status">狀態</label>
+                        <select class="form-control" id="edit-game-status" name="status">
+                            <option value="1">啟用</option>
+                            <option value="0">停用</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">確定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- jQuery -->
 <script src="https://adminlte.io/themes/v3/plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
@@ -216,6 +250,39 @@ $(document).ready(function() {
             },
             error: function(xhr, status, error) {
                 alert('新增遊戲失敗：' + error);
+            }
+        });
+    });
+    
+    function editGame(gameId) {
+        $.ajax({
+            url: 'get_game.php',
+            type: 'GET',
+            data: { id: gameId },
+            success: function(response) {
+                $('#edit-game-id').val(response.Sid);
+                $('#edit-game-name').val(response.Name);
+                $('#edit-game-status').val(response.flag);
+                $('#edit-game-modal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                alert('獲取遊戲資訊失敗：' + error);
+            }
+        });
+    }
+
+    $('#edit-game-form').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: 'update_game.php',
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                $('#edit-game-modal').modal('hide');
+                $('#games-table').DataTable().ajax.reload();
+            },
+            error: function(xhr, status, error) {
+                alert('更新遊戲失敗：' + error);
             }
         });
     });
