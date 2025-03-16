@@ -235,6 +235,24 @@ function editGame(gameId) {
     });
 }
 
+function toggleGameStatus(gameId, newStatus) {
+    $.ajax({
+        url: 'update_game_status.php',
+        type: 'POST',
+        data: { game_id: gameId, status: newStatus },
+        success: function(response) {
+            if (response.success) {
+                $('#games-table').DataTable().ajax.reload();
+            } else {
+                alert('更新遊戲狀態失敗：' + response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            alert('更新遊戲狀態失敗：' + error);
+        }
+    });
+}
+
 $(document).ready(function() {
 
     $.fn.DataTable.ext.errMode = 'throw';
@@ -255,6 +273,13 @@ $(document).ready(function() {
         "drawCallback": function() {
             $('.edit-game-btn').on('click', function() {
                 editGame($(this).data('id'));
+            });
+            
+            // 綁定狀態切換按鈕點擊事件
+            $('.toggle-status').on('click', function() {
+                var gameId = $(this).data('id');
+                var newStatus = $(this).data('status');
+                toggleGameStatus(gameId, newStatus);
             });
         }
     });

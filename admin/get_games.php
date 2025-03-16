@@ -15,16 +15,10 @@ $draw = isset($_GET['draw']) ? intval($_GET['draw']) : 1;
 $start = isset($_GET['start']) ? intval($_GET['start']) : 0;
 $length = isset($_GET['length']) ? intval($_GET['length']) : 10;
 $search = isset($_GET['search']['value']) ? $_GET['search']['value'] : '';
-$orderColumn = isset($_GET['order'][0]['column']) ? intval($_GET['order'][0]['column']) : 0;
-$orderDir = isset($_GET['order'][0]['dir']) ? strtoupper($_GET['order'][0]['dir']) : 'ASC';
-
-// 定義可排序的列
-$columns = ['Sid', 'Name', 'flag', 'UpdateTime'];
-$orderBy = isset($columns[$orderColumn]) ? $columns[$orderColumn] : 'id';
 
 try {
     // 計算總記錄數
-    $total_query = "SELECT COUNT(*) as count FROM switch_game_lists";
+    $total_query = "SELECT COUNT(*) as count FROM games";
     $stmt = $pdo->prepare($total_query);
     $stmt->execute();
     $total_row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -39,7 +33,7 @@ try {
     }
 
     // 計算過濾後的記錄數
-    $filtered_query = "SELECT COUNT(*) as count FROM switch_game_lists" . $where;
+    $filtered_query = "SELECT COUNT(*) as count FROM games" . $where;
     $stmt = $pdo->prepare($filtered_query);
     if (!empty($params)) {
         $stmt->execute($params);
@@ -50,7 +44,7 @@ try {
     $filtered_records = $filtered_row['count'];
 
     // 獲取遊戲數據
-    $query = "SELECT * FROM switch_game_lists" . $where . " ORDER BY " . $orderBy . " " . $orderDir . " LIMIT :start, :length";
+    $query = "SELECT * FROM games" . $where . " LIMIT :start, :length";
     $stmt = $pdo->prepare($query);
     if (!empty($params)) {
         $stmt->bindValue(':search', $params[':search'], PDO::PARAM_STR);
@@ -61,38 +55,33 @@ try {
 
     $data = [];
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        // 格式化狀態
-        $status = $row['flag'] ? 
-            '<span class="badge badge-success">啟用</span>' : 
-            '<span class="badge badge-danger">停用</span>';
+    // 格式化狀態為可點擊按鈕
+    $status_text = $row['status'] ? '啟用' : '停用';
+    $status_class = $row['status'] ? 'success' : 'danger';
+    $new_status = $row['status'] ? 0 : 1;
+    $status = '<button type="button" class="btn btn-sm btn-' . $status_class . ' toggle-status" data-id="' . $row['id'] . '" data-status="' . $new_status . '">' . $status_text . '</button>';
 
-        // 格式化操作按鈕
-        $actions = 
-            '<button type="button" class="btn btn-sm btn-info mr-1" onclick="editGame(' . $row['id'] . ')">編輯</button>' .
-            '<button type="button" class="btn btn-sm btn-danger" onclick="deleteGame(' . $row['id'] . ')">刪除</button>';
+    // 格式化操作按鈕
+    $actions = 
+        '<button type="button" class="btn btn-sm btn-info mr-1" onclick="editGame(' . $row['id'] . ')">編輯</button>' .
+        '<button type="button" class="btn btn-sm btn-danger" onclick="deleteGame(' . $row['id'] . ')">刪除</button>';
 
-        $data[] = [
-            'Sid' => $row['Sid'],
-            'Name' => $row['Name'],
-            'flag' => $status,
-            'UpdateTime' => date('Y-m-d H:i:s', strtotime($row['UpdateTime'])),
-            'actions' => $actions
-        ];
-    }
-
-    
-    // 返回 JSON 響應
-    $response = [
-        'draw' => $draw,
-        'recordsTotal' => $total_records,
-        'recordsFiltered' => $filtered_records,
-        'data' => $data
+    $data[] = [
+        'game_id' => $row['id'],
+        'game_name' => $row['game_name'],
+        'status' => $status,
+        'updated_at' => date('Y-m-d H:i:s', strtotime($row['updated_at'])),
+        'actions' => $actions
     ];
-
-    header('Content-Type: application/json');
-    echo json_encode($response);
-} catch (Exception $e) {
-    header('Content-Type: application/json');
-    http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
 }
+
+// 返回 JSON 響應
+$response = [
+    'draw' => $draw,
+    'recordsTotal' => $total_records,
+    'recordsFiltered' => $filtered_records,
+    'data' => $data
+];
+
+header('Content-Type: application/json');
+echo json_encode($response);
