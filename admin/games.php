@@ -218,6 +218,23 @@ if (!isset($_SESSION['admin_id'])) {
 <script src="https://adminlte.io/themes/v3/dist/js/adminlte.js?v=3.2.0"></script>
 <!-- Page specific script -->
 <script>
+function editGame(gameId) {
+    $.ajax({
+        url: 'get_game.php',
+        type: 'GET',
+        data: { id: gameId },
+        success: function(response) {
+            $('#edit-game-id').val(response.Sid);
+            $('#edit-game-name').val(response.Name);
+            $('#edit-game-status').val(response.flag);
+            $('#edit-game-modal').modal('show');
+        },
+        error: function(xhr, status, error) {
+            alert('獲取遊戲資訊失敗：' + error);
+        }
+    });
+}
+
 $(document).ready(function() {
 
     $.fn.DataTable.ext.errMode = 'throw';
@@ -259,22 +276,7 @@ $(document).ready(function() {
         });
     });
     
-    function editGame(gameId) {
-        $.ajax({
-            url: 'get_game.php',
-            type: 'GET',
-            data: { id: gameId },
-            success: function(response) {
-                $('#edit-game-id').val(response.Sid);
-                $('#edit-game-name').val(response.Name);
-                $('#edit-game-status').val(response.flag);
-                $('#edit-game-modal').modal('show');
-            },
-            error: function(xhr, status, error) {
-                alert('獲取遊戲資訊失敗：' + error);
-            }
-        });
-    }
+
 
     $('#edit-game-form').on('submit', function(e) {
         e.preventDefault();
