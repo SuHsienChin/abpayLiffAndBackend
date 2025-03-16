@@ -12,10 +12,18 @@ class DatabaseConnection {
     }
 
     private function loadEnv() {
-        $lines = file('.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        foreach ($lines as $line) {
-            list($key, $value) = explode('=', $line);
-            $_ENV[$key] = $value;
+        $envPath = __DIR__ . '/.env';  // 使用絕對路徑
+        if (file_exists($envPath)) {
+            $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                if (strpos(trim($line), '#') === 0) {
+                    continue;  // 跳過註釋行
+                }
+                list($key, $value) = explode('=', $line, 2);
+                $_ENV[$key] = $value;
+            }
+        } else {
+            error_log("警告：未找到 .env 文件，將使用默認配置");
         }
 
         $this->host = $_ENV['DB_HOST'] ?? 'localhost';
