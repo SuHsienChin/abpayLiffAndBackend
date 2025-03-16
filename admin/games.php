@@ -234,7 +234,12 @@ $(document).ready(function() {
             { "data": "flag" },
             { "data": "UpdateTime" },
             { "data": "actions" }
-        ]
+        ],
+        "drawCallback": function() {
+            $('.edit-game-btn').on('click', function() {
+                editGame($(this).data('id'));
+            });
+        }
     });
 
     
