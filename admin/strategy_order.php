@@ -322,7 +322,7 @@ $(document).ready(function() {
             "responsive": true,
             "autoWidth": false,
             "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Chinese-traditional.json"
+                "url": "plugins/datatables/i18n/Chinese-traditional.json"
             }
         });
 
@@ -499,6 +499,7 @@ $(document).ready(function() {
                 logProcess(`正在處理 ${order.系統客編} 的訂單...`);
                 
                 // 模擬 API 處理時間
+                console.log(order);
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
                 logProcess(`${order.系統客編} 處理完成`);
