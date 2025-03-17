@@ -144,6 +144,11 @@ if (!isset($_SESSION['admin_id'])) {
                                 <h3 class="card-title">檔案資料</h3>
                             </div>
                             <div class="card-body">
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-primary" id="startOrderBtn">
+                                        <i class="fas fa-paper-plane"></i> 開始送單
+                                    </button>
+                                </div>
                                 <table id="data-table" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
@@ -199,6 +204,7 @@ $(document).ready(function() {
     
     // 檔案上傳處理
     $('#upload-btn').on('click', function() {
+        sessionStorage.clear();
         const fileInput = document.getElementById('file-upload');
         const file = fileInput.files[0];
         
@@ -285,6 +291,7 @@ $(document).ready(function() {
     }
     
     // 顯示資料到表格
+    // 在 displayData 函數後加入：
     function displayData(data) {
         const tableBody = $('#data-table tbody');
         tableBody.empty();
@@ -318,6 +325,32 @@ $(document).ready(function() {
                 "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Chinese-traditional.json"
             }
         });
+
+        // 取得遊戲商品資料
+        fetchGameItems();
+    }
+    
+    // 新增取得遊戲商品資料的函數
+    async function fetchGameItems() {
+        try {
+            // 取得 QOO 商品資料
+            const qooResponse = await axios.get('api/proxy_game_items.php?sid=7');
+            if (qooResponse.data) {
+                sessionStorage.setItem('qoo_items', JSON.stringify(qooResponse.data));
+                console.log('QOO 商品資料已儲存');
+            }
+    
+            // 取得 GTW 商品資料
+            const gtwResponse = await axios.get('api/proxy_game_items.php?sid=344');
+            if (gtwResponse.data) {
+                sessionStorage.setItem('gtw_items', JSON.stringify(gtwResponse.data));
+                console.log('GTW 商品資料已儲存');
+            }
+    
+        } catch (error) {
+            console.error('取得遊戲商品資料失敗:', error);
+            alert('取得遊戲商品資料失敗: ' + error.message);
+        }
     }
     
     // 獲取客戶資料
@@ -370,6 +403,116 @@ $(document).ready(function() {
                 alert('獲取客戶資料失敗: ' + (error.response?.data?.error || error.message));
             });
     }
+});
+</script>
+<!-- 送單進度 Modal -->
+<div class="modal fade" id="orderProgressModal" data-backdrop="static" data-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">送單進度</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 進度記錄區 -->
+                <div class="form-group">
+                    <label>處理記錄：</label>
+                    <div id="processLog" class="border p-3 bg-light" style="height: 300px; overflow-y: auto; font-family: monospace;">
+                    </div>
+                </div>
+                
+                <!-- 進度條 -->
+                <div class="form-group">
+                    <label>整體進度：</label>
+                    <div class="progress">
+                        <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            0%
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 當前處理項目 -->
+                <div class="form-group">
+                    <label>當前處理：</label>
+                    <div id="currentCustomerId" class="h5 text-primary">等待開始...</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="startSystemOrderBtn">
+                    <i class="fas fa-upload"></i> 開始送單到系統
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // 開始送單按鈕點擊事件
+    $('#startOrderBtn').click(function() {
+        const orderData = JSON.parse(sessionStorage.getItem('strategyOrderData') || '[]');
+        if (orderData.length === 0) {
+            alert('沒有可處理的訂單資料');
+            return;
+        }
+        $('#orderProgressModal').modal('show');
+    });
+
+    // 處理記錄函數
+    function logProcess(message) {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = `[${timestamp}] ${message}`;
+        const logElement = $('#processLog');
+        logElement.append(logEntry + '\n</br>');
+        logElement.scrollTop(logElement[0].scrollHeight);
+    }
+
+    // 更新進度條
+    function updateProgress(current, total) {
+        const percentage = Math.round((current / total) * 100);
+        $('#progressBar').css('width', percentage + '%').text(percentage + '%');
+    }
+
+    // 更新當前處理客戶
+    function updateCurrentCustomer(customerId) {
+        $('#currentCustomerId').text(`處理中: ${customerId}`);
+    }
+
+    // 開始送單到系統按鈕點擊事件
+    $('#startSystemOrderBtn').click(async function() {
+        const orderData = JSON.parse(sessionStorage.getItem('strategyOrderData') || '[]');
+        const totalOrders = orderData.length;
+        let processedOrders = 0;
+
+        $(this).prop('disabled', true);
+        logProcess('開始處理訂單...');
+
+        for (const order of orderData) {
+            updateCurrentCustomer(order.系統客編);
+            
+            try {
+                // 這裡加入實際送單到系統的 API 呼叫
+                logProcess(`正在處理 ${order.系統客編} 的訂單...`);
+                
+                // 模擬 API 處理時間
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                logProcess(`${order.系統客編} 處理完成`);
+                processedOrders++;
+                updateProgress(processedOrders, totalOrders);
+                
+            } catch (error) {
+                logProcess(`錯誤: ${order.系統客編} 處理失敗 - ${error.message}`);
+            }
+        }
+
+        logProcess('所有訂單處理完成');
+        $(this).prop('disabled', false);
+    });
 });
 </script>
 </body>
