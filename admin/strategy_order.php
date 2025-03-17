@@ -358,6 +358,8 @@ $(document).ready(function() {
         axios.get('api/get_customers.php')
             .then(function(response) {
                 const customers = response.data;
+                // 將客戶資料存儲到 sessionStorage
+                sessionStorage.setItem('customerData', JSON.stringify(customers));
                 const fileData = JSON.parse(sessionStorage.getItem('strategyOrderData') || '[]');
                 
                 // 關聯客戶資料
