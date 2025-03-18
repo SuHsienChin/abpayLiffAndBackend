@@ -487,24 +487,54 @@ $(document).ready(function() {
     // 開始送單到系統按鈕點擊事件
     $('#startSystemOrderBtn').click(async function() {
         const orderData = JSON.parse(sessionStorage.getItem('strategyOrderData') || '[]');
+        const customerData = JSON.parse(sessionStorage.getItem('customerData') || '[]');
         const totalOrders = orderData.length;
         let processedOrders = 0;
-
+    
         $(this).prop('disabled', true);
         logProcess('開始處理訂單...');
-
+    
         for (const order of orderData) {
             updateCurrentCustomer(order.系統客編);
             
             try {
-                // 這裡加入實際送單到系統的 API 呼叫
+                // 檢查必要資料
+                if (!order.customer_data || !order.customer_data.customer_sid) {
+                    throw new Error('無效的客戶資料');
+                }
+    
+                // 根據版本取得對應的 GameSid
+                const gameSid = order.版本 === '戰略版(Qoo)' ? '7' : '344';
+                
+                // 取得遊戲帳號資料
+                const gameAccountResponse = await axios.get(`api/proxy_game_items.php?sid=${order.customer_data.customer_sid}`);
+                const gameAccounts = gameAccountResponse.data;
+                
+                // 尋找符合的遊戲帳號
+                const matchedAccount = gameAccounts.find(account => account.GameSid === gameSid);
+                if (!matchedAccount) {
+                    throw new Error('找不到對應的遊戲帳號');
+                }
+    
+                // 準備送單資料
+                const orderParams = {
+                    customer_id: order.customer_data.customer_id,
+                    item_id: order.商品編號,
+                    quantity: order.商品數量,
+                    game_account: matchedAccount.Sid
+                };
+    
                 logProcess(`正在處理 ${order.系統客編} 的訂單...`);
                 
-                // 模擬 API 處理時間
-                console.log(order);
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // 送單到系統
+                const response = await axios.post('api/process_order.php', orderParams);
                 
-                logProcess(`${order.系統客編} 處理完成`);
+                if (response.data.success) {
+                    logProcess(`${order.系統客編} 處理完成 - 訂單編號: ${response.data.order_id}`);
+                } else {
+                    throw new Error(response.data.message || '送單失敗');
+                }
+                
                 processedOrders++;
                 updateProgress(processedOrders, totalOrders);
                 
@@ -512,7 +542,7 @@ $(document).ready(function() {
                 logProcess(`錯誤: ${order.系統客編} 處理失敗 - ${error.message}`);
             }
         }
-
+    
         logProcess('所有訂單處理完成');
         $(this).prop('disabled', false);
     });
