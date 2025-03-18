@@ -365,7 +365,13 @@ $(document).ready(function() {
                 // 關聯客戶資料
                 fileData.forEach(function(item) {
                     const customerId = item.系統客編;
-                    const customer = customers.find(c => c.customer_id === customerId);
+                    let gameSid = '';
+                    if (item.版本 === '戰略版(Qoo)') {
+                        gameSid = '7';
+                    } else if (item.版本 === '戰略版(青鳥)') {
+                        gameSid = '344';
+                    }
+                    const customer = customers.find(c => c.customer_id === customerId && c.game_sid === gameSid);
                     
                     // 更新表格中的客戶資料單元格
                     const cell = $(`td[data-customer-id="${customerId}"]`);
@@ -501,11 +507,18 @@ $(document).ready(function() {
         const customerData = JSON.parse(sessionStorage.getItem('customerData') || '[]');
         const totalOrders = orderData.length;
         let processedOrders = 0;
+        let isProcessing = false;
     
         $(this).prop('disabled', true);
         logProcess('開始處理訂單...');
     
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    
         for (const order of orderData) {
+            if (isProcessing) {
+                await delay(1000); // 等待1秒
+            }
+            isProcessing = true;
             updateCurrentCustomer(order.系統客編);
             
             try {
@@ -522,23 +535,34 @@ $(document).ready(function() {
                     game_account: order.customer_data.sid
                 };
                 logProcess(`正在處理 ${order.系統客編} 的訂單...`);
+                console.log('送單資料',orderParams);
                 
                 // 送單到系統
                 const formData = new URLSearchParams();
+                // 映射參數名稱
+                const paramMapping = {
+                    '商品代號': 'item_id',
+                    '數量': 'quantity',
+                    '系統客編': 'customer_id',
+                    '遊戲帳號': 'game_account'
+                };
+                
                 for (const key in orderParams) {
-                    formData.append(key, orderParams[key]);
+                    const mappedKey = paramMapping[key] || key;
+                    formData.append(mappedKey, orderParams[key]);
                 }
                 const response = await axios.post('api/process_order.php', formData);
                 
                 if (response.data.success) {
-                    logProcess(`${order.系統客編} 處理完成 - 訂單編號: ${response.data.order_id}`);
-                    console.log('url:', response.data.data.url);
+                    logProcess(`${order.系統客編} 處理完成 - 訂單編號: ${response.data.data.order_id}`);
+                    console.log('url:', response.data.data);
                 } else {
                     throw new Error(response.data.message || '送單失敗');
                 }
                 
                 processedOrders++;
                 updateProgress(processedOrders, totalOrders);
+                isProcessing = false;
                 
             } catch (error) {
                 logProcess(`錯誤: ${order.系統客編} 處理失敗 - ${error.message}`);

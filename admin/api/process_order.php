@@ -2,11 +2,25 @@
 header('Content-Type: application/json');
 
 try {
-    // 獲取訂單資料（支持 POST 和 GET 請求）
-    $itemId = trim($_REQUEST['item_id'] ?? '');
-    $itemCount = trim($_REQUEST['quantity'] ?? '');
-    $customerSid = trim($_REQUEST['customer_id'] ?? '');
-    $gameAccount = trim($_REQUEST['game_account'] ?? '');
+    // 獲取請求數據（支持 GET 和 POST）
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        $itemId = trim($_GET['item_id'] ?? '');
+        $itemCount = trim($_GET['quantity'] ?? '');
+        $customerSid = trim($_GET['customer_id'] ?? '');
+        $gameAccount = trim($_GET['game_account'] ?? '');
+    } else {
+        // 支持application/x-www-form-urlencoded和application/json兩種格式
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+        if (strpos($contentType, 'application/json') !== false) {
+            $postData = json_decode(file_get_contents('php://input'), true);
+        } else {
+            $postData = $_POST;
+        }
+        $itemId = trim($postData['item_id'] ?? '');
+        $itemCount = trim($postData['quantity'] ?? '');
+        $customerSid = trim($postData['customer_id'] ?? '');
+        $gameAccount = trim($postData['game_account'] ?? '');
+    }
     $url = 'http://www.adp.idv.tw/api/Order?UserId=test02&Password=3345678';
 
     if (!$itemId || !$itemCount || !$customerSid || !$gameAccount) {
@@ -33,7 +47,7 @@ try {
                   . '&Item=' . urlencode($itemId) 
                   . '&Count=' . urlencode($itemCount);
 
-    // 發送API請求
+    //發送API請求
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiUrl);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -43,7 +57,8 @@ try {
     curl_close($ch);
 
     if ($response === false) {
-        throw new Exception('API請求失敗：' . curl_error($ch));
+        $error = curl_error($ch);
+        throw new Exception('API請求失敗：' . $error);
     }
 
     if ($httpCode !== 200) {
@@ -55,6 +70,11 @@ try {
         throw new Exception('API返回數據格式錯誤');
     }
 
+    if (isset($result['error'])) {
+        $errorMessage = is_string($result['error']) ? $result['error'] : json_encode($result['error']);
+        throw new Exception('API返回錯誤：' . $errorMessage);
+    }
+
     if (!isset($result['OrderId']) || !isset($result['Status'])) {
         throw new Exception('API返回數據缺少必要欄位');
     }
@@ -63,20 +83,31 @@ try {
         'success' => true,
         'data' => [
             'order_id' => $result['OrderId'],
-            'status' => $result['Status']
+            'status' => $result['Status'],
+            'url' => $apiUrl,
         ]
     ]);
     
 } catch (Exception $e) {
     http_response_code(400);
-    echo json_encode([
+    $error_details = [
         'success' => false,
         'error' => $e->getMessage(),
+        'message' => $e->getMessage(),
         'params' => [
             'item_id' => $itemId ?? '',
             'quantity' => $itemCount ?? '',
             'customer_id' => $customerSid ?? '',
             'game_account' => $gameAccount ?? ''
-        ]
-    ]);
+        ],
+        'debug_info' => [
+            'request_url' => $apiUrl ?? null,
+            'http_code' => $httpCode ?? null,
+            'response_raw' => $response ?? null,
+            'response_parsed' => $result ?? null
+        ],
+        'data' => null
+    ];
+    
+    echo json_encode($error_details);
 }
