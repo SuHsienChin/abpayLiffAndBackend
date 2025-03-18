@@ -130,7 +130,7 @@ if (!isset($_SESSION['admin_id'])) {
                                     </div>
                                 </div>
                                 <div class="alert alert-info" role="alert" id="upload-info" style="display: none;">
-                                    請上傳包含以下欄位的檔案：序號、符號、客編、系統客編、版本、商品編號、商品數量、商品名稱、備註
+                                    請上傳包含以下欄位的檔案：序號、客編、賽區未確認、系統客編要完整、版本、編號不用動、數量、下拉式選取商品、備註
                                 </div>
                             </div>
                         </div>
@@ -144,22 +144,17 @@ if (!isset($_SESSION['admin_id'])) {
                                 <h3 class="card-title">檔案資料</h3>
                             </div>
                             <div class="card-body">
-                                <div class="mb-3">
-                                    <button type="button" class="btn btn-primary" id="startOrderBtn">
-                                        <i class="fas fa-paper-plane"></i> 開始送單
-                                    </button>
-                                </div>
                                 <table id="data-table" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
                                             <th>序號</th>
-                                            <th>符號</th>
                                             <th>客編</th>
+                                            <th>賽區未確認</th>
                                             <th>系統客編</th>
                                             <th>版本</th>
-                                            <th>商品編號</th>
-                                            <th>商品數量</th>
-                                            <th>商品名稱</th>
+                                            <th>編號</th>
+                                            <th>數量</th>
+                                            <th>商品</th>
                                             <th>備註</th>
                                             <th>客戶資料</th>
                                         </tr>
@@ -204,7 +199,6 @@ $(document).ready(function() {
     
     // 檔案上傳處理
     $('#upload-btn').on('click', function() {
-        sessionStorage.clear();
         const fileInput = document.getElementById('file-upload');
         const file = fileInput.files[0];
         
@@ -243,13 +237,13 @@ $(document).ready(function() {
                         if (row.length > 0) {
                             const item = {
                                 序號: row[0] || '',
-                                符號: row[1] || '',
-                                客編: row[2] || '',
+                                客編: row[1] || '',
+                                賽區未確認: row[2] || '',
                                 系統客編: row[3] || '',
                                 版本: row[4] || '',
-                                商品編號: row[5] || '',
-                                商品數量: row[6] || '',
-                                商品名稱: row[7] || '',
+                                編號: row[5] || '',
+                                數量: row[6] || '',
+                                商品: row[7] || '',
                                 備註: row[8] || ''
                             };
                             jsonData.push(item);
@@ -291,7 +285,6 @@ $(document).ready(function() {
     }
     
     // 顯示資料到表格
-    // 在 displayData 函數後加入：
     function displayData(data) {
         const tableBody = $('#data-table tbody');
         tableBody.empty();
@@ -299,13 +292,13 @@ $(document).ready(function() {
         data.forEach(item => {
             const row = $('<tr>');
             row.append(`<td>${item.序號}</td>`);
-            row.append(`<td>${item.符號}</td>`);
             row.append(`<td>${item.客編}</td>`);
+            row.append(`<td>${item.賽區未確認}</td>`);
             row.append(`<td>${item.系統客編}</td>`);
             row.append(`<td>${item.版本}</td>`);
-            row.append(`<td>${item.商品編號}</td>`);
-            row.append(`<td>${item.商品數量}</td>`);
-            row.append(`<td>${item.商品名稱}</td>`);
+            row.append(`<td>${item.編號}</td>`);
+            row.append(`<td>${item.數量}</td>`);
+            row.append(`<td>${item.商品}</td>`);
             row.append(`<td>${item.備註}</td>`);
             row.append(`<td data-customer-id="${item.系統客編}">載入中...</td>`);
             tableBody.append(row);
@@ -322,35 +315,9 @@ $(document).ready(function() {
             "responsive": true,
             "autoWidth": false,
             "language": {
-                "url": "plugins/datatables/i18n/Chinese-traditional.json"
+                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Chinese-traditional.json"
             }
         });
-
-        // 取得遊戲商品資料
-        fetchGameItems();
-    }
-    
-    // 新增取得遊戲商品資料的函數
-    async function fetchGameItems() {
-        try {
-            // 取得 QOO 商品資料
-            const qooResponse = await axios.get('api/proxy_game_items.php?sid=7');
-            if (qooResponse.data) {
-                sessionStorage.setItem('qoo_items', JSON.stringify(qooResponse.data));
-                console.log('QOO 商品資料已儲存');
-            }
-    
-            // 取得 GTW 商品資料
-            const gtwResponse = await axios.get('api/proxy_game_items.php?sid=344');
-            if (gtwResponse.data) {
-                sessionStorage.setItem('gtw_items', JSON.stringify(gtwResponse.data));
-                console.log('GTW 商品資料已儲存');
-            }
-    
-        } catch (error) {
-            console.error('取得遊戲商品資料失敗:', error);
-            alert('取得遊戲商品資料失敗: ' + error.message);
-        }
     }
     
     // 獲取客戶資料
@@ -381,171 +348,17 @@ $(document).ready(function() {
                             </div>
                         `);
                         cell.addClass('text-success');
-                        
-                        // 將客戶資料添加到原始數據中
-                        item.customer_data = {
-                            id: customer.id,
-                            customer_id: customer.customer_id,
-                            customer_sid: customer.customer_sid || '無',
-                            created_at: customer.created_at || '無'
-                        };
                     } else {
                         cell.text('未找到對應客戶資料');
                         cell.addClass('text-danger');
-                        item.customer_data = null;
                     }
                 });
-                
-                // 更新 sessionStorage 中的數據
-                sessionStorage.setItem('strategyOrderData', JSON.stringify(fileData));
-                console.log('已更新 sessionStorage 中的關聯客戶資料');
             })
             .catch(function(error) {
                 console.error('獲取客戶資料失敗:', error);
                 alert('獲取客戶資料失敗: ' + (error.response?.data?.error || error.message));
             });
     }
-});
-</script>
-<!-- 送單進度 Modal -->
-<div class="modal fade" id="orderProgressModal" data-backdrop="static" data-keyboard="false" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">送單進度</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- 進度記錄區 -->
-                <div class="form-group">
-                    <label>處理記錄：</label>
-                    <div id="processLog" class="border p-3 bg-light" style="height: 300px; overflow-y: auto; font-family: monospace;">
-                    </div>
-                </div>
-                
-                <!-- 進度條 -->
-                <div class="form-group">
-                    <label>整體進度：</label>
-                    <div class="progress">
-                        <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" 
-                             role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                            0%
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 當前處理項目 -->
-                <div class="form-group">
-                    <label>當前處理：</label>
-                    <div id="currentCustomerId" class="h5 text-primary">等待開始...</div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="startSystemOrderBtn">
-                    <i class="fas fa-upload"></i> 開始送單到系統
-                </button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-$(document).ready(function() {
-    // 開始送單按鈕點擊事件
-    $('#startOrderBtn').click(function() {
-        const orderData = JSON.parse(sessionStorage.getItem('strategyOrderData') || '[]');
-        if (orderData.length === 0) {
-            alert('沒有可處理的訂單資料');
-            return;
-        }
-        $('#orderProgressModal').modal('show');
-    });
-
-    // 處理記錄函數
-    function logProcess(message) {
-        const timestamp = new Date().toLocaleTimeString();
-        const logEntry = `[${timestamp}] ${message}`;
-        const logElement = $('#processLog');
-        logElement.append(logEntry + '\n</br>');
-        logElement.scrollTop(logElement[0].scrollHeight);
-    }
-
-    // 更新進度條
-    function updateProgress(current, total) {
-        const percentage = Math.round((current / total) * 100);
-        $('#progressBar').css('width', percentage + '%').text(percentage + '%');
-    }
-
-    // 更新當前處理客戶
-    function updateCurrentCustomer(customerId) {
-        $('#currentCustomerId').text(`處理中: ${customerId}`);
-    }
-
-    // 開始送單到系統按鈕點擊事件
-    $('#startSystemOrderBtn').click(async function() {
-        const orderData = JSON.parse(sessionStorage.getItem('strategyOrderData') || '[]');
-        const customerData = JSON.parse(sessionStorage.getItem('customerData') || '[]');
-        const totalOrders = orderData.length;
-        let processedOrders = 0;
-    
-        $(this).prop('disabled', true);
-        logProcess('開始處理訂單...');
-    
-        for (const order of orderData) {
-            updateCurrentCustomer(order.系統客編);
-            
-            try {
-                // 檢查必要資料
-                if (!order.customer_data || !order.customer_data.customer_sid) {
-                    throw new Error('無效的客戶資料');
-                }
-    
-                // 根據版本取得對應的 GameSid
-                const gameSid = order.版本 === '戰略版(Qoo)' ? '7' : '344';
-                
-                // 取得遊戲帳號資料
-                const gameAccountResponse = await axios.get(`api/proxy_game_items.php?sid=${order.customer_data.customer_sid}`);
-                const gameAccounts = gameAccountResponse.data;
-                
-                // 尋找符合的遊戲帳號
-                const matchedAccount = gameAccounts.find(account => account.GameSid === gameSid);
-                if (!matchedAccount) {
-                    throw new Error('找不到對應的遊戲帳號');
-                }
-    
-                // 準備送單資料
-                const orderParams = {
-                    customer_id: order.customer_data.customer_id,
-                    item_id: order.商品編號,
-                    quantity: order.商品數量,
-                    game_account: matchedAccount.Sid
-                };
-    
-                logProcess(`正在處理 ${order.系統客編} 的訂單...`);
-                
-                // 送單到系統
-                const response = await axios.post('api/process_order.php', orderParams);
-                
-                if (response.data.success) {
-                    logProcess(`${order.系統客編} 處理完成 - 訂單編號: ${response.data.order_id}`);
-                } else {
-                    throw new Error(response.data.message || '送單失敗');
-                }
-                
-                processedOrders++;
-                updateProgress(processedOrders, totalOrders);
-                
-            } catch (error) {
-                logProcess(`錯誤: ${order.系統客編} 處理失敗 - ${error.message}`);
-            }
-        }
-    
-        logProcess('所有訂單處理完成');
-        $(this).prop('disabled', false);
-    });
 });
 </script>
 </body>
