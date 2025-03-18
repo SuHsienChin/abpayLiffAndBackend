@@ -387,7 +387,18 @@ $(document).ready(function() {
                             id: customer.id,
                             customer_id: customer.customer_id,
                             customer_sid: customer.customer_sid || '無',
-                            created_at: customer.created_at || '無'
+                            created_at: customer.created_at || '無',
+                            account_id: customer.account_id || '',
+                            characters: customer.characters || '',
+                            game_sid: customer.game_sid || '',
+                            last_time: customer.last_time || '',
+                            login_account: customer.login_account || '',
+                            login_password: customer.login_password || '',
+                            login_type: customer.login_type || '',
+                            name: customer.name || '',
+                            note1: customer.note1 || '',
+                            server_name: customer.server_name || '',
+                            sid: customer.sid || ''
                         };
                     } else {
                         cell.text('未找到對應客戶資料');
