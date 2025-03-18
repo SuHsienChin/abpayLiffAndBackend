@@ -513,35 +513,26 @@ $(document).ready(function() {
                 if (!order.customer_data || !order.customer_data.customer_sid) {
                     throw new Error('無效的客戶資料');
                 }
-    
-                // 根據版本取得對應的 GameSid
-                const gameSid = order.版本 === '戰略版(Qoo)' ? '7' : '344';
-                
-                // 取得遊戲帳號資料
-                const gameAccountResponse = await axios.get(`api/proxy_game_items.php?sid=${order.customer_data.customer_sid}`);
-                const gameAccounts = gameAccountResponse.data;
-                
-                // 尋找符合的遊戲帳號
-                const matchedAccount = gameAccounts.find(account => account.GameSid === gameSid);
-                if (!matchedAccount) {
-                    throw new Error('找不到對應的遊戲帳號');
-                }
-    
+
                 // 準備送單資料
                 const orderParams = {
-                    customer_id: order.customer_data.customer_id,
                     item_id: order.商品編號,
                     quantity: order.商品數量,
-                    game_account: matchedAccount.Sid
+                    customer_id: order.customer_data.customer_sid,
+                    game_account: order.customer_data.sid
                 };
-    
                 logProcess(`正在處理 ${order.系統客編} 的訂單...`);
                 
                 // 送單到系統
-                const response = await axios.post('api/process_order.php', orderParams);
+                const formData = new URLSearchParams();
+                for (const key in orderParams) {
+                    formData.append(key, orderParams[key]);
+                }
+                const response = await axios.post('api/process_order.php', formData);
                 
                 if (response.data.success) {
                     logProcess(`${order.系統客編} 處理完成 - 訂單編號: ${response.data.order_id}`);
+                    console.log('url:', response.data.data.url);
                 } else {
                     throw new Error(response.data.message || '送單失敗');
                 }
