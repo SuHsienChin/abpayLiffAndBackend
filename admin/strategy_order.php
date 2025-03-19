@@ -237,8 +237,8 @@ $(document).ready(function() {
                     // 移除表頭，轉換為 JSON 格式
                     const headers = data[0];
                     const jsonData = [];
-                    
-                    for (let i = 1; i < data.length; i++) {
+                    console.log(data)
+                    for (let i = 0; i < data.length; i++) {
                         const row = data[i];
                         if (row.length > 0) {
                             const item = {
@@ -321,6 +321,7 @@ $(document).ready(function() {
         $('#data-table').DataTable({
             "responsive": true,
             "autoWidth": false,
+            "pageLength":'200',// 預設為'10'，若需更改初始每頁顯示筆數，才需設定
             "language": {
                 "url": "plugins/datatables/i18n/Chinese-traditional.json"
             }
@@ -383,7 +384,7 @@ $(document).ready(function() {
                                 <strong>ID:</strong> ${customer.id}<br>
                                 <strong>客戶ID:</strong> ${customer.customer_id}<br>
                                 <strong>SID:</strong> ${customer.customer_sid || '無'}<br>
-                                <strong>建立時間:</strong> ${customer.created_at || '無'}
+                                <strong>版本:</strong> ${customer.game_sid === '344' ? '戰略版(青鳥)' : customer.game_sid === '7' ? '戰略版(Qoo)' : '無'}
                             </div>
                         `);
                         cell.addClass('text-success');
