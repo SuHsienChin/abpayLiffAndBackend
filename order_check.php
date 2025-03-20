@@ -159,8 +159,8 @@ require_once 'config.php';
                 try {
                     const params_json_data = {
                         "gameName": sessionStorage.getItem('gameNameText'),
-                        "UserId": "test01",
-                        "Password": "111111",
+                        "UserId": API_USER_ID,
+                        "Password": API_PASSWORD,
                         "GameAccount": sessionStorage.getItem('gameAccount'),
                         "Item": itemArr.gameitemSLabelText,
                         "Count": sessionStorage.getItem('gameItemCounts'),
