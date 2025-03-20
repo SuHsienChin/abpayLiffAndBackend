@@ -20,4 +20,3 @@ define('ORDER_STATUS_FAILED', '失敗');
 
 // 安全配置
 define('ANTI_REPLAY_WINDOW', 300);  // 防重放攻擊時間窗口(秒)
-?>

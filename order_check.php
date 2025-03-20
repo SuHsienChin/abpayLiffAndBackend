@@ -326,7 +326,6 @@ require_once 'config.php';
             //紀錄使用者的參數log
             saveLogsToMysql('在傳送訂單到官方LINE之前的params_json_data', params_json_data);
 
-
             // 傳送訂單內容到官方LINE
             sendMessagetoLineOfficial(params_json_data);
 
