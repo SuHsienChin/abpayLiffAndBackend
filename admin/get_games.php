@@ -53,28 +53,26 @@ try {
     $stmt->bindValue(':length', $length, PDO::PARAM_INT);
     $stmt->execute();
 
-        $data = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        // 格式化狀態為可點擊按鈕
-        $status_text = $row['flag'] ? '啟用' : '停用';
-        $status_class = $row['flag'] ? 'success' : 'danger';
-        $new_status = $row['flag'] ? 0 : 1;
-        $status = '<button type="button" class="btn btn-sm btn-' . $status_class . ' toggle-status" data-id="' . $row['Sid'] . '" data-status="' . $new_status . '">' . $status_text . '</button>';
+    $data = [];
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    // 格式化狀態
+    $status = $row['status'] ? 
+        '<span class="badge badge-success">啟用</span>' : 
+        '<span class="badge badge-danger">停用</span>';
 
-        // 格式化操作按鈕
-        $actions = 
-            '<button type="button" class="btn btn-sm btn-info mr-1 edit-game-btn" data-Sid="' . $row['Sid'] . '">編輯</button>' .
-            '<button type="button" class="btn btn-sm btn-danger" onclick="deleteGame(' . $row['Sid'] . ')">刪除</button>';
+    // 格式化操作按鈕
+    $actions = 
+        '<button type="button" class="btn btn-sm btn-info mr-1" onclick="editGame(' . $row['id'] . ')">編輯</button>' .
+        '<button type="button" class="btn btn-sm btn-danger" onclick="deleteGame(' . $row['id'] . ')">刪除</button>';
 
-        $data[] = [
-            'Sid' => $row['Sid'],
-            'Name' => $row['Name'],
-            'flag' => $status,
-            'flag_value' => $row['flag'],
-            'UpdateTime' => date('Y-m-d H:i:s', strtotime($row['UpdateTime'])),
-            'actions' => $actions
-        ];
-    }
+    $data[] = [
+        'game_id' => $row['id'],
+        'game_name' => $row['game_name'],
+        'status' => $status,
+        'updated_at' => date('Y-m-d H:i:s', strtotime($row['updated_at'])),
+        'actions' => $actions
+    ];
+}
 
 // 返回 JSON 響應
 $response = [
@@ -86,7 +84,6 @@ $response = [
 
 header('Content-Type: application/json');
 echo json_encode($response);} catch (PDOException $e) {
-    // 處理錯誤
     header('Content-Type: application/json');
-    echo json_encode(['error' => 'Database error: '. $e->getMessage()]);
+    echo json_encode(['error' => $e->getMessage()]);
 }
