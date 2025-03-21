@@ -321,7 +321,7 @@ $(document).ready(function() {
         $('#data-table').DataTable({
             "responsive": true,
             "autoWidth": false,
-            "pageLength":'50',// 預設為'10'，若需更改初始每頁顯示筆數，才需設定
+            "pageLength":'200',// 預設為'10'，若需更改初始每頁顯示筆數，才需設定
             "language": {
                 "url": "plugins/datatables/i18n/Chinese-traditional.json"
             }
