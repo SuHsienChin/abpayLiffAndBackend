@@ -238,7 +238,7 @@ $(document).ready(function() {
                     const headers = data[0];
                     const jsonData = [];
                     
-                    for (let i = 1; i < data.length; i++) {
+                    for (let i = 0; i < data.length; i++) {
                         const row = data[i];
                         if (row.length > 0) {
                             const item = {
