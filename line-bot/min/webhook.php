@@ -17,13 +17,79 @@ function handleEvent($event) {
         $userId = $event['source']['userId'];
         $messageText = $event['message']['text'];
 
-        // 檢查用戶是否傳送 [價目表]
+        // 檢查用戶是否傳送 價目表
         if (trim($messageText) == "價目表") {
-            $replyText = "毛孩形象全檔方案 NT.5980\n"
-                       . "毛孩親寫真 NT.600\n"
-                       . "毛孩與你親子寫真 NT.1200\n"
-                       . "毛孩BOOM起來 NT.800";
-            replyMessage($event['replyToken'], $replyText);
+            $flexMessage = [
+                "type" => "flex",
+                "altText" => "價目表",
+                "contents" => [
+                    "type" => "bubble",
+                    "body" => [
+                        "type" => "box",
+                        "layout" => "vertical",
+                        "contents" => [
+                            [
+                                "type" => "text",
+                                "text" => "寵物攝影服務價目表",
+                                "weight" => "bold",
+                                "size" => "xl",
+                                "color" => "#1DB446"
+                            ],
+                            [
+                                "type" => "separator",
+                                "margin" => "xxl"
+                            ],
+                            [
+                                "type" => "box",
+                                "layout" => "vertical",
+                                "margin" => "xxl",
+                                "spacing" => "sm",
+                                "contents" => [
+                                    [
+                                        "type" => "box",
+                                        "layout" => "horizontal",
+                                        "contents" => [
+                                            ["type" => "text", "text" => "毛孩形象全檔方案", "size" => "sm", "color" => "#555555"],
+                                            ["type" => "text", "text" => "NT.5980", "size" => "sm", "color" => "#111111", "align" => "end"]
+                                        ]
+                                    ],
+                                    [
+                                        "type" => "box",
+                                        "layout" => "horizontal",
+                                        "contents" => [
+                                            ["type" => "text", "text" => "毛孩親寫真", "size" => "sm", "color" => "#555555"],
+                                            ["type" => "text", "text" => "NT.600", "size" => "sm", "color" => "#111111", "align" => "end"]
+                                        ]
+                                    ],
+                                    [
+                                        "type" => "box",
+                                        "layout" => "horizontal",
+                                        "contents" => [
+                                            ["type" => "text", "text" => "毛孩與你親子寫真", "size" => "sm", "color" => "#555555"],
+                                            ["type" => "text", "text" => "NT.1200", "size" => "sm", "color" => "#111111", "align" => "end"]
+                                        ]
+                                    ],
+                                    [
+                                        "type" => "box",
+                                        "layout" => "horizontal",
+                                        "contents" => [
+                                            ["type" => "text", "text" => "毛孩BOOM起來", "size" => "sm", "color" => "#555555"],
+                                            ["type" => "text", "text" => "NT.800", "size" => "sm", "color" => "#111111", "align" => "end"]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+            
+            $body = [
+                "replyToken" => $event['replyToken'],
+                "messages" => [$flexMessage]
+            ];
+            
+            replyMessage($event['replyToken'], $body, true);
         } else {
             // 如果不是 [價目表]，回覆其他提示
             replyMessage($event['replyToken'], "請輸入 [價目表] 查看詳細資訊！");
@@ -32,16 +98,17 @@ function handleEvent($event) {
 }
 
 // 回覆用戶訊息
-function replyMessage($replyToken, $text) {
+function replyMessage($replyToken, $content, $isJson = false) {
     $url = "https://api.line.me/v2/bot/message/reply";
     $headers = [
         "Authorization: Bearer /tawKQINYfBLEp75MXH+HMsQ1Hw/IT1UZAnC0nxge0clIvgoBjBUE1Tr+LIhIhIpfa9TfYYgx1pTClW8z1UYK/iALlqXv6NDXe7G5PsemziQxAuDFOGpyHHqxP0b51gMjkz8Kmo0jCULhNm7A4P4VAdB04t89/1O/w1cDnyilFU=",
         "Content-Type: application/json"
     ];
-    $body = [
+    
+    $body = $isJson ? $content : [
         "replyToken" => $replyToken,
         "messages" => [
-            ["type" => "text", "text" => $text]
+            ["type" => "text", "text" => $content]
         ]
     ];
 
