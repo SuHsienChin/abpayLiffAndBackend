@@ -18,7 +18,7 @@ function handleEvent($event) {
         $messageText = $event['message']['text'];
 
         // 檢查用戶是否傳送 [價目表]
-        if (trim($messageText) == "[價目表]") {
+        if (trim($messageText) == "價目表") {
             $replyText = "毛孩形象全檔方案 NT.5980\n"
                        . "毛孩親寫真 NT.600\n"
                        . "毛孩與你親子寫真 NT.1200\n"
