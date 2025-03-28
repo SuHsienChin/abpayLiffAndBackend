@@ -17,115 +17,116 @@ function handleEvent($event) {
         $userId = $event['source']['userId'];
         $messageText = $event['message']['text'];
 
-        // 定義價目表數據
-        $priceList = [
-            ["name" => "毛孩形象全檔方案", "price" => "NT.5980"],
-            ["name" => "毛孩親寫真", "price" => "NT.600"],
-            ["name" => "毛孩與你親子寫真", "price" => "NT.1200"],
-            ["name" => "毛孩BOOM起來", "price" => "NT.800"]
+        // 定義價目表數據與回覆內容
+        $services = [
+            "毛孩形象全檔方案" => [
+                "title" => "毛孩形象全檔方案",
+                "description" => "記錄毛孩的每一個精彩瞬間！\n價格：NT.5980",
+                "image_url" => "https://example.com/images/full_package.jpg"
+            ],
+            "毛孩親寫真" => [
+                "title" => "毛孩親寫真",
+                "description" => "專屬於毛孩的個人寫真集！\n價格：NT.600",
+                "image_url" => "https://example.com/images/pet_portrait.jpg"
+            ],
+            "毛孩與你親子寫真" => [
+                "title" => "毛孩與你親子寫真",
+                "description" => "毛孩與主人的溫馨合照！\n價格：NT.1200",
+                "image_url" => "https://example.com/images/family_portrait.jpg"
+            ],
+            "毛孩BOOM起來" => [
+                "title" => "毛孩BOOM起來",
+                "description" => "讓毛孩成為焦點的創意拍攝！\n價格：NT.800",
+                "image_url" => "https://example.com/images/boom_pet.jpg"
+            ]
         ];
 
-        // 檢查用戶是否傳送「價目表」
-        if (trim($messageText) == "價目表") {
-            // 生成 Flex Message
-            $flexMessage = generateFlexMessage($priceList);
-
-            // 生成 Quick Reply
-            $quickReply = generateQuickReply($priceList);
-
-            // 發送回覆
-            replyMessage($event['replyToken'], [
-                "type" => "flex",
-                "altText" => "價目表",
-                "contents" => $flexMessage
-            ], $quickReply);
-        } else {
-            // 如果不是「價目表」，回覆其他提示
-            replyMessage($event['replyToken'], "請輸入「價目表」查看詳細資訊！");
+        // 檢查用戶訊息是否符合格式
+        foreach ($services as $key => $service) {
+            if (strpos($messageText, "我想了解" . $key) !== false) {
+                // 生成 Flex Message
+                $flexMessage = generateServiceFlexMessage($service);
+                replyMessage($event['replyToken'], $flexMessage);
+                return;
+            }
         }
+
+        // 如果不是指定的訊息，回覆提示
+        replyMessage($event['replyToken'], "請輸入正確的查詢格式，例如：我想了解毛孩形象全檔方案！");
     }
 }
 
-// 生成 Flex Message
-function generateFlexMessage($priceList) {
-    $contents = [];
-    foreach ($priceList as $item) {
-        $contents[] = [
-            "type" => "box",
-            "layout" => "horizontal",
-            "contents" => [
-                ["type" => "text", "text" => $item["name"], "size" => "sm", "color" => "#555555"],
-                ["type" => "text", "text" => $item["price"], "size" => "sm", "color" => "#111111", "align" => "end"]
-            ]
-        ];
-    }
-
+// 生成服務的 Flex Message
+function generateServiceFlexMessage($service) {
     return [
-        "type" => "bubble",
-        "body" => [
-            "type" => "box",
-            "layout" => "vertical",
-            "contents" => [
-                [
-                    "type" => "text",
-                    "text" => "寵物攝影服務價目表",
-                    "weight" => "bold",
-                    "size" => "xl",
-                    "color" => "#1DB446"
-                ],
-                [
-                    "type" => "separator",
-                    "margin" => "xxl"
-                ],
-                [
-                    "type" => "box",
-                    "layout" => "vertical",
-                    "margin" => "xxl",
-                    "spacing" => "sm",
-                    "contents" => $contents
+        "type" => "flex",
+        "altText" => $service["title"],
+        "contents" => [
+            "type" => "bubble",
+            "hero" => [
+                "type" => "image",
+                "url" => $service["image_url"],
+                "size" => "full",
+                "aspectRatio" => "20:13",
+                "aspectMode" => "cover"
+            ],
+            "body" => [
+                "type" => "box",
+                "layout" => "vertical",
+                "contents" => [
+                    [
+                        "type" => "text",
+                        "text" => $service["title"],
+                        "weight" => "bold",
+                        "size" => "xl",
+                        "color" => "#1DB446"
+                    ],
+                    [
+                        "type" => "separator",
+                        "margin" => "xxl"
+                    ],
+                    [
+                        "type" => "text",
+                        "text" => $service["description"],
+                        "wrap" => true,
+                        "size" => "sm",
+                        "color" => "#555555",
+                        "margin" => "md"
+                    ]
+                ]
+            ],
+            "footer" => [
+                "type" => "box",
+                "layout" => "horizontal",
+                "contents" => [
+                    [
+                        "type" => "button",
+                        "action" => [
+                            "type" => "uri",
+                            "label" => "立即預約",
+                            "uri" => "https://example.com/book-now"
+                        ],
+                        "style" => "primary",
+                        "color" => "#1DB446"
+                    ]
                 ]
             ]
         ]
     ];
 }
 
-// 生成 Quick Reply
-function generateQuickReply($priceList) {
-    $items = [];
-    foreach ($priceList as $item) {
-        $items[] = [
-            "type" => "action",
-            "action" => [
-                "type" => "message",
-                "label" => $item["name"],
-                "text" => "我想了解" . $item["name"]
-            ]
-        ];
-    }
-
-    return [
-        "items" => $items
-    ];
-}
-
 // 回覆用戶訊息
-function replyMessage($replyToken, $message, $quickReply = null) {
+function replyMessage($replyToken, $message) {
     $url = "https://api.line.me/v2/bot/message/reply";
     $headers = [
         "Authorization: Bearer /tawKQINYfBLEp75MXH+HMsQ1Hw/IT1UZAnC0nxge0clIvgoBjBUE1Tr+LIhIhIpfa9TfYYgx1pTClW8z1UYK/iALlqXv6NDXe7G5PsemziQxAuDFOGpyHHqxP0b51gMjkz8Kmo0jCULhNm7A4P4VAdB04t89/1O/w1cDnyilFU=",
         "Content-Type: application/json"
     ];
 
-    // 組合回覆內容
     $body = [
         "replyToken" => $replyToken,
         "messages" => [$message]
     ];
-
-    // 如果有 Quick Reply，加入到回覆中
-    if ($quickReply) {
-        $body["messages"][0]["quickReply"] = $quickReply;
-    }
 
     $options = [
         "http" => [
