@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "@line/bot-sdk": "^9.7.3",
+    "@line/liff": "^2.25.1",
+    "express": "^4.21.2"
+  },
+  "name": "abpay",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SuHsienChin/abpayLiffAndBackend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SuHsienChin/abpayLiffAndBackend/issues"
+  },
+  "homepage": "https://github.com/SuHsienChin/abpayLiffAndBackend#readme",
+  "description": ""
+}
