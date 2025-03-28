@@ -12,12 +12,22 @@ if (isset($data['events'])) {
 
 // 處理單個事件
 function handleEvent($event) {
+    // 檢查是否為文字訊息
     if ($event['type'] == 'message' && $event['message']['type'] == 'text') {
         $userId = $event['source']['userId'];
         $messageText = $event['message']['text'];
 
-        // 回覆用戶訊息
-        replyMessage($event['replyToken'], "你說了：{$messageText}");
+        // 檢查用戶是否傳送 [價目表]
+        if (trim($messageText) == "[價目表]") {
+            $replyText = "毛孩形象全檔方案 NT.5980\n"
+                       . "毛孩親寫真 NT.600\n"
+                       . "毛孩與你親子寫真 NT.1200\n"
+                       . "毛孩BOOM起來 NT.800";
+            replyMessage($event['replyToken'], $replyText);
+        } else {
+            // 如果不是 [價目表]，回覆其他提示
+            replyMessage($event['replyToken'], "請輸入 [價目表] 查看詳細資訊！");
+        }
     }
 }
 
@@ -47,3 +57,4 @@ function replyMessage($replyToken, $text) {
     $response = file_get_contents($url, false, $context);
     error_log("回覆結果：" . $response);
 }
+?>
