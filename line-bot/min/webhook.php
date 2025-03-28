@@ -86,7 +86,43 @@ function handleEvent($event) {
             
             $body = [
                 "replyToken" => $event['replyToken'],
-                "messages" => [$flexMessage]
+                "messages" => [$flexMessage],
+                "quickReply" => [
+                    "items" => [
+                        [
+                            "type" => "action",
+                            "action" => [
+                                "type" => "message",
+                                "label" => "毛孩形象全檔",
+                                "text" => "我想了解毛孩形象全檔方案"
+                            ]
+                        ],
+                        [
+                            "type" => "action",
+                            "action" => [
+                                "type" => "message",
+                                "label" => "毛孩親寫真",
+                                "text" => "我想了解毛孩親寫真"
+                            ]
+                        ],
+                        [
+                            "type" => "action",
+                            "action" => [
+                                "type" => "message",
+                                "label" => "毛孩與你親子寫真",
+                                "text" => "我想了解毛孩與你親子寫真"
+                            ]
+                        ],
+                        [
+                            "type" => "action",
+                            "action" => [
+                                "type" => "message",
+                                "label" => "毛孩BOOM起來",
+                                "text" => "我想了解毛孩BOOM起來方案"
+                            ]
+                        ]
+                    ]
+                ]
             ];
             
             replyMessage($event['replyToken'], $body, true);
