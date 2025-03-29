@@ -1,5 +1,6 @@
 <?php
 // 載入 .env 檔案
+global $env;
 $env = parse_ini_file(__DIR__ . '/.env');
 
 
