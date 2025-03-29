@@ -2,23 +2,14 @@
 
 // 載入環境變數
 $envFile = __DIR__ . '/.env';
-error_log("ENV 檔案路徑: " . $envFile);
-
 if (!file_exists($envFile)) {
     error_log('找不到 .env 檔案');
     exit;
 }
 
 $env = parse_ini_file($envFile);
-error_log("ENV 內容: " . print_r($env, true));
-
 if ($env === false) {
     error_log('無法讀取 .env 檔案，請檢查檔案權限');
-    exit;
-}
-
-if (!isset($env['LINE_CHANNEL_ACCESS_TOKEN'])) {
-    error_log('找不到 LINE_CHANNEL_ACCESS_TOKEN');
     exit;
 }
 
