@@ -2,6 +2,8 @@
 // 載入 .env 檔案
 $env = parse_ini_file(__DIR__ . '/.env');
 
+echo $env['LINE_CHANNEL_ACCESS_TOKEN'];
+
 // 取得 LINE 傳送的請求資料
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
@@ -164,7 +166,6 @@ function generateQuickReply($priceList) {
 // 回覆用戶訊息
 function replyMessage($replyToken, $message, $quickReply = null) {
     global $env;
-    echo $env['LINE_CHANNEL_ACCESS_TOKEN'];
     $url = "https://api.line.me/v2/bot/message/reply";
     $headers = [
         "Authorization: Bearer " . $env['LINE_CHANNEL_ACCESS_TOKEN'],
