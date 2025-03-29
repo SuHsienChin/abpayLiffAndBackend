@@ -44,180 +44,93 @@ function handleEvent($event) {
         elseif (strpos($messageText, "我想了解") === 0) {
             foreach ($priceList as $item) {
                 if ($messageText === "我想了解" . $item["name"]) {
-                    if ($item["name"] === "毛孩形象全檔方案") {
-                        $flexMessage = [
-                            "type" => "flex",
-                            "altText" => "毛孩形象全檔方案詳細介紹",
-                            "contents" => [
-                                "type" => "bubble",
-                                "body" => [
-                                    "type" => "box",
-                                    "layout" => "horizontal",
-                                    "contents" => [
-                                        [
-                                            "type" => "box",
-                                            "layout" => "vertical",
-                                            "flex" => 2,
-                                            "contents" => [
-                                                [
-                                                    "type" => "text",
-                                                    "text" => "毛孩形象全檔方案",
-                                                    "weight" => "bold",
-                                                    "size" => "xl",
-                                                    "color" => "#1DB446",
-                                                    "wrap" => true
-                                                ],
-                                                [
-                                                    "type" => "text",
-                                                    "text" => "NT.5980",
-                                                    "size" => "lg",
-                                                    "weight" => "bold",
-                                                    "margin" => "md"
-                                                ],
-                                                [
-                                                    "type" => "text",
-                                                    "text" => "拍攝時數大約1~1.5hr\n檔案當天拍攝全贈\n自行挑選精修12張\n4G USB\n客製放大相框1組\n贈每年週年照2張\n限定毛孩隻數1隻\n家人可一同入鏡(限定2人)\n可拍攝三款造型(需自備兩款造型搭配)\n引導師協助引導(視情況家人輔助)",
-                                                    "wrap" => true,
-                                                    "margin" => "lg",
-                                                    "size" => "sm"
-                                                ],
-                                                [
-                                                    "type" => "text",
-                                                    "text" => "加購項目：",
-                                                    "weight" => "bold",
-                                                    "margin" => "lg",
-                                                    "size" => "sm"
-                                                ],
-                                                [
-                                                    "type" => "text",
-                                                    "text" => "多加一隻毛孩加收500元\n多一位大人加收1000\n如需妝髮加收1200",
-                                                    "wrap" => true,
-                                                    "margin" => "sm",
-                                                    "size" => "sm",
-                                                    "color" => "#555555"
-                                                ]
-                                            ]
-                                        ],
-                                        [
-                                            "type" => "box",
-                                            "layout" => "vertical",
-                                            "flex" => 1,
-                                            "contents" => [
-                                                [
-                                                    "type" => "image",
-                                                    "url" => "https://abpay.tw/line-bot/min/images/allfile.jpg",
-                                                    "size" => "full",
-                                                    "aspectMode" => "cover",
-                                                    "aspectRatio" => "1:1",
-                                                    "gravity" => "center"
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                ],
-                                "footer" => [
-                                    "type" => "box",
-                                    "layout" => "vertical",
-                                    "contents" => [
-                                        [
-                                            "type" => "button",
-                                            "style" => "primary",
-                                            "action" => [
-                                                "type" => "message",
-                                                "label" => "立即預約",
-                                                "text" => "預約毛孩形象全檔方案"
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ];
-                    } else {
-                        // 根據不同方案顯示不同內容
-                        $content = [];
-                        $imagePath = "";
-                        
-                        switch($item["name"]) {
-                            case "毛孩親寫真":
-                                $content = "少張數的單拍方案\n僅限一隻毛孩拍攝\n2隻毛孩需兩個方案\nNT.600";
-                                $imagePath = "https://abpay.tw/line-bot/min/images/onepet.jpg";
-                                break;
-                            case "毛孩與你親子寫真":
-                                $content = "拍攝毛孩與家人之間的互動\n拍攝1-2組系列\nNT.1200";
-                                $imagePath = "https://abpay.tw/line-bot/min/images/famile_and_pet.jpg";
-                                break;
-                            case "毛孩BOOM起來":
-                                $content = "爆破系列拍攝\n拍攝詳情需了解討論\nNT.800";
-                                $imagePath = "https://abpay.tw/line-bot/min/images/boom.jpg";
-                                break;
-                        }
-
-                        $flexMessage = [
-                            "type" => "flex",
-                            "altText" => $item["name"] . "詳細介紹",
-                            "contents" => [
-                                "type" => "bubble",
-                                "body" => [
-                                    "type" => "box",
-                                    "layout" => "horizontal",
-                                    "contents" => [
-                                        [
-                                            "type" => "box",
-                                            "layout" => "vertical",
-                                            "flex" => 2,
-                                            "contents" => [
-                                                [
-                                                    "type" => "text",
-                                                    "text" => $item["name"],
-                                                    "weight" => "bold",
-                                                    "size" => "xl",
-                                                    "color" => "#1DB446",
-                                                    "wrap" => true
-                                                ],
-                                                [
-                                                    "type" => "text",
-                                                    "text" => $content,
-                                                    "wrap" => true,
-                                                    "margin" => "lg",
-                                                    "size" => "md"
-                                                ]
-                                            ]
-                                        ],
-                                        [
-                                            "type" => "box",
-                                            "layout" => "vertical",
-                                            "flex" => 1,
-                                            "contents" => [
-                                                [
-                                                    "type" => "image",
-                                                    "url" => $imagePath,
-                                                    "size" => "full",
-                                                    "aspectMode" => "cover",
-                                                    "aspectRatio" => "1:1",
-                                                    "gravity" => "center"
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                ],
-                                "footer" => [
-                                    "type" => "box",
-                                    "layout" => "vertical",
-                                    "contents" => [
-                                        [
-                                            "type" => "button",
-                                            "style" => "primary",
-                                            "action" => [
-                                                "type" => "message",
-                                                "label" => "立即預約",
-                                                "text" => "預約" . $item["name"]
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ];
+                    $content = "";
+                    $imagePath = "";
+                    
+                    switch($item["name"]) {
+                        case "毛孩形象全檔方案":
+                            $content = "NT.5980\n\n拍攝時數大約1~1.5hr\n檔案當天拍攝全贈\n自行挑選精修12張\n4G USB\n客製放大相框1組\n贈每年週年照2張\n限定毛孩隻數1隻\n家人可一同入鏡(限定2人)\n可拍攝三款造型(需自備兩款造型搭配)\n引導師協助引導(視情況家人輔助)\n\n加購項目：\n多加一隻毛孩加收500元\n多一位大人加收1000\n如需妝髮加收1200";
+                            $imagePath = "https://abpay.tw/line-bot/min/images/allfile.jpg";
+                            break;
+                        case "毛孩親寫真":
+                            $content = "少張數的單拍方案\n僅限一隻毛孩拍攝\n2隻毛孩需兩個方案\nNT.600";
+                            $imagePath = "https://abpay.tw/line-bot/min/images/onepet.jpg";
+                            break;
+                        case "毛孩與你親子寫真":
+                            $content = "拍攝毛孩與家人之間的互動\n拍攝1-2組系列\nNT.1200";
+                            $imagePath = "https://abpay.tw/line-bot/min/images/famile_and_pet.jpg";
+                            break;
+                        case "毛孩BOOM起來":
+                            $content = "爆破系列拍攝\n拍攝詳情需了解討論\nNT.800";
+                            $imagePath = "https://abpay.tw/line-bot/min/images/boom.jpg";
+                            break;
                     }
+
+                    $flexMessage = [
+                        "type" => "flex",
+                        "altText" => $item["name"] . "詳細介紹",
+                        "contents" => [
+                            "type" => "bubble",
+                            "body" => [
+                                "type" => "box",
+                                "layout" => "horizontal",
+                                "contents" => [
+                                    [
+                                        "type" => "box",
+                                        "layout" => "vertical",
+                                        "flex" => 2,
+                                        "contents" => [
+                                            [
+                                                "type" => "text",
+                                                "text" => $item["name"],
+                                                "weight" => "bold",
+                                                "size" => "xl",
+                                                "color" => "#1DB446",
+                                                "wrap" => true
+                                            ],
+                                            [
+                                                "type" => "text",
+                                                "text" => $content,
+                                                "wrap" => true,
+                                                "margin" => "lg",
+                                                "size" => "md"
+                                            ]
+                                        ]
+                                    ],
+                                    [
+                                        "type" => "box",
+                                        "layout" => "vertical",
+                                        "flex" => 1,
+                                        "contents" => [
+                                            [
+                                                "type" => "image",
+                                                "url" => $imagePath,
+                                                "size" => "full",
+                                                "aspectMode" => "cover",
+                                                "aspectRatio" => "1:1",
+                                                "gravity" => "center"
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ],
+                            "footer" => [
+                                "type" => "box",
+                                "layout" => "vertical",
+                                "contents" => [
+                                    [
+                                        "type" => "button",
+                                        "style" => "primary",
+                                        "action" => [
+                                            "type" => "message",
+                                            "label" => "立即預約",
+                                            "text" => "預約" . $item["name"]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ];
                     
                     replyMessage($event['replyToken'], $flexMessage, generateQuickReply($priceList));
                     return;
