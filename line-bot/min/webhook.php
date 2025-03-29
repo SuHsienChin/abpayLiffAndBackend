@@ -105,7 +105,7 @@ function handleEvent($event) {
                                             "contents" => [
                                                 [
                                                     "type" => "image",
-                                                    "url" => "/images/allfile.jpg",
+                                                    "url" => "https://abpay.tw/line-bot/min/images/allfile.jpg",
                                                     "size" => "full",
                                                     "aspectMode" => "cover",
                                                     "aspectRatio" => "1:1",
