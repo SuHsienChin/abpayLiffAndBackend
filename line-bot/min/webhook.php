@@ -45,120 +45,49 @@ function handleEvent($event) {
         elseif (strpos($messageText, "我想了解") === 0) {
             foreach ($priceList as $item) {
                 if ($messageText === "我想了解" . $item["name"]) {
-                    if ($item["name"] === "毛孩形象全檔方案") {
-                        $flexMessage = [
-                            "type" => "flex",
-                            "altText" => "毛孩形象全檔方案詳細介紹",
-                            "contents" => [
-                                "type" => "bubble",
-                                "hero" => [
-                                    "type" => "image",
-                                    "url" => "https://example.com/your-image.jpg", // 請替換為實際圖片網址
-                                    "size" => "full",
-                                    "aspectRatio" => "20:13",
-                                    "aspectMode" => "cover"
-                                ],
-                                "body" => [
-                                    "type" => "box",
-                                    "layout" => "vertical",
-                                    "contents" => [
-                                        [
-                                            "type" => "text",
-                                            "text" => "毛孩形象全檔方案",
-                                            "weight" => "bold",
-                                            "size" => "xl",
-                                            "color" => "#1DB446"
+                    $flexMessage = [
+                        "type" => "flex",
+                        "altText" => $item["name"] . "詳細介紹",
+                        "contents" => [
+                            "type" => "bubble",
+                            "body" => [
+                                "type" => "box",
+                                "layout" => "vertical",
+                                "contents" => [
+                                    [
+                                        "type" => "text",
+                                        "text" => $item["name"],
+                                        "weight" => "bold",
+                                        "size" => "xl",
+                                        "color" => "#1DB446"
+                                    ],
+                                    [
+                                        "type" => "text",
+                                        "text" => $item["price"],
+                                        "size" => "lg",
+                                        "weight" => "bold",
+                                        "margin" => "md"
+                                    ],
+                                    [
+                                        "type" => "text",
+                                        "text" => $item["description"],
+                                        "wrap" => true,
+                                        "margin" => "lg"
+                                    ],
+                                    [
+                                        "type" => "button",
+                                        "style" => "primary",
+                                        "action" => [
+                                            "type" => "message",
+                                            "label" => "立即預約",
+                                            "text" => "預約" . $item["name"]
                                         ],
-                                        [
-                                            "type" => "text",
-                                            "text" => "NT.5980",
-                                            "size" => "lg",
-                                            "weight" => "bold",
-                                            "margin" => "md"
-                                        ],
-                                        [
-                                            "type" => "box",
-                                            "layout" => "vertical",
-                                            "margin" => "lg",
-                                            "spacing" => "sm",
-                                            "contents" => [
-                                                ["type" => "text", "text" => "✦ 拍攝時數大約1~1.5hr", "wrap" => true, "size" => "sm"],
-                                                ["type" => "text", "text" => "✦ 檔案當天拍攝全贈", "wrap" => true, "size" => "sm"],
-                                                ["type" => "text", "text" => "✦ 自行挑選精修12張", "wrap" => true, "size" => "sm"],
-                                                ["type" => "text", "text" => "✦ 4G USB", "wrap" => true, "size" => "sm"],
-                                                ["type" => "text", "text" => "✦ 客製放大相框1組", "wrap" => true, "size" => "sm"],
-                                                ["type" => "text", "text" => "✦ 贈每年週年照2張", "wrap" => true, "size" => "sm"],
-                                                ["type" => "text", "text" => "✦ 限定毛孩隻數1隻", "wrap" => true, "size" => "sm"],
-                                                ["type" => "text", "text" => "✦ 家人可一同入鏡(限定2人)", "wrap" => true, "size" => "sm"],
-                                                ["type" => "text", "text" => "✦ 可拍攝三款造型(需自備兩款造型搭配)", "wrap" => true, "size" => "sm"],
-                                                ["type" => "text", "text" => "✦ 引導師協助引導(視情況家人輔助)", "wrap" => true, "size" => "sm"],
-                                                ["type" => "separator", "margin" => "md"],
-                                                ["type" => "text", "text" => "加購項目：", "weight" => "bold", "margin" => "md", "size" => "sm"],
-                                                ["type" => "text", "text" => "• 多加一隻毛孩加收500元", "wrap" => true, "size" => "sm"],
-                                                ["type" => "text", "text" => "• 多一位大人加收1000", "wrap" => true, "size" => "sm"],
-                                                ["type" => "text", "text" => "• 如需妝髮加收1200", "wrap" => true, "size" => "sm"]
-                                            ]
-                                        ],
-                                        [
-                                            "type" => "button",
-                                            "style" => "primary",
-                                            "action" => [
-                                                "type" => "message",
-                                                "label" => "立即預約",
-                                                "text" => "預約毛孩形象全檔方案"
-                                            ],
-                                            "margin" => "lg"
-                                        ]
+                                        "margin" => "lg"
                                     ]
                                 ]
                             ]
-                        ];
-                    } else {
-                        // 保持原有的其他方案處理邏輯
-                        $flexMessage = [
-                            "type" => "flex",
-                            "altText" => $item["name"] . "詳細介紹",
-                            "contents" => [
-                                "type" => "bubble",
-                                "body" => [
-                                    "type" => "box",
-                                    "layout" => "vertical",
-                                    "contents" => [
-                                        [
-                                            "type" => "text",
-                                            "text" => $item["name"],
-                                            "weight" => "bold",
-                                            "size" => "xl",
-                                            "color" => "#1DB446"
-                                        ],
-                                        [
-                                            "type" => "text",
-                                            "text" => $item["price"],
-                                            "size" => "lg",
-                                            "weight" => "bold",
-                                            "margin" => "md"
-                                        ],
-                                        [
-                                            "type" => "text",
-                                            "text" => $item["description"],
-                                            "wrap" => true,
-                                            "margin" => "lg"
-                                        ],
-                                        [
-                                            "type" => "button",
-                                            "style" => "primary",
-                                            "action" => [
-                                                "type" => "message",
-                                                "label" => "立即預約",
-                                                "text" => "預約" . $item["name"]
-                                            ],
-                                            "margin" => "lg"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ];
-                    }
+                        ]
+                    ];
                     
                     replyMessage($event['replyToken'], $flexMessage, generateQuickReply($priceList));
                     return;
