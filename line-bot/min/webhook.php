@@ -61,7 +61,7 @@ function handleEvent($event) {
                             $imagePath = "https://abpay.tw/line-bot/min/images/famile_and_pet.jpg";
                             break;
                         case "毛孩BOOM起來":
-                            $content = "爆破系列拍攝\n拍攝詳情需了解討論\nNT.800";
+                            $content = "爆破系列拍攝\n拍攝詳情需了解discussion\nNT.800";
                             $imagePath = "https://abpay.tw/line-bot/min/images/boom.jpg";
                             break;
                     }
@@ -205,11 +205,13 @@ function generateQuickReply($priceList) {
 }
 
 // 回覆用戶訊息
+// 將 Token 移至 .env 檔案中
+define('LINE_CONFIG', parse_ini_file(__DIR__ . '/.env'));
+
 function replyMessage($replyToken, $message, $quickReply = null) {
     $url = "https://api.line.me/v2/bot/message/reply";
     $headers = [
-        //"Authorization: Bearer",
-        "Authorization: Bearer suczLIKWyfw0Ne6sBmW0UadXscpJ1zcHCkXvW73Fef+RQO6ojcOuV4G9nYeM+k1+Rj+AC7qEy9WuQ0FjwBvH819PXeQTmkzXCVu35xibdIy8HsH/KuE9LJFhZW+Lqdbny/EIRBsvx1SRNew8+OKJIAdB04t89/1O/w1cDnyilFU=",
+        "Authorization: Bearer " . LINE_CONFIG['LINE_CHANNEL_ACCESS_TOKEN'],
         "Content-Type: application/json"
     ];
 
@@ -233,12 +235,33 @@ function replyMessage($replyToken, $message, $quickReply = null) {
     ];
 
     $context = stream_context_create($options);
-    $response = @file_get_contents($url, false, $context);
-
-    // 錯誤處理
+    $response = file_get_contents($url, false, $context);
+    
     if ($response === FALSE) {
-        error_log("API 請求失敗：" . print_r($http_response_header, true));
-    } else {
-        error_log("回覆結果：" . $response);
+        throw new Exception("API 請求失敗：" . error_get_last()['message']);
     }
+    
+    $result = json_decode($response, true);
+    if (isset($result['message'])) {
+        throw new Exception("LINE API 錯誤：" . $result['message']);
+    }
+    
+    error_log("回覆成功：" . $response);
 }
+
+
+// 在檔案開頭加入
+if (!isset($_SERVER['HTTP_X_LINE_SIGNATURE'])) {
+    http_response_code(403);
+    exit;
+}
+
+// 驗證 LINE 的簽章
+$signature = $_SERVER['HTTP_X_LINE_SIGNATURE'];
+$body = file_get_contents('php://input');
+if (!hash_equals(base64_encode(hash_hmac('sha256', $body, LINE_CONFIG['LINE_CHANNEL_SECRET'], true)), $signature)) {
+    http_response_code(403);
+    exit;
+}
+
+$data = json_decode($body, true);
