@@ -105,12 +105,19 @@ function handleEvent($event) {
                             "type" => "bubble",
                             "body" => [
                                 "type" => "box",
-                                "layout" => "horizontal",
+                                "layout" => "vertical",
                                 "contents" => [
+                                    [
+                                        "type" => "image",
+                                        "url" => $imagePath,
+                                        "size" => "full",
+                                        "aspectMode" => "cover",
+                                        "aspectRatio" => "1:1",
+                                        "gravity" => "center"
+                                    ],
                                     [
                                         "type" => "box",
                                         "layout" => "vertical",
-                                        "flex" => 2,
                                         "contents" => [
                                             [
                                                 "type" => "text",
@@ -125,24 +132,11 @@ function handleEvent($event) {
                                                 "text" => $content,
                                                 "wrap" => true,
                                                 "margin" => "lg",
-                                                "size" => "md"
+                                                "size" => "md",
+                                                "color" => "#666666"
                                             ]
-                                        ]
-                                    ],
-                                    [
-                                        "type" => "box",
-                                        "layout" => "vertical",
-                                        "flex" => 1,
-                                        "contents" => [
-                                            [
-                                                "type" => "image",
-                                                "url" => $imagePath,
-                                                "size" => "full",
-                                                "aspectMode" => "cover",
-                                                "aspectRatio" => "1:1",
-                                                "gravity" => "center"
-                                            ]
-                                        ]
+                                        ],
+                                        "paddingAll" => "lg"
                                     ]
                                 ]
                             ],
