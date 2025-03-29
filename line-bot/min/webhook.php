@@ -105,7 +105,7 @@ function handleEvent($event) {
                                             "contents" => [
                                                 [
                                                     "type" => "image",
-                                                    "url" => "https://example.com/images/allfile.jpg",
+                                                    "url" => "/images/allfile.jpg",
                                                     "size" => "full",
                                                     "aspectMode" => "cover",
                                                     "aspectRatio" => "1:1",
