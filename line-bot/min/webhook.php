@@ -187,6 +187,85 @@ function handleEvent($event) {
                     return;
                 }
             }
+        } elseif (trim($messageText) == "溫馨提醒") {
+            $reminderMessage = [
+                "type" => "flex",
+                "altText" => "溫馨提醒",
+                "contents" => [
+                    "type" => "bubble",
+                    "body" => [
+                        "type" => "box",
+                        "layout" => "vertical",
+                        "contents" => [
+                            [
+                                "type" => "text",
+                                "text" => "溫馨提醒",
+                                "weight" => "bold",
+                                "size" => "xl",
+                                "color" => "#1DB446",
+                                "margin" => "md"
+                            ],
+                            [
+                                "type" => "box",
+                                "layout" => "vertical",
+                                "margin" => "lg",
+                                "spacing" => "sm",
+                                "contents" => [
+                                    [
+                                        "type" => "text",
+                                        "text" => "1. 拍攝時間約1.5～2小時，依照寶貝當天狀況而定喔",
+                                        "wrap" => true,
+                                        "size" => "sm"
+                                    ],
+                                    [
+                                        "type" => "text",
+                                        "text" => "2. 如果寶貝屬精力旺盛好動型，建議拍攝前先帶寶貝消耗一些體力，會讓拍攝過程更流暢些喔",
+                                        "wrap" => true,
+                                        "size" => "sm"
+                                    ],
+                                    [
+                                        "type" => "text",
+                                        "text" => "3. 拍攝日前1~2天內洗澡美容拍攝效果最佳喔",
+                                        "wrap" => true,
+                                        "size" => "sm"
+                                    ],
+                                    [
+                                        "type" => "text",
+                                        "text" => "4. 重點整理：以臉上毛髮不遮到眼睛為主",
+                                        "wrap" => true,
+                                        "size" => "sm"
+                                    ],
+                                    [
+                                        "type" => "text",
+                                        "text" => "5. 寶貝睡飽喝飽，脫光光到現場拍照即可，如要自備寶貝入鏡的衣服配件可帶來唷",
+                                        "wrap" => true,
+                                        "size" => "sm"
+                                    ],
+                                    [
+                                        "type" => "text",
+                                        "text" => "6. 可以提早5~10分鐘到攝影棚，讓寶貝有時間認識環境",
+                                        "wrap" => true,
+                                        "size" => "sm"
+                                    ],
+                                    [
+                                        "type" => "text",
+                                        "text" => "7. 準備一些毛寶貝習慣的玩偶、玩具、食物...等等",
+                                        "wrap" => true,
+                                        "size" => "sm"
+                                    ],
+                                    [
+                                        "type" => "text",
+                                        "text" => "8. 建議隨身攜帶個人衛生物品：飲水器、寵物梳、禮貌帶唷",
+                                        "wrap" => true,
+                                        "size" => "sm"
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+            replyMessage($event['replyToken'], $reminderMessage);
         } else {
             replyMessage($event['replyToken'], "請輸入「價目表」查看詳細資訊！");
         }
