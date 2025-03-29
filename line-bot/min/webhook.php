@@ -201,4 +201,3 @@ function replyMessage($replyToken, $message, $quickReply = null) {
         error_log("回覆結果：" . $response);
     }
 }
-?>
