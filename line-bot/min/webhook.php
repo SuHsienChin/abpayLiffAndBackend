@@ -1,5 +1,18 @@
 <?php
+// 載入環境變數
+$envFile = __DIR__ . '/.env';
+if (!file_exists($envFile)) {
+    error_log('找不到 .env 檔案');
+    exit;
+}
 
+$env = parse_ini_file($envFile);
+if ($env === false) {
+    error_log('無法讀取 .env 檔案，請檢查檔案權限');
+    exit;
+}
+
+define('LINE_CONFIG', $env);
 
 // 取得 LINE 傳送的請求資料
 $input = file_get_contents('php://input');
@@ -206,7 +219,7 @@ function generateQuickReply($priceList) {
 
 // 回覆用戶訊息
 // 將 Token 移至 .env 檔案中
-define('LINE_CONFIG', parse_ini_file(__DIR__ . '/.env'));
+
 
 function replyMessage($replyToken, $message, $quickReply = null) {
     $url = "https://api.line.me/v2/bot/message/reply";
