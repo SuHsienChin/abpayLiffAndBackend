@@ -171,6 +171,22 @@ function handleEvent($event) {
                     return;
                 }
             }
+        } 
+        // 處理預約請求
+        elseif (strpos($messageText, "預約") === 0) {
+            // 找出對應的方案
+            foreach ($priceList as $item) {
+                if ($messageText === "預約" . $item["name"]) {
+                    // 回覆預約表單和付款資訊
+                    $replyText = "確認訂購的話\n麻煩先幫我留個資料唷\n姓名：\n電話：\n地址：\n寵物品種：\n主人入鏡人數：\nEmail：\n拍攝地點：\n定金1500或全額付清 全額付清贈送修片檔3組\n\n銀行代號：013 國泰世華銀行\n帳號：699519441822\n戶名：羅敏明\n分行：東林口分行\n匯款完成後再麻煩跟我們說後五碼唷";
+                    
+                    replyMessage($event['replyToken'], [
+                        "type" => "text",
+                        "text" => $replyText
+                    ]);
+                    return;
+                }
+            }
         } else {
             replyMessage($event['replyToken'], "請輸入「價目表」查看詳細資訊！");
         }
