@@ -164,6 +164,7 @@ function generateQuickReply($priceList) {
 // 回覆用戶訊息
 function replyMessage($replyToken, $message, $quickReply = null) {
     global $env;
+    echo $env['LINE_CHANNEL_ACCESS_TOKEN'];
     $url = "https://api.line.me/v2/bot/message/reply";
     $headers = [
         "Authorization: Bearer " . $env['LINE_CHANNEL_ACCESS_TOKEN'],
