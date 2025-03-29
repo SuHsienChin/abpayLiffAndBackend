@@ -162,7 +162,7 @@ function generateQuickReply($priceList) {
 function replyMessage($replyToken, $message, $quickReply = null) {
     $url = "https://api.line.me/v2/bot/message/reply";
     $headers = [
-        "Authorization: Bearer /tawKQINYfBLEp75MXH+HMsQ1Hw/IT1UZAnC0nxge0clIvgoBjBUE1Tr+LIhIhIpfa9TfYYgx1pTClW8z1UYK/iALlqXv6NDXe7G5PsemziQxAuDFOGpyHHqxP0b51gMjkz8Kmo0jCULhNm7A4P4VAdB04t89/1O/w1cDnyilFU=",
+        "Authorization: Bearer suczLIKWyfw0Ne6sBmW0UadXscpJ1zcHCkXvW73Fef+RQO6ojcOuV4G9nYeM+k1+Rj+AC7qEy9WuQ0FjwBvH819PXeQTmkzXCVu35xibdIy8HsH/KuE9LJFhZW+Lqdbny/EIRBsvx1SRNew8+OKJIAdB04t89/1O/w1cDnyilFU=",
         "Content-Type: application/json"
     ];
 
