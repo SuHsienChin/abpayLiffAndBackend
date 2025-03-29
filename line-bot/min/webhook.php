@@ -1,7 +1,6 @@
 <?php
-// 載入 .env 檔案
-global $env;
-$env = parse_ini_file(__DIR__ . '/.env');
+// 載入 .env 檔案並定義為常數
+define('LINE_CONFIG', parse_ini_file(__DIR__ . '/.env'));
 
 
 // 取得 LINE 傳送的請求資料
@@ -165,11 +164,9 @@ function generateQuickReply($priceList) {
 
 // 回覆用戶訊息
 function replyMessage($replyToken, $message, $quickReply = null) {
-    global $env;
     $url = "https://api.line.me/v2/bot/message/reply";
     $headers = [
-        "Authorization: Bearer ". $env['LINE_CHANNEL_ACCESS_TOKEN'],
-        //"Authorization: Bearer suczLIKWyfw0Ne6sBmW0UadXscpJ1zcHCkXvW73Fef+RQO6ojcOuV4G9nYeM+k1+Rj+AC7qEy9WuQ0FjwBvH819PXeQTmkzXCVu35xibdIy8HsH/KuE9LJFhZW+Lqdbny/EIRBsvx1SRNew8+OKJIAdB04t89/1O/w1cDnyilFU=",
+        "Authorization: Bearer " . LINE_CONFIG['LINE_CHANNEL_ACCESS_TOKEN'],
         "Content-Type: application/json"
     ];
 
