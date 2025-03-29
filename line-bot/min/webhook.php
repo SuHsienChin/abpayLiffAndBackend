@@ -133,7 +133,25 @@ function handleEvent($event) {
                             ]
                         ];
                     } else {
-                        // 原有的其他方案處理邏輯
+                        // 根據不同方案顯示不同內容
+                        $content = [];
+                        $imagePath = "";
+                        
+                        switch($item["name"]) {
+                            case "毛孩親寫真":
+                                $content = "少張數的單拍方案\n僅限一隻毛孩拍攝\n2隻毛孩需兩個方案\nNT.600";
+                                $imagePath = "https://abpay.tw/line-bot/min/images/onepet.jpg";
+                                break;
+                            case "毛孩與你親子寫真":
+                                $content = "拍攝毛孩與家人之間的互動\n拍攝1-2組系列\nNT.1200";
+                                $imagePath = "https://abpay.tw/line-bot/min/images/famile_and_pet.jpg";
+                                break;
+                            case "毛孩BOOM起來":
+                                $content = "爆破系列拍攝\n拍攝詳情需了解討論\nNT.800";
+                                $imagePath = "https://abpay.tw/line-bot/min/images/boom.jpg";
+                                break;
+                        }
+
                         $flexMessage = [
                             "type" => "flex",
                             "altText" => $item["name"] . "詳細介紹",
@@ -141,28 +159,51 @@ function handleEvent($event) {
                                 "type" => "bubble",
                                 "body" => [
                                     "type" => "box",
-                                    "layout" => "vertical",
+                                    "layout" => "horizontal",
                                     "contents" => [
                                         [
-                                            "type" => "text",
-                                            "text" => $item["name"],
-                                            "weight" => "bold",
-                                            "size" => "xl",
-                                            "color" => "#1DB446"
+                                            "type" => "box",
+                                            "layout" => "vertical",
+                                            "flex" => 2,
+                                            "contents" => [
+                                                [
+                                                    "type" => "text",
+                                                    "text" => $item["name"],
+                                                    "weight" => "bold",
+                                                    "size" => "xl",
+                                                    "color" => "#1DB446",
+                                                    "wrap" => true
+                                                ],
+                                                [
+                                                    "type" => "text",
+                                                    "text" => $content,
+                                                    "wrap" => true,
+                                                    "margin" => "lg",
+                                                    "size" => "md"
+                                                ]
+                                            ]
                                         ],
                                         [
-                                            "type" => "text",
-                                            "text" => $item["price"],
-                                            "size" => "lg",
-                                            "weight" => "bold",
-                                            "margin" => "md"
-                                        ],
-                                        [
-                                            "type" => "text",
-                                            "text" => $item["description"],
-                                            "wrap" => true,
-                                            "margin" => "lg"
-                                        ],
+                                            "type" => "box",
+                                            "layout" => "vertical",
+                                            "flex" => 1,
+                                            "contents" => [
+                                                [
+                                                    "type" => "image",
+                                                    "url" => $imagePath,
+                                                    "size" => "full",
+                                                    "aspectMode" => "cover",
+                                                    "aspectRatio" => "1:1",
+                                                    "gravity" => "center"
+                                                ]
+                                            ]
+                                        ]
+                                    ]
+                                ],
+                                "footer" => [
+                                    "type" => "box",
+                                    "layout" => "vertical",
+                                    "contents" => [
                                         [
                                             "type" => "button",
                                             "style" => "primary",
@@ -170,8 +211,7 @@ function handleEvent($event) {
                                                 "type" => "message",
                                                 "label" => "立即預約",
                                                 "text" => "預約" . $item["name"]
-                                            ],
-                                            "margin" => "lg"
+                                            ]
                                         ]
                                     ]
                                 ]
