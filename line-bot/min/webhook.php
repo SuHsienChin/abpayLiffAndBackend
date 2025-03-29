@@ -1,19 +1,37 @@
 <?php
 
 // 載入環境變數
-$envFile = __DIR__ . '/.env';
-if (!file_exists($envFile)) {
-    error_log('找不到 .env 檔案');
-    exit;
+function loadEnv() {
+    $envPath = __DIR__ . '/.env';
+    if (file_exists($envPath)) {
+        $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($lines as $line) {
+            if (strpos(trim($line), '#') === 0) {
+                continue;
+            }
+            list($key, $value) = explode('=', $line, 2);
+            $_ENV[$key] = $value;
+        }
+    } else {
+        error_log("警告：未找到 .env 文件");
+        exit;
+    }
 }
 
-$env = parse_ini_file($envFile);
-if ($env === false) {
-    error_log('無法讀取 .env 檔案，請檢查檔案權限');
+// 初始化環境變數
+loadEnv();
+
+// 設定 LINE 配置
+define('LINE_CONFIG', [
+    'LINE_CHANNEL_ACCESS_TOKEN' => $_ENV['LINE_CHANNEL_ACCESS_TOKEN'] ?? '',
+    'LINE_CHANNEL_SECRET' => $_ENV['LINE_CHANNEL_SECRET'] ?? ''
+]);
+
+// 檢查必要的配置
+if (empty(LINE_CONFIG['LINE_CHANNEL_ACCESS_TOKEN']) || empty(LINE_CONFIG['LINE_CHANNEL_SECRET'])) {
+    error_log("錯誤：LINE 配置未設定完整");
     exit;
 }
-
-define('LINE_CONFIG', $env);
 
 // 取得 LINE 傳送的請求資料
 $input = file_get_contents('php://input');
