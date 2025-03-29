@@ -103,57 +103,73 @@ function handleEvent($event) {
                         "altText" => $item["name"] . "詳細介紹",
                         "contents" => [
                             "type" => "bubble",
+                            "hero" => [
+                                "type" => "image",
+                                "url" => $imagePath,
+                                "size" => "full",
+                                "aspectRatio" => "20:13",
+                                "aspectMode" => "cover",
+                                "action" => [
+                                    "type" => "uri",
+                                    "uri" => $imagePath
+                                ]
+                            ],
                             "body" => [
                                 "type" => "box",
                                 "layout" => "vertical",
+                                "spacing" => "md",
                                 "contents" => [
                                     [
-                                        "type" => "image",
-                                        "url" => $imagePath,
-                                        "size" => "full",
-                                        "aspectMode" => "cover",
-                                        "aspectRatio" => "1:1",
-                                        "gravity" => "center"
+                                        "type" => "text",
+                                        "text" => $item["name"],
+                                        "weight" => "bold",
+                                        "size" => "xl",
+                                        "color" => "#1DB446",
+                                        "wrap" => true
                                     ],
                                     [
                                         "type" => "box",
                                         "layout" => "vertical",
+                                        "margin" => "lg",
+                                        "spacing" => "sm",
                                         "contents" => [
                                             [
-                                                "type" => "text",
-                                                "text" => $item["name"],
-                                                "weight" => "bold",
-                                                "size" => "xl",
-                                                "color" => "#1DB446",
-                                                "wrap" => true
-                                            ],
-                                            [
-                                                "type" => "text",
-                                                "text" => $content,
-                                                "wrap" => true,
-                                                "margin" => "lg",
-                                                "size" => "md",
-                                                "color" => "#666666"
+                                                "type" => "box",
+                                                "layout" => "baseline",
+                                                "spacing" => "sm",
+                                                "contents" => [
+                                                    [
+                                                        "type" => "text",
+                                                        "text" => $content,
+                                                        "wrap" => true,
+                                                        "color" => "#666666",
+                                                        "size" => "md",
+                                                        "flex" => 5
+                                                    ]
+                                                ]
                                             ]
-                                        ],
-                                        "paddingAll" => "lg"
+                                        ]
                                     ]
                                 ]
                             ],
                             "footer" => [
                                 "type" => "box",
                                 "layout" => "vertical",
+                                "spacing" => "sm",
                                 "contents" => [
                                     [
                                         "type" => "button",
                                         "style" => "primary",
+                                        "color" => "#1DB446",
                                         "action" => [
                                             "type" => "message",
                                             "label" => "立即預約",
                                             "text" => "預約" . $item["name"]
-                                        ]
+                                        ],
+                                        "height" => "sm"
                                     ]
-                                ]
+                                ],
+                                "flex" => 0
                             ]
                         ]
                     ];
