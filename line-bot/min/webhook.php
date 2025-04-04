@@ -89,11 +89,11 @@ function handleEvent($event) {
                             $imagePath = "https://abpay.tw/line-bot/min/images/onepet.jpg";
                             break;
                         case "毛孩與你親子寫真":
-                            $content = "拍攝毛孩與家人之間的互動\n拍攝1-2組系列\nNT.1200";
+                            $content = "少張數單拍方案(限一隻毛孩)\nNT.1200\n加購項目:\n多加一隻毛孩加收500元\n多一位大人加收1000\n如需妝髮加收1200";
                             $imagePath = "https://abpay.tw/line-bot/min/images/famile_and_pet.jpg";
                             break;
                         case "毛孩BOOM起來":
-                            $content = "爆破系列拍攝\n拍攝詳情需了解discussion\nNT.800";
+                            $content = "爆破系列拍攝\n拍攝詳情需了解discussion\nNT.800\n多加一隻毛孩500元";
                             $imagePath = "https://abpay.tw/line-bot/min/images/boom.jpg";
                             break;
                     }
@@ -213,7 +213,7 @@ function handleEvent($event) {
                                 "contents" => [
                                     [
                                         "type" => "text",
-                                        "text" => "1. 拍攝時間約1.5～2小時，依照寶貝當天狀況而定喔",
+                                        "text" => "1. 拍攝時間約1.5～2小時，依照寶貝當天狀況而定喔\n2. 如果寶貝屬精力旺盛好動型，建議拍攝前先帶寶貝消耗一些體力，會讓拍攝過程更流暢些喔\n3. 拍攝日前1~2天內洗澡美容拍攝效果最佳喔\n4. 重點整理：以臉上毛髮不遮到眼睛為主\n5. 寶貝睡飽喝飽，脫光光到現場拍照即可，如要自備寶貝入鏡的衣服配件可帶來唷\n6. 可以提早5~10分鐘到攝影棚，讓寶貝有時間認識環境\n7. 準備一些毛寶貝習慣的玩偶、玩具、食物...等等\n8. 建議隨身攜帶個人衛生物品：飲水器、寵物梳、禮貌帶唷",
                                         "wrap" => true,
                                         "size" => "sm"
                                     ],
