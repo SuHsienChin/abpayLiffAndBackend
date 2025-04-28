@@ -64,6 +64,12 @@ require_once 'config.php';
     <!-- 以下是liff 要上線時需打開 -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
+    <!-- 將PHP常量傳遞給JavaScript -->
+    <script>
+        // 從PHP獲取LIFF_ID常量
+        const LIFF_ID = "<?php echo LIFF_ID; ?>";
+    </script>
+
     <script>
         function initializeLiff(myLiffId) {
             liff
