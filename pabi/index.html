@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帕比寵物攝影宜蘭店開幕</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+        header { background: #333; padding: 20px 0; text-align: center; color: white; }
+        #hero { background: url('https://via.placeholder.com/1200x800') no-repeat center center/cover; color: white; text-align: center; padding: 100px 20px; position: relative; }
+        section { padding: 20px; text-align: center; }
+        .container { max-width: 1200px; margin: auto; }
+        footer { background: #333; color: white; text-align: center; padding: 20px; font-size: 14px; }
+        button { background-color: #5cb85c; color: white; border: none; padding: 15px 30px; margin: 10px 0; cursor: pointer; font-size: 18px; border-radius: 5px; }
+        button:hover { background-color: #449d44; }
+        h1, h2 { color: #333; }
+        img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+        .features { display: flex; justify-content: space-around; flex-wrap: wrap; }
+        .feature { flex: 1; padding: 20px; min-width: 300px; }
+        .testimonial { background-color: #f9f9f9; padding: 50px 20px; }
+        .testimonial img { width: 100px; height: 100px; border-radius: 50%; margin: 20px auto; }
+        .bold { font-weight: bold; }
+        .animation { animation: fadeIn 2s; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+    <!-- Facebook Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n, arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', 'YOUR_PIXEL_ID_HERE'); // Insert your pixel ID here.
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID_HERE&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Facebook Pixel Code -->
+    <!-- Line Chat Plugin -->
+    <script>
+      window.onload = function() {
+        var liffId = "YOUR_LIFF_ID"; // Replace with your LIFF ID
+        liff.init({ liffId: liffId }, () => {
+          if (!liff.isLoggedIn()) {
+            liff.login();
+          }
+        }, err => console.error(err));
+      };
+    </script>
+</head>
+<body>
+    <header>
+        <h1>帕比寵物攝影宜蘭店</h1>
+        <p>專業寵物攝影，現在預約享特惠！</p>
+    </header>
+
+    <div id="hero" class="animation">
+        <h2>開幕特惠！全套只需 NT$5980</h2>
+        <p>專業級的寵物攝影服務，限時優惠，不容錯過！</p>
+        <button onclick="window.location.href='https://line.me/R/ti/p/%40khw1009s';">立即預約</button>
+    </div>
+
+    <section class="container features animation">
+        <div class="feature">
+            <h2>專業攝影</h2>
+            <img src="https://via.placeholder.com/400x300" alt="專業攝影">
+            <p>使用最先進的攝影設備，捕捉每一刻的完美細節。</p>
+        </div>
+        <div class="feature">
+            <h2>寵物友好</h2>
+            <img src="https://via.placeholder.com/400x300" alt="寵物友好">
+            <p>專業的寵物攝影師，創造一個安全舒適的環境，讓您的寵物放鬆。</p>
+        </div>
+        <div class="feature">
+            <h2>獨特風格</h2>
+            <img src="https://via.placeholder.com/400x300" alt="獨特風格">
+            <p>多種攝影風格選擇，滿足不同主人的需求和寵物的個性。</p>
+        </div>
+    </section>
+
+    <section class="testimonial container animation">
+        <h2>客戶推薦</h2>
+        <img src="https://via.placeholder.com/200" alt="客戶照片">
+        <p>“非常專業的服務，我的狗狗在鏡頭前從未這麼放鬆過！”</p>
+        <p class="bold">- 狗狗主人 張小姐</p>
+    </section>
+
+    <section class="contact container animation">
+        <h2>聯繫方式</h2>
+        <p>有任何問題，請透過以下方式聯繫我們：</p>
+        <p>電話: 0926805350</p>
+        <p>地址: 宜蘭縣宜蘭市慶和街1-1號2樓</p>
+        <button onclick="window.location.href='https://line.me/R/ti/p/%40khw1009s';">聯繫我們</button>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 帕比寵物攝影宜蘭店. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
+
