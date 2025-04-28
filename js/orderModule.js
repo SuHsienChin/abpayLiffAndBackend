@@ -1,80 +1,80 @@
 /**
- * 订单处理模块 - 包含所有与订单处理相关的功能
+ * 訂單處理模組 - 包含所有與訂單處理相關的功能
  */
 
-// 价格计算模块
+// 價格計算模組
 const PriceCalculator = {
     /**
-     * 计算单个商品的价格
-     * @param {number} gameRate - 商品单价
-     * @param {number} bonus - 奖励倍数
-     * @param {number} rateValue - 汇率值
-     * @param {number} count - 购买数量
-     * @param {string} customerCurrency - 客户币别
-     * @returns {number} - 计算后的价格
+     * 計算單個商品的價格
+     * @param {number} gameRate - 商品單價
+     * @param {number} bonus - 獎勵倍數
+     * @param {number} rateValue - 匯率值
+     * @param {number} count - 購買數量
+     * @param {string} customerCurrency - 客戶幣別
+     * @returns {number} - 計算後的價格
      */
     calculateItemPrice: function(gameRate, bonus, rateValue, count, customerCurrency) {
-        console.log('===== 价格计算开始 =====');
-        console.log('输入参数：');
-        console.log('- 商品单价(gameRate):', gameRate);
-        console.log('- 奖励倍数(bonus):', bonus);
-        console.log('- 汇率值(rateValue):', rateValue);
-        console.log('- 购买数量(count):', count);
-        console.log('- 客户币别(customerCurrency):', customerCurrency);
+        console.log('===== 價格計算開始 =====');
+        console.log('輸入參數：');
+        console.log('- 商品單價(gameRate):', gameRate);
+        console.log('- 獎勵倍數(bonus):', bonus);
+        console.log('- 匯率值(rateValue):', rateValue);
+        console.log('- 購買數量(count):', count);
+        console.log('- 客戶幣別(customerCurrency):', customerCurrency);
 
         let result;
         if (rateValue == 1) {
             const basePrice = gameRate * bonus * rateValue;
-            console.log('基础价格计算：', gameRate, '*', bonus, '*', rateValue, '=', basePrice);
+            console.log('基礎價格計算：', gameRate, '*', bonus, '*', rateValue, '=', basePrice);
             result = Math.ceil(basePrice) * count;
-            console.log('最终价格：', Math.ceil(basePrice), '*', count, '=', result);
+            console.log('最終價格：', Math.ceil(basePrice), '*', count, '=', result);
         } else {
             if (customerCurrency.includes('新')) {
                 const basePrice = gameRate * bonus / rateValue;
-                console.log('基础价格计算(新币)：', gameRate, '*', bonus, '/', rateValue, '=', basePrice);
+                console.log('基礎價格計算(新幣)：', gameRate, '*', bonus, '/', rateValue, '=', basePrice);
                 result = this.roundUp(basePrice, 1) * count;
-                console.log('最终价格：', this.roundUp(basePrice, 1), '*', count, '=', result);
+                console.log('最終價格：', this.roundUp(basePrice, 1), '*', count, '=', result);
             } else {
                 const basePrice = gameRate * bonus / rateValue;
-                console.log('基础价格计算：', gameRate, '*', bonus, '/', rateValue, '=', basePrice);
+                console.log('基礎價格計算：', gameRate, '*', bonus, '/', rateValue, '=', basePrice);
                 result = Math.ceil(basePrice) * count;
-                console.log('最终价格：', Math.ceil(basePrice), '*', count, '=', result);
+                console.log('最終價格：', Math.ceil(basePrice), '*', count, '=', result);
             }
         }
-        console.log('===== 价格计算结束 =====');
+        console.log('===== 價格計算結束 =====');
         return result;
     },
 
     /**
-     * 四舍五入到指定小数位
-     * @param {number} num - 要四舍五入的数字
-     * @param {number} decimal - 小数位数
-     * @returns {number} - 四舍五入后的结果
+     * 四捨五入到指定小數位
+     * @param {number} num - 要四捨五入的數字
+     * @param {number} decimal - 小數位數
+     * @returns {number} - 四捨五入後的結果
      */
     roundUp: function(num, decimal) {
         const result = Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
-        console.log(`四舍五入到${decimal}位小数：${num} → ${result}`);
+        console.log(`四捨五入到${decimal}位小數：${num} → ${result}`);
         return result;
     },
 
     /**
-     * 计算所有商品的价格并返回格式化的结果
-     * @returns {Object} - 包含商品格式、总价和币别的对象
+     * 計算所有商品的價格並返回格式化的結果
+     * @returns {Object} - 包含商品格式、總價和幣別的對象
      */
     calculateTotalPrice: function() {
-        // 设定rate汇率
+        // 設定rate匯率
         const rate = JSON.parse(sessionStorage.getItem('rate'));
 
-        // 获取下单游戏里的gameRate
+        // 獲取下單遊戲裡的gameRate
         const gameRate = JSON.parse(sessionStorage.getItem('gameRate'));
 
-        // 获取客人资料
+        // 獲取客人資料
         const customerData = JSON.parse(sessionStorage.getItem('customerData'));
 
-        // 获取客人的币别
+        // 獲取客人的幣別
         const customerCurrency = customerData.Currency;
 
-        // 依客人币别来比对汇率并获取汇率值
+        // 依客人幣別來比對匯率並獲取匯率值
         let rateValue = 0.000;
         $.each(rate, function(i, item) {
             if (item.includes(customerCurrency)) {
@@ -109,10 +109,10 @@ const PriceCalculator = {
     }
 };
 
-// 订单处理模块
+// 訂單處理模組
 const OrderProcessor = {
     /**
-     * 发送订单到服务器
+     * 發送訂單到伺服器
      */
     sendOrder: function() {
         try {
@@ -120,23 +120,23 @@ const OrderProcessor = {
             const params = this.createOrderParams(orderData);
             const params_json_data = this.createOrderJsonData(orderData);
 
-            // 记录用户的参数log
-            this.saveLogsToMysql('在传送订单到官方LINE之前的params_json_data', params_json_data);
+            // 記錄用戶的參數log
+            this.saveLogsToMysql('在傳送訂單到官方LINE之前的params_json_data', params_json_data);
 
-            // 传送订单内容到官方LINE
+            // 傳送訂單內容到官方LINE
             this.sendMessageToLineOfficial(params_json_data);
 
-            // 发送订单到API
+            // 發送訂單到API
             this.sendOrderToApi(orderData.UrlParametersString, params);
         } catch (e) {
-            alert('发送订单时发生错误，请洽小编\n' + e);
-            console.error('发送订单错误:', e);
+            alert('發送訂單時發生錯誤，請洽小編\n' + e);
+            console.error('發送訂單錯誤:', e);
         }
     },
 
     /**
-     * 准备订单数据
-     * @returns {Object} - 订单数据对象
+     * 準備訂單數據
+     * @returns {Object} - 訂單數據對象
      */
     prepareOrderData: function() {
         const item = String(JSON.parse(sessionStorage.getItem('gameItemSelectedValues')));
@@ -150,7 +150,7 @@ const OrderProcessor = {
         const gameName = sessionStorage.getItem('gameNameText');
         const gameItemsName = String(JSON.parse(sessionStorage.getItem('gameItemSelectedTexts')));
         
-        // 过滤游戏账号
+        // 過濾遊戲賬號
         let customerGameAccount = this.filterGameAccount(
             JSON.parse(sessionStorage.getItem('customerGameAccounts')), 
             sessionStorage.getItem('gameAccountSid')
@@ -159,7 +159,7 @@ const OrderProcessor = {
         const orderDateTime = sessionStorage.getItem('orderDateTime');
         const gameRemark = sessionStorage.getItem('gameRemark');
         
-        // 构建URL参数字符串
+        // 構建URL參數字符串
         const UrlParametersString = 'UserId=test02&Password=3345678&Customer=' + customer +
             '&GameAccount=' + account +
             '&Item=' + item +
@@ -184,9 +184,9 @@ const OrderProcessor = {
     },
 
     /**
-     * 创建订单参数
-     * @param {Object} orderData - 订单数据
-     * @returns {URLSearchParams} - 订单参数
+     * 創建訂單參數
+     * @param {Object} orderData - 訂單數據
+     * @returns {URLSearchParams} - 訂單參數
      */
     createOrderParams: function(orderData) {
         const params = new URLSearchParams();
@@ -211,23 +211,23 @@ const OrderProcessor = {
             params.append('gameAccountId', orderData.customerGameAccounts.Id);
             params.append('gameAccountSid', orderData.customerGameAccounts.Sid);
             params.append('customerSid', orderData.customerGameAccounts.CustomerId);
-            params.append('status', '订单处理中');
+            params.append('status', '訂單處理中');
             params.append('itemsMoney', orderData.itemMoney);
             params.append('sumMoney', orderData.sumMoney);
             params.append('orderDateTime', orderData.orderDateTime);
             params.append('gameRemark', orderData.gameRemark);
         } catch (e) {
-            alert('组参数发生错误，请洽小编\n' + e);
-            console.error('组参数错误:', e);
+            alert('組參數發生錯誤，請洽小編\n' + e);
+            console.error('組參數錯誤:', e);
         }
         
         return params;
     },
 
     /**
-     * 创建订单JSON数据
-     * @param {Object} orderData - 订单数据
-     * @returns {Object} - 订单JSON数据
+     * 創建訂單JSON數據
+     * @param {Object} orderData - 訂單數據
+     * @returns {Object} - 訂單JSON數據
      */
     createOrderJsonData: function(orderData) {
         return {
@@ -250,7 +250,7 @@ const OrderProcessor = {
             "gameAccountId": orderData.customerGameAccounts.Id,
             "gameAccountSid": orderData.customerGameAccounts.Sid,
             "customerSid": orderData.customerGameAccounts.CustomerId,
-            "status": "订单处理中",
+            "status": "訂單處理中",
             "itemsMoney": orderData.itemMoney,
             "sumMoney": orderData.sumMoney,
             "orderDateTime": orderData.orderDateTime,
@@ -259,9 +259,9 @@ const OrderProcessor = {
     },
 
     /**
-     * 发送订单到API
-     * @param {string} urlParams - URL参数字符串
-     * @param {URLSearchParams} params - 订单参数
+     * 發送訂單到API
+     * @param {string} urlParams - URL參數字符串
+     * @param {URLSearchParams} params - 訂單參數
      */
     sendOrderToApi: function(urlParams, params) {
         try {
@@ -276,100 +276,100 @@ const OrderProcessor = {
                         params.append('orderId', orderId);
                         OrderProcessor.insertOrderData(params);
 
-                        alert('下单成功');
+                        alert('下單成功');
 
                         //sessionStorage.clear();
                         window.location = "finishOrder.php?orderId=" + orderId;
                     } else {
-                        alert('下单发生错误，请洽小编');
+                        alert('下單發生錯誤，請洽小編');
                     }
                 })
                 .catch(function(error) {
                     console.error('Error fetching :', error);
                 });
         } catch (e) {
-            alert('API下单错误，请洽小编\n' + e);
-            console.error('API下单错误:', e);
+            alert('API下單錯誤，請洽小編\n' + e);
+            console.error('API下單錯誤:', e);
         }
     },
 
     /**
-     * 新增订单数据到数据库
-     * @param {URLSearchParams} params - 订单参数
+     * 新增訂單數據到數據庫
+     * @param {URLSearchParams} params - 訂單參數
      */
     insertOrderData: function(params) {
         axios.post('addOrderData.php', params)
             .then(function(response) {
-                console.log('数据新增成功', response.data);
+                console.log('數據新增成功', response.data);
                 console.log(response.data);
             })
             .catch(function(error) {
-                console.error('数据新增失败', error);
+                console.error('數據新增失敗', error);
             });
     },
 
     /**
-     * 传送订单内容到官方LINE
-     * @param {Object} params_json_data - 订单JSON数据
+     * 傳送訂單內容到官方LINE
+     * @param {Object} params_json_data - 訂單JSON數據
      */
     sendMessageToLineOfficial: function(params_json_data) {
         try {
             const jsonParams = params_json_data;
             const itemArr = PriceCalculator.calculateTotalPrice();
 
-            // 输出 JSON 对象
+            // 輸出 JSON 對象
             let txt = "";
-            txt += "【自动下单】\n";
-            txt += "客户编号: " + jsonParams.customerId + "\n";
-            txt += "下单时间: " + jsonParams.orderDateTime + "\n";
-            txt += "游戏名称: " + jsonParams.gameName + "\n";
+            txt += "【自動下單】\n";
+            txt += "客戶編號: " + jsonParams.customerId + "\n";
+            txt += "下單時間: " + jsonParams.orderDateTime + "\n";
+            txt += "遊戲名稱: " + jsonParams.gameName + "\n";
             txt += "登入方式: " + jsonParams.logintype + "\n";
-            txt += "游戏账号: " + jsonParams.acount + "\n";
-            txt += "游戏密码: " + jsonParams.password + "\n";
+            txt += "遊戲賬號: " + jsonParams.acount + "\n";
+            txt += "遊戲密碼: " + jsonParams.password + "\n";
             txt += "伺 服 器: " + jsonParams.serverName + "\n";
-            txt += "角色名称: " + jsonParams.gameAccountName + "\n";
+            txt += "角色名稱: " + jsonParams.gameAccountName + "\n";
             txt += "\n";
             txt += itemArr.gameitemSLabelText + '\n\n';
-            txt += '总计: $' + itemArr.sumMoney + "\n";
-            txt += "币别: " + itemArr.customerCurrency + '\n\n';
-            txt += "备注: \n" + jsonParams.gameRemark + '\n';
+            txt += '總計: $' + itemArr.sumMoney + "\n";
+            txt += "幣別: " + itemArr.customerCurrency + '\n\n';
+            txt += "備註: \n" + jsonParams.gameRemark + '\n';
 
             txt = txt.replace(/<br\s*[\/]?>/gi, "\n");
 
-            // 传送通知到官方LINE
+            // 傳送通知到官方LINE
             liff.sendMessages([{
                     type: "text",
                     text: txt,
                 }, ])
                 .then(() => {
-                    alert('订单内容传送到官方');
+                    alert('訂單內容傳送到官方');
                 })
                 .catch((err) => {
                     console.log("error", err);
-                    //alert('下单错误 请截图洽小编' + err);
+                    //alert('下單錯誤 請截圖洽小編' + err);
                 });
         } catch (e) {
-            alert('传送订单内容发生错误\n' + e);
-            console.error('传送订单内容错误:', e);
+            alert('傳送訂單內容發生錯誤\n' + e);
+            console.error('傳送訂單內容錯誤:', e);
         }
     },
 
     /**
-     * 过滤游戏账号
-     * @param {Array} json_data - 游戏账号数据
-     * @param {string} gameAccountSid - 游戏账号SID
-     * @returns {Array} - 过滤后的游戏账号
+     * 過濾遊戲賬號
+     * @param {Array} json_data - 遊戲賬號數據
+     * @param {string} gameAccountSid - 遊戲賬號SID
+     * @returns {Array} - 過濾後的遊戲賬號
      */
     filterGameAccount: function(json_data, gameAccountSid) {
-        // 找出 Sid 等于 gameAccountSid
+        // 找出 Sid 等於 gameAccountSid
         let result = json_data.filter(item => item.Sid == gameAccountSid);
         return result;
     },
 
     /**
-     * 把要记录的logs存到数据库里面
-     * @param {string} log_type - 日志类型
-     * @param {Object} params_json_data - 参数JSON数据
+     * 把要記錄的logs存到數據庫裡面
+     * @param {string} log_type - 日誌類型
+     * @param {Object} params_json_data - 參數JSON數據
      */
     saveLogsToMysql: function(log_type, params_json_data) {
         try {
@@ -378,23 +378,23 @@ const OrderProcessor = {
                     JSON: JSON.stringify(params_json_data)
                 })
                 .then(function(response) {
-                    console.log('成功存数据库 1>', response.data);
+                    console.log('成功存數據庫 1>', response.data);
                 })
                 .catch(function(error) {
                     console.log(error);
                 });
         } catch (e) {
-            alert('错误，请洽小编\n' + e);
-            console.error('保存日志错误:', e);
+            alert('錯誤，請洽小編\n' + e);
+            console.error('保存日誌錯誤:', e);
         }
     },
 
     /**
-     * 检查余额是否足够下单
-     * @param {number} sumMoney - 订单总额
+     * 檢查餘額是否足夠下單
+     * @param {number} sumMoney - 訂單總額
      */
     checkBalance: function(sumMoney) {
-        // 客人的余额
+        // 客人的餘額
         let customerBalance = JSON.parse(sessionStorage.getItem('customerData')).CurrentMoney;
 
         if (typeof customerBalance === "undefined") {
@@ -404,9 +404,9 @@ const OrderProcessor = {
             customerBalance = JSON.parse(sessionStorage.getItem('customerData')).CurrentMoney;
         }
 
-        // 订单总额大于客人余额不给下单
+        // 訂單總額大於客人餘額不給下單
         // if (sumMoney > customerBalance) {
-        //     alert('您的余额不足\n要自动下单\n请先至官方LINE\n找小编储值钱包哟');
+        //     alert('您的餘額不足\n要自動下單\n請先至官方LINE\n找小編儲值錢包哟');
         //     $('.btn').hide();
         //     sessionStorage.clear();
         //     window.location.href = 'https://liff.line.me/2000183731-BLmrAGPp';
@@ -414,56 +414,56 @@ const OrderProcessor = {
     }
 };
 
-// 工具函数模块
+// 工具函數模組
 const Utils = {
     /**
-     * 把URL的QueryString转换成JSON
-     * @param {string} queryString - 查询字符串
+     * 把URL的QueryString轉換成JSON
+     * @param {string} queryString - 查詢字符串
      * @returns {string} - JSON字符串
      */
     transferQueryStringToJSON: function(queryString) {
         // 使用 URLSearchParams 解析字符串
         const searchParams = new URLSearchParams(queryString);
 
-        // 将 URLSearchParams 转换为 JavaScript 对象
+        // 將 URLSearchParams 轉換為 JavaScript 對象
         const obj = {};
         searchParams.forEach(function(value, key) {
             obj[key] = value;
         });
 
-        // 将 JavaScript 对象转换为 JSON 字符串
+        // 將 JavaScript 對象轉換為 JSON 字符串
         const jsonString = JSON.stringify(obj);
         return jsonString;
     },
 
     /**
-     * 把一个新的参数加到JSON里面
-     * @param {string} value - 参数值
+     * 把一個新的參數加到JSON裡面
+     * @param {string} value - 參數值
      * @param {string} jsonString - JSON字符串
      * @returns {string} - 新的JSON字符串
      */
     addNewParameterToJson: function(value, jsonString) {
-        // 将 JSON 字符串解析为 JavaScript 对象
+        // 將 JSON 字符串解析為 JavaScript 對象
         const obj = JSON.parse(jsonString);
 
-        // 新增参数到 JavaScript 对象
+        // 新增參數到 JavaScript 對象
         obj.orderId = value;
 
-        // 再将 JavaScript 对象转换为 JSON 字符串
+        // 再將 JavaScript 對象轉換為 JSON 字符串
         const newJsonString = JSON.stringify(obj);
 
         return newJsonString;
     },
 
     /**
-     * 返回上一页
+     * 返回上一頁
      */
     goback: function() {
         window.location.href = 'https://liff.line.me/2000183731-BLmrAGPp';
     }
 };
 
-// LIFF模块
+// LIFF模組
 const LiffManager = {
     /**
      * 初始化LIFF
@@ -480,15 +480,15 @@ const LiffManager = {
             })
             .catch((err) => {
                 console.log(err);
-                console.log('启动失败。');
+                console.log('啟動失敗。');
             });
     },
 
     /**
-     * 初始化应用
+     * 初始化應用
      */
     initializeApp: function() {
-        console.log('启动成功。');
+        console.log('啟動成功。');
 
         liff.getProfile()
             .then(profile => {
@@ -501,7 +501,7 @@ const LiffManager = {
     }
 };
 
-// 导出模块
+// 導出模組
 window.PriceCalculator = PriceCalculator;
 window.OrderProcessor = OrderProcessor;
 window.Utils = Utils;
