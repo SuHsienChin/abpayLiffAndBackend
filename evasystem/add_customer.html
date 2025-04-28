@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>後台儲值</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <h2 class="text-center mb-4">新增客戶儲值</h2>
+        <form action="add_customer.php" method="POST" class="bg-white p-4 rounded shadow-sm">
+            <div class="mb-3">
+                <label for="name" class="form-label">姓名</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">電話</label>
+                <input type="text" class="form-control" id="phone" name="phone" required>
+            </div>
+            <div class="mb-3">
+                <label for="birthday" class="form-label">生日</label>
+                <input type="date" class="form-control" id="birthday" name="birthday">
+            </div>
+            <div class="mb-3">
+                <label for="line_id" class="form-label">LINE ID</label>
+                <input type="text" class="form-control" id="line_id" name="line_id">
+            </div>
+            <div class="mb-3">
+                <label for="amount" class="form-label">儲值金額 (台幣)</label>
+                <input type="number" class="form-control" id="amount" name="amount" step="0.01" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">儲值</button>
+        </form>
+    </div>
+</body>
+</html>

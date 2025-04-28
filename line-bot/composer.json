@@ -1,0 +1,6 @@
+{
+    "name": "root/line-bot",
+    "require": {
+        "linecorp/line-bot-sdk": "^9.8"
+    }
+}
