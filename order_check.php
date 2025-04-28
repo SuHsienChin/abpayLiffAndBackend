@@ -90,7 +90,7 @@
                 });
         }
 
-        $(function () {
+        $(function() {
             //使用 LIFF_ID 初始化 LIFF 應用
             initializeLiff('2000183731-BLmrAGPp');
 
@@ -111,9 +111,9 @@
 
         //取得rate匯率
         axios.get('getRate.php')
-            .then(function (response) {
+            .then(function(response) {
 
-                setTimeout(function () {
+                setTimeout(function() {
                     // 在這裡執行您的程式碼
                 }, 1000); // 2000 毫秒 = 2 秒
 
@@ -192,21 +192,41 @@
 
         //計算每個商品乘上數量後的價格
         function calculateMoney(gameRate, bouns, rateValue, count, customerCurrency) {
-            //console.log('gameRate=' + gameRate + 'bouns=' + bouns + 'rateValue=' + rateValue + 'count=' + count);
+            console.log('===== 價格計算開始 =====');
+            console.log('輸入參數：');
+            console.log('- 商品單價(gameRate):', gameRate);
+            console.log('- 獎勵倍數(bouns):', bouns);
+            console.log('- 匯率值(rateValue):', rateValue);
+            console.log('- 購買數量(count):', count);
+            console.log('- 客戶幣別(customerCurrency):', customerCurrency);
 
-            roundUp = function (num, decimal) {
-                return Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
+            roundUp = function(num, decimal) {
+                const result = Math.ceil((num + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
+                console.log(`四捨五入到${decimal}位小數：${num} → ${result}`);
+                return result;
             }
 
+            let result;
             if (rateValue == 1) {
-                return Math.ceil(gameRate * bouns * rateValue) * count;
+                const basePrice = gameRate * bouns * rateValue;
+                console.log('基礎價格計算：', gameRate, '*', bouns, '*', rateValue, '=', basePrice);
+                result = Math.ceil(basePrice) * count;
+                console.log('最終價格：', Math.ceil(basePrice), '*', count, '=', result);
             } else {
-
                 if (customerCurrency.includes('新')) {
-                    return roundUp(gameRate * bouns / rateValue, 1) * count;
+                    const basePrice = gameRate * bouns / rateValue;
+                    console.log('基礎價格計算(新幣)：', gameRate, '*', bouns, '/', rateValue, '=', basePrice);
+                    result = roundUp(basePrice, 1) * count;
+                    console.log('最終價格：', roundUp(basePrice, 1), '*', count, '=', result);
+                } else {
+                    const basePrice = gameRate * bouns / rateValue;
+                    console.log('基礎價格計算：', gameRate, '*', bouns, '/', rateValue, '=', basePrice);
+                    result = Math.ceil(basePrice) * count;
+                    console.log('最終價格：', Math.ceil(basePrice), '*', count, '=', result);
                 }
-                return Math.ceil(gameRate * bouns / rateValue) * count;
             }
+            console.log('===== 價格計算結束 =====');
+            return result;
         }
 
         // 以下為訂單送出時要做的事
@@ -321,7 +341,7 @@
 
             try {
                 axios.get('sendOrderUrlByCORS.php?' + UrlParametersString)
-                    .then(function (response) {
+                    .then(function(response) {
                         const resdata = response.data
                         let orderId = '';
                         console.log(resdata);
@@ -340,7 +360,7 @@
                             alert('下單發生錯誤，請洽小編');
                         }
                     })
-                    .catch(function (error) {
+                    .catch(function(error) {
                         console.error('Error fetching :', error);
                     });
             } catch (e) {
@@ -353,11 +373,11 @@
         function insertOrderData(params) {
 
             axios.post('addOrderData.php', params)
-                .then(function (response) {
+                .then(function(response) {
                     console.log('資料新增成功', response.data);
                     console.log(response.data);
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.error('資料新增失敗', error);
                 });
 
@@ -370,7 +390,7 @@
 
             // 將 URLSearchParams 轉換為 JavaScript 物件
             const obj = {};
-            searchParams.forEach(function (value, key) {
+            searchParams.forEach(function(value, key) {
                 obj[key] = value;
             });
 
@@ -426,9 +446,9 @@
 
                 //傳送通知到官方LINE
                 liff.sendMessages([{
-                    type: "text",
-                    text: txt,
-                },])
+                        type: "text",
+                        text: txt,
+                    }, ])
                     .then(() => {
                         alert('訂單內容傳送到官方');
                     })
@@ -459,7 +479,7 @@
 
             //依客人幣別來比對匯率並取得匯率值
             let rateValue = 0.000;
-            $.each(rate, function (i, item) {
+            $.each(rate, function(i, item) {
                 if (item.includes(customerCurrency)) {
                     rateValue = item.split(",")[2];
                 }
@@ -475,7 +495,7 @@
             let itemMoneyText = '';
 
 
-            $.each(gameItemSelectedValues, function (i, item) {
+            $.each(gameItemSelectedValues, function(i, item) {
                 itemMoney = calculateMoney(gameRate, gameItemBouns[i], rateValue, gameItemCounts[i], customerCurrency);
                 sumMoney += itemMoney;
                 gameitemSLabelText += (i + 1) + '. ' + gameItemSelectedTexts[i] + ' X ' + gameItemCounts[i] + ' = ' + itemMoney + '<br />';
@@ -533,13 +553,13 @@
         function saveLogsToMysql(log_type, params_json_data) {
             try {
                 axios.post('saveLogsToMysql.php', {
-                    type: log_type,
-                    JSON: JSON.stringify(params_json_data)
-                })
-                    .then(function (response) {
+                        type: log_type,
+                        JSON: JSON.stringify(params_json_data)
+                    })
+                    .then(function(response) {
                         console.log('成功存資料庫 1>', response.data);
                     })
-                    .catch(function (error) {
+                    .catch(function(error) {
                         console.log(error);
                     });
             } catch (e) {
@@ -551,15 +571,7 @@
         function goback() {
             window.location.href = 'https://liff.line.me/2000183731-BLmrAGPp';
         }
-
-    
-
-
-
-
     </script>
-
-
 </body>
 
 </html>
