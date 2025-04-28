@@ -190,7 +190,7 @@
         $(customData).hide();
     }
 
-    // 關閉訂單內容視窗
+
     $(document).ready(function () {
         // 使用事件代理绑定 click 事件
         $('.openbtn').on('click', 'button', function () {
