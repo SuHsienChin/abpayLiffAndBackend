@@ -7,7 +7,7 @@
     <title>確認下單</title>
     <!-- 引入Bootstrap 4的CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
-    <!-- 引入用户操作日志模块 -->
+    <!-- 引入使用者操作日誌模組 -->
     <script src="js/userActionLogger.js"></script>
 </head>
 
@@ -59,11 +59,11 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- 引入LINE LIFF SDK -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <!-- 引入订单处理模块 -->
+    <!-- 引入訂單處理模組 -->
     <script src="js/orderModule.js"></script>
 
     <script>
-        // 确认下单
+        // 確認下單
         function confirmOrder() {
             logUserAction('order_check', '確認下單');
             if (confirm("確認下單？")) {
@@ -71,24 +71,24 @@
             }
         }
 
-        // 页面加载完成后执行
+        // 頁面載入完成後執行
         $(function() {
-            // 初始化LIFF应用
+            // 初始化LIFF應用
             LiffManager.initializeLiff('2000183731-BLmrAGPp');
 
-            // 记录用户进入确认页面的操作
+            // 記錄使用者進入確認頁面的操作
             logUserAction('order_check', '進入確認頁面', {
                 gameItems: sessionStorage.getItem('gameItemSelectedTexts'),
                 sumMoney: sessionStorage.getItem('sumMoney')
             });
 
-            // 获取汇率和初始化订单数据
+            // 獲取匯率和初始化訂單資料
             initializeOrderData();
         });
 
-        // 初始化订单数据
+        // 初始化訂單資料
         function initializeOrderData() {
-            // 获取汇率数据
+            // 獲取匯率資料
             axios.get('getRate.php')
                 .then(function(response) {
                     const result = response.data.sort((a, b) => {
@@ -97,32 +97,32 @@
 
                     const orderDateTime = new Date().toLocaleString('en-ZA');
 
-                    // 保存汇率和订单时间到sessionStorage
+                    // 儲存匯率和訂單時間到sessionStorage
                     sessionStorage.setItem('rate', '');
                     sessionStorage.setItem('rate', JSON.stringify(result[4].Name.split(";;")));
                     sessionStorage.setItem('orderDateTime', orderDateTime);
 
-                    // 计算下单商品价格
+                    // 計算下單商品價格
                     const itemArr = PriceCalculator.calculateTotalPrice();
 
-                    // 保存商品价格信息到sessionStorage
+                    // 儲存商品價格資訊到sessionStorage
                     const itemMoneyText = itemArr.itemMoneyText.slice(0, -1);
                     sessionStorage.setItem('itemMoney', itemArr.itemMoneyText);
                     sessionStorage.setItem('sumMoney', itemArr.sumMoney + itemArr.customerCurrency);
 
-                    // 检查余额是否足够
+                    // 檢查餘額是否足夠
                     OrderProcessor.checkBalance(itemArr.sumMoney);
 
-                    // 更新页面显示
+                    // 更新頁面顯示
                     updateOrderDisplay(itemArr, orderDateTime);
 
-                    // 记录订单初始数据
+                    // 記錄訂單初始資料
                     logInitialOrderData(itemArr, orderDateTime);
                 })
                 .catch((error) => console.log(error));
         }
 
-        // 更新订单显示
+        // 更新訂單顯示
         function updateOrderDisplay(itemArr, orderDateTime) {
             $('#customerId').html(JSON.parse(sessionStorage.getItem('customerData')).Id);
             $('#orderDateTime').html(orderDateTime);
@@ -138,7 +138,7 @@
             $('#gameRemark').html(sessionStorage.getItem('gameRemark').replaceAll('\n', '</br>'));
         }
 
-        // 记录初始订单数据
+        // 記錄初始訂單資料
         function logInitialOrderData(itemArr, orderDateTime) {
             try {
                 const params_json_data = {
@@ -165,10 +165,10 @@
                     "gameRemark": sessionStorage.getItem('gameRemark').replaceAll('\n', '</br>')
                 };
 
-                // 记录用户的参数log
+                // 記錄使用者的參數log
                 saveLogsToMysql('在order_check.php一進入時的訂單內容', params_json_data);
             } catch (e) {
-                console.log('記錄初始訂單數據錯誤：\n' + e);
+                console.log('記錄初始訂單資料錯誤：\n' + e);
             }
         }
     </script>
