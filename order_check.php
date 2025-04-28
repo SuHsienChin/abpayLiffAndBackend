@@ -66,8 +66,10 @@ require_once 'config.php';
 
     <!-- 將PHP常量傳遞給JavaScript -->
     <script>
-        // 從PHP獲取LIFF_ID常量
+        // 從PHP獲取常量
         const LIFF_ID = "<?php echo LIFF_ID; ?>";
+        const API_USER_ID = "<?php echo API_USER_ID; ?>";
+        const API_PASSWORD = "<?php echo API_PASSWORD; ?>";
     </script>
 
     <script>
