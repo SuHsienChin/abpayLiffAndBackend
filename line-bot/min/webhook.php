@@ -255,7 +255,7 @@ function handleEvent($event) {
                                     ],
                                     [
                                         "type" => "text",
-                                        "text" => "A: 我們內外景都有喔外景拍攝我們全程牽繩拍攝 製",
+                                        "text" => "A: 我們內外景都有喔外景拍攝我們全程牽繩拍攝",
                                         "size" => "sm",
                                         "color" => "#666666",
                                         "wrap" => true,
