@@ -304,7 +304,7 @@ $(document).ready(function() {
         "autoWidth": false,
         "processing": true,
         "serverSide": true,
-        "ajax": "get_games.php",
+        "ajax": "get_switch_game_lists.php",
         "columns": [
             { 
                 "data": null,
