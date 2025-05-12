@@ -113,12 +113,17 @@ if (!isset($_SESSION['admin_id'])) {
                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-game-modal">
                                         <i class="fas fa-plus"></i> 新增遊戲
                                     </button>
+                                    <button class="btn btn-success" id="update-games">
+                                        <i class="fas fa-sync"></i> 更新遊戲列表
+                                    </button>
                                 </div>
                             </div>
                             <div class="card-body">
+                                <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; color: white; background-color: rgba(0, 0, 0, 0.5); padding: 10px; border-radius: 5px; z-index: 1000;">讀取中...</div>
                                 <table id="games-table" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
+                                            <th><input type="checkbox" id="select-all-header"></th>
                                             <th>遊戲ID</th>
                                             <th>遊戲名稱</th>
                                             <th>狀態</th>
@@ -129,6 +134,13 @@ if (!isset($_SESSION['admin_id'])) {
                                     <tbody>
                                     </tbody>
                                 </table>
+                                <div class="row mt-3">
+                                    <div class="col-md-12 text-right">
+                                        <button class="btn btn-primary" id="select-all">全選</button>
+                                        <button class="btn btn-default" id="deselect-all">全不選</button>
+                                        <button class="btn btn-info" id="update-selected">更新選取項目</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -222,6 +234,8 @@ if (!isset($_SESSION['admin_id'])) {
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
 <!-- AdminLTE App -->
 <script src="https://adminlte.io/themes/v3/dist/js/adminlte.js?v=3.2.0"></script>
+<!-- Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <!-- Page specific script -->
 <script>
 function editGame(Sid) {
@@ -267,6 +281,23 @@ function toggleGameStatus(gameId, newStatus) {
 $(document).ready(function() {
 
     $.fn.DataTable.ext.errMode = 'throw';
+    
+    // 設置全局攔截器
+    axios.interceptors.request.use(function (config) {
+        document.getElementById('loading').style.display = 'block'; // 顯示加載動畫
+        return config;
+    }, function (error) {
+        document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
+        return Promise.reject(error);
+    });
+
+    axios.interceptors.response.use(function (response) {
+        document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
+        return response;
+    }, function (error) {
+        document.getElementById('loading').style.display = 'none'; // 隱藏加載動畫
+        return Promise.reject(error);
+    });
 
     $('#games-table').DataTable({
         "responsive": true,
@@ -275,6 +306,13 @@ $(document).ready(function() {
         "serverSide": true,
         "ajax": "get_games.php",
         "columns": [
+            { 
+                "data": null,
+                "render": function(data, type, row) {
+                    return '<input type="checkbox" name="selectedItems" value="' + row.Sid + '" ' + (row.flag_value == 1 ? 'checked' : '') + '>';
+                },
+                "orderable": false
+            },
             { "data": "Sid" },
             { "data": "Name" },
             { "data": "flag" },
@@ -331,6 +369,64 @@ $(document).ready(function() {
                 alert('更新遊戲失敗：' + error);
             }
         });
+    });
+    
+    // 全選/全不選功能 - 表頭的全選框
+    $('#select-all-header').click(function() {
+        $('input[name="selectedItems"]').prop('checked', $(this).prop('checked'));
+    });
+    
+    // 全選按鈕
+    $('#select-all').click(function() {
+        $('input[name="selectedItems"]').prop('checked', true);
+        $('#select-all-header').prop('checked', true);
+    });
+
+    // 全不選按鈕
+    $('#deselect-all').click(function() {
+        $('input[name="selectedItems"]').prop('checked', false);
+        $('#select-all-header').prop('checked', false);
+    });
+
+    // 更新遊戲列表功能
+    $('#update-games').click(function() {
+        axios.get('../getGameList.php')
+            .then(function(response) {
+                // 向 PHP 後端發送請求更新資料庫
+                axios.post('../abpay/update_games.php', response.data)
+                    .then(function(response) {
+                        alert('遊戲列表已更新!');
+                        //重新讀取datatable
+                        $('#games-table').DataTable().ajax.reload();
+                    })
+                    .catch(function(error) {
+                        alert('更新遊戲列表時發生錯誤: ' + error);
+                    });
+            })
+            .catch(function(error) {
+                alert('無法獲取遊戲列表: ' + error);
+            });
+    });
+
+    // 更新選取項目功能
+    $('#update-selected').click(function() {
+        var selectedItemSids = [];
+        var selectedItemFlags = [];
+        $('input[name="selectedItems"]').each(function() {
+            var sid = $(this).val();
+            var flag = $(this).prop('checked') ? 1 : 0;
+            selectedItemSids.push(sid);
+            selectedItemFlags.push(flag);
+        });
+
+        axios.post('update_game_switches.php', { selectedSids: selectedItemSids, selectedFlags: selectedItemFlags })
+            .then(function(response) {
+                alert('選取項目已更新!');
+                $('#games-table').DataTable().ajax.reload();
+            })
+            .catch(function(error) {
+                alert('更新選取項目時發生錯誤: ' + error);
+            });
     });
 });
 </script>
