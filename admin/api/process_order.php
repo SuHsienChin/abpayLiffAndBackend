@@ -47,46 +47,47 @@ try {
                   . '&Item=' . urlencode($itemId) 
                   . '&Count=' . urlencode($itemCount);
 
-    //發送API請求
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $apiUrl);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    echo $apiUrl;
+    // //發送API請求
+    // $ch = curl_init();
+    // curl_setopt($ch, CURLOPT_URL, $apiUrl);
+    // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    // $response = curl_exec($ch);
+    // $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    // curl_close($ch);
 
-    if ($response === false) {
-        $error = curl_error($ch);
-        throw new Exception('API請求失敗：' . $error);
-    }
+    // if ($response === false) {
+    //     $error = curl_error($ch);
+    //     throw new Exception('API請求失敗：' . $error);
+    // }
 
-    if ($httpCode !== 200) {
-        throw new Exception('API返回異常狀態碼：' . $httpCode);
-    }
+    // if ($httpCode !== 200) {
+    //     throw new Exception('API返回異常狀態碼：' . $httpCode);
+    // }
 
-    $result = json_decode($response, true);
-    if ($result === null) {
-        throw new Exception('API返回數據格式錯誤');
-    }
+    // $result = json_decode($response, true);
+    // if ($result === null) {
+    //     throw new Exception('API返回數據格式錯誤');
+    // }
 
-    if (isset($result['error'])) {
-        $errorMessage = is_string($result['error']) ? $result['error'] : json_encode($result['error']);
-        throw new Exception('API返回錯誤：' . $errorMessage);
-    }
+    // if (isset($result['error'])) {
+    //     $errorMessage = is_string($result['error']) ? $result['error'] : json_encode($result['error']);
+    //     throw new Exception('API返回錯誤：' . $errorMessage);
+    // }
 
-    if (!isset($result['OrderId']) || !isset($result['Status'])) {
-        throw new Exception('API返回數據缺少必要欄位');
-    }
+    // if (!isset($result['OrderId']) || !isset($result['Status'])) {
+    //     throw new Exception('API返回數據缺少必要欄位');
+    // }
 
-    echo json_encode([
-        'success' => true,
-        'data' => [
-            'order_id' => $result['OrderId'],
-            'status' => $result['Status'],
-            'url' => $apiUrl,
-        ]
-    ]);
+    // echo json_encode([
+    //     'success' => true,
+    //     'data' => [
+    //         'order_id' => $result['OrderId'],
+    //         'status' => $result['Status'],
+    //         'url' => $apiUrl,
+    //     ]
+    // ]);
     
 } catch (Exception $e) {
     http_response_code(400);
