@@ -237,8 +237,8 @@ $(document).ready(function() {
                         if (row.length > 0) {
                             const item = {
                                 序號: row[0] || '',
-                                客編: row[1] || '',
-                                賽區未確認: row[2] || '',
+                                賽區未確認: row[1] || '',
+                                客編: row[2] || '',
                                 系統客編: row[3] || '',
                                 版本: row[4] || '',
                                 編號: row[5] || '',
@@ -312,6 +312,7 @@ $(document).ready(function() {
         }
         
         $('#data-table').DataTable({
+            "pageLength":'100',
             "responsive": true,
             "autoWidth": false,
             "language": {
