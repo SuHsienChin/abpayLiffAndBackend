@@ -372,19 +372,12 @@ $(document).ready(function() {
                     } else if (item.版本 === '戰略青鳥') {
                         gameSid = '344';
                     }
-                    const customer = customers.find((c, index) => {
-                        const match = c.customer_id === customerId ;
-                        return match;
-                    });
-        
-                    console.log('customerId', customerId);
-                    console.log('gameSid', gameSid);
-                    console.log('customer', customers[1].customer_id);
+                    const customer = customers.find(c => c.customer_id === customerId && c.game_sid === gameSid);
+                    
                     // 更新表格中的客戶資料單元格
                     const cell = $(`td[data-customer-id="${customerId}"]`);
                     
                     if (customer) {
-                        console.log('客戶',customer);
                         console.log('找到對應客戶資料');
                         cell.html(`
                             <div>
@@ -392,7 +385,7 @@ $(document).ready(function() {
                                 <strong>客戶ID:</strong> ${customer.customer_id}<br>
                                 <strong>SID:</strong> ${customer.customer_sid || '無'}<br>
                                 <strong>建立時間:</strong> ${customer.created_at || '無'}<br>
-                                <strong>版本:</strong> ${customer.game_sid === '7' ? '戰略版(Qoo)' : customer.game_sid === '344' ? '戰略版(青鳥)' : '未知版本'}
+                                <strong>版本:</strong> ${customer.game_sid === '7' ? '戰略Qoo' : customer.game_sid === '344' ? '戰略青鳥' : '未知版本'}
                             </div>
                         `);
                         cell.addClass('text-success');
