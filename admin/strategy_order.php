@@ -376,7 +376,7 @@ $(document).ready(function() {
         
                     console.log('customerId', customerId);
                     console.log('gameSid', gameSid);
-                    
+                    console.log('customer', customer[1].customer_id);
                     // 更新表格中的客戶資料單元格
                     const cell = $(`td[data-customer-id="${customerId}"]`);
                     
