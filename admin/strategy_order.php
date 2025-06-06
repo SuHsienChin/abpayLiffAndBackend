@@ -374,7 +374,6 @@ $(document).ready(function() {
                     }
                     const customer = customers.find((c, index) => {
                         const match = c.customer_id === customerId ;
-                        console.log(`查找过程 #${index}:`, c, '匹配结果:', match, '(比较: customer_id=' + c.customer_id + ' vs ' + customerId + ', game_sid=' + c.game_sid + ' vs ' + gameSid + ')');
                         return match;
                     });
         
@@ -385,6 +384,7 @@ $(document).ready(function() {
                     const cell = $(`td[data-customer-id="${customerId}"]`);
                     
                     if (customer) {
+                        console.log('客戶',customer);
                         console.log('找到對應客戶資料');
                         cell.html(`
                             <div>
