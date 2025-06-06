@@ -372,7 +372,7 @@ $(document).ready(function() {
                     } else if (item.版本 === '戰略青鳥') {
                         gameSid = '344';
                     }
-                    const customer = customers.find(c => c.customer_id === customerId);
+                    const customer = customers.find(c => c.customer_id === customerId && c.game_sid === gameSid);
                     
                     // 更新表格中的客戶資料單元格
                     const cell = $(`td[data-customer-id="${customerId}"]`);
