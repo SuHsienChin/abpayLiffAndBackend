@@ -367,12 +367,17 @@ $(document).ready(function() {
                 fileData.forEach(function(item) {
                     const customerId = item.系統客編;
                     let gameSid = '';
-                    if (item.版本 === '戰略版(Qoo)') {
+                    if (item.版本 === '戰略Qoo') {
                         gameSid = '7';
-                    } else if (item.版本 === '戰略版(青鳥)') {
+                    } else if (item.版本 === '戰略青鳥') {
                         gameSid = '344';
                     }
                     const customer = customers.find(c => c.customer_id === customerId && c.game_sid === gameSid);
+                    console.log('c', c);
+                    console.log('c.customer_i', c.customer_id);
+                    console.log('customerId', customerId);
+                    console.log('c.game_sid', c.game_sid);
+                    console.log('gameSid', gameSid);
                     
                     // 更新表格中的客戶資料單元格
                     const cell = $(`td[data-customer-id="${customerId}"]`);
