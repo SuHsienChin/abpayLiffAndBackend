@@ -372,7 +372,11 @@ $(document).ready(function() {
                     } else if (item.版本 === '戰略青鳥') {
                         gameSid = '344';
                     }
-                    const customer = customers.find(c => c.customer_id === customerId && c.game_sid === gameSid);
+                    const customer = customers.find((c, index) => {
+                        const match = c.customer_id === customerId && c.game_sid === gameSid;
+                        console.log(`查找过程 #${index}:`, c, '匹配结果:', match, '(比较: customer_id=' + c.customer_id + ' vs ' + customerId + ', game_sid=' + c.game_sid + ' vs ' + gameSid + ')');
+                        return match;
+                    });
         
                     console.log('customerId', customerId);
                     console.log('gameSid', gameSid);
