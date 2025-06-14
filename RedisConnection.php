@@ -64,7 +64,7 @@ class RedisConnection {
         }
     }
     
-    public function set($key, $value, $ttl = 3600) {
+    public function set($key, $value, $ttl = 60) {
         try {
             return $this->redis->set($key, $value, $ttl);
         } catch (Exception $e) {
