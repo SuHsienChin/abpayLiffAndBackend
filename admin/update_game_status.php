@@ -33,10 +33,10 @@ try {
         $result1 = $stmt1->execute();
         
         // 更新 games 表
-        $query2 = "UPDATE games SET flag = :flag, UpdateTime = NOW() WHERE Sid = :Sid";
+        $query2 = "UPDATE games SET flag = :flag, UpdateTime = NOW() WHERE id = :game_id";
         $stmt2 = $pdo->prepare($query2);
         $stmt2->bindValue(':flag', $status, PDO::PARAM_INT);
-        $stmt2->bindValue(':Sid', $game_id, PDO::PARAM_INT);
+        $stmt2->bindValue(':game_id', $game_id, PDO::PARAM_INT);
         $result2 = $stmt2->execute();
         
         // 提交事務
