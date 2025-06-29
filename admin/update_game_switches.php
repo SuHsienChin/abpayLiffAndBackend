@@ -22,7 +22,7 @@ try {
         $flag = $selectedFlags[$i];
         
         // 更新games表
-        $stmt = $pdo->prepare("UPDATE games SET flag = :flag WHERE id = :sid");
+        $stmt = $pdo->prepare("UPDATE games SET status = :flag WHERE id = :sid");
         $stmt->bindParam(':flag', $flag);
         $stmt->bindParam(':sid', $sid);
         $stmt->execute();
