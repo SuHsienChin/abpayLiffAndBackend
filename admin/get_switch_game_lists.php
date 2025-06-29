@@ -83,7 +83,7 @@ try {
             'Sid' => $row['Sid'],
             'Name' => $row['Name'],
             'flag' => $status,
-            'flag_value' => $row['Flag'],
+            'flag_value' => $row['Flag'], // 保持與 get_games.php 中的 flag_value 欄位一致
             'UpdateTime' => date('Y-m-d H:i:s', strtotime($row['UpdateTime'])),
             'actions' => $actions
         ];
