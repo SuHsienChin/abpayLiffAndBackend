@@ -75,9 +75,9 @@ try {
         }
     }
 
-    echo json_encode(['status' => 'success', 'message' => '成功更新遊戲列表', 'inserted' => $inserted_count]);
+    echo json_encode(['success' => true, 'message' => '成功更新遊戲列表', 'inserted' => $inserted_count]);
 } catch (PDOException $e) {
-    echo json_encode(['status' => 'error', 'message' => '更新失敗：' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => '更新失敗：' . $e->getMessage()]);
 } finally {
     // 關閉資料庫連接
     $pdo = null;

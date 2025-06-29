@@ -240,14 +240,14 @@ if (!isset($_SESSION['admin_id'])) {
 <script>
 function editGame(Sid) {
     $.ajax({
-        url: 'get_games.php?Sid=' + Sid,
+        url: 'get_switch_game_lists.php?Sid=' + Sid,
         dataType: 'json',
         success: function(response) {
             if (response && response.game) {
                 var game = response.game;
                 $('#edit-game-id').val(game.Sid);
                 $('#edit-game-name').val(game.Name);
-                $('#edit-game-status').val(game.flag_value || 0);
+                $('#edit-game-status').val(game.Flag || 0);
                 $('#edit-game-modal').modal('show');
             } else {
                 alert('無法獲取遊戲資訊');
@@ -333,6 +333,21 @@ $(document).ready(function() {
                 var newStatus = $(this).data('status');
                 toggleGameStatus(gameId, newStatus);
             });
+        },
+        "language": {
+            "processing": "處理中...",
+            "lengthMenu": "顯示 _MENU_ 項結果",
+            "zeroRecords": "沒有匹配結果",
+            "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
+            "infoEmpty": "顯示第 0 至 0 項結果，共 0 項",
+            "infoFiltered": "(從 _MAX_ 項結果過濾)",
+            "search": "搜尋:",
+            "paginate": {
+                "first": "首頁",
+                "previous": "上頁",
+                "next": "下頁",
+                "last": "末頁"
+            }
         }
     });
 
@@ -390,43 +405,51 @@ $(document).ready(function() {
 
     // 更新遊戲列表功能
     $('#update-games').click(function() {
-        axios.get('../getGameList.php')
-            .then(function(response) {
-                // 向 PHP 後端發送請求更新資料庫
-                axios.post('../abpay/update_games.php', response.data)
-                    .then(function(response) {
-                        alert('遊戲列表已更新!');
-                        //重新讀取datatable
-                        $('#games-table').DataTable().ajax.reload();
-                    })
-                    .catch(function(error) {
-                        alert('更新遊戲列表時發生錯誤: ' + error);
-                    });
-            })
-            .catch(function(error) {
-                alert('無法獲取遊戲列表: ' + error);
-            });
+        if (confirm('確定要更新遊戲列表嗎？這將從系統獲取最新的遊戲列表。')) {
+            axios.get('../getGameList.php')
+                .then(function(response) {
+                    // 向 PHP 後端發送請求更新資料庫
+                    axios.post('update_games.php', response.data)
+                        .then(function(response) {
+                            alert('遊戲列表已更新!');
+                            //重新讀取datatable
+                            $('#games-table').DataTable().ajax.reload();
+                        })
+                        .catch(function(error) {
+                            alert('更新遊戲列表時發生錯誤: ' + error);
+                        });
+                })
+                .catch(function(error) {
+                    alert('無法獲取遊戲列表: ' + error);
+                });
+        }
     });
 
     // 更新選取項目功能
     $('#update-selected').click(function() {
-        var selectedItemSids = [];
-        var selectedItemFlags = [];
-        $('input[name="selectedItems"]').each(function() {
-            var sid = $(this).val();
-            var flag = $(this).prop('checked') ? 1 : 0;
-            selectedItemSids.push(sid);
-            selectedItemFlags.push(flag);
-        });
-
-        axios.post('update_game_switches.php', { selectedSids: selectedItemSids, selectedFlags: selectedItemFlags })
-            .then(function(response) {
-                alert('選取項目已更新!');
-                $('#games-table').DataTable().ajax.reload();
-            })
-            .catch(function(error) {
-                alert('更新選取項目時發生錯誤: ' + error);
+        if (confirm('確定要更新所有選取的遊戲狀態嗎？')) {
+            var selectedItemSids = [];
+            var selectedItemFlags = [];
+            $('input[name="selectedItems"]').each(function() {
+                var sid = $(this).val();
+                var flag = $(this).prop('checked') ? 1 : 0;
+                selectedItemSids.push(sid);
+                selectedItemFlags.push(flag);
             });
+
+            axios.post('update_game_switches.php', { selectedSids: selectedItemSids, selectedFlags: selectedItemFlags })
+                .then(function(response) {
+                    if (response.data.success) {
+                        alert('選取項目已更新!');
+                    } else {
+                        alert('更新失敗: ' + (response.data.message || '未知錯誤'));
+                    }
+                    $('#games-table').DataTable().ajax.reload();
+                })
+                .catch(function(error) {
+                    alert('更新選取項目時發生錯誤: ' + error);
+                });
+        }
     });
 });
 </script>
