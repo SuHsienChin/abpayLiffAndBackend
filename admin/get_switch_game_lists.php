@@ -69,9 +69,9 @@ try {
     $data = [];
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         // 格式化狀態為可點擊按鈕
-        $status_text = $row['Flag'] ? '啟用' : '停用';
-        $status_class = $row['Flag'] ? 'success' : 'danger';
-        $new_status = $row['Flag'] ? 0 : 1;
+        $status_text = $row['flag'] ? '啟用' : '停用';
+        $status_class = $row['flag'] ? 'success' : 'danger';
+        $new_status = $row['flag'] ? 0 : 1;
         $status = '<button type="button" class="btn btn-sm btn-' . $status_class . ' toggle-status" data-id="' . $row['Sid'] . '" data-status="' . $new_status . '">' . $status_text . '</button>';
 
         // 格式化操作按鈕
