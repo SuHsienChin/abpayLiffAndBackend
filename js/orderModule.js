@@ -179,12 +179,93 @@ const OrderProcessor = {
             // 傳送訂單內容到官方LINE
             await this.sendMessageToLineOfficial(params_json_data);
 
-            // 發送訂單到API
-            await this.sendOrderToApi(orderData.UrlParametersString, params);
+            // 將訂單添加到 Redis 佇列，而不是直接發送到 API
+            await this.addToRedisQueue(orderData, params, params_json_data);
         } catch (e) {
             alert('發送訂單時發生錯誤，請洽小編\n' + e.message || e);
             console.error('發送訂單錯誤:', e);
         }
+    },
+    
+    /**
+     * 將訂單添加到 Redis 佇列
+     * @param {Object} orderData - 訂單數據
+     * @param {URLSearchParams} params - 訂單參數
+     * @param {Object} params_json_data - 訂單 JSON 數據
+     * @returns {Promise<void>}
+     */
+    addToRedisQueue: function(orderData, params, params_json_data) {
+        return new Promise((resolve, reject) => {
+            try {
+                // 生成唯一訂單 ID
+                const tempOrderId = 'temp_' + new Date().getTime() + '_' + Math.floor(Math.random() * 1000);
+                
+                // 構建要發送到佇列的數據
+                const queueData = {
+                    orderId: tempOrderId,
+                    orderData: {
+                        UrlParametersString: orderData.UrlParametersString,
+                        params: this.paramsToObject(params),
+                        params_json_data: params_json_data
+                    },
+                    timestamp: new Date().getTime()
+                };
+                
+                // 記錄佇列數據到日誌
+                this.saveLogsToMysql('添加訂單到Redis佇列', queueData);
+                
+                // 發送到 addToOrderQueue.php
+                const axiosConfig = {
+                    timeout: 10000, // 10秒超時
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                axios.post('addToOrderQueue.php', queueData, axiosConfig)
+                    .then(response => {
+                        console.log('訂單已添加到佇列:', response.data);
+                        
+                        if (response.data && response.data.status === 'success') {
+                            // 顯示成功消息
+                            alert('訂單已成功添加到處理佇列，訂單號: ' + response.data.orderId);
+                            
+                            // 將臨時訂單 ID 存儲到會話中
+                            sessionStorage.setItem('tempOrderId', response.data.orderId);
+                            
+                            // 跳轉到訂單完成頁面
+                            window.location = "finishOrder.php?orderId=" + encodeURIComponent(response.data.orderId) + "&queued=1";
+                            resolve();
+                        } else {
+                            const errorMsg = (response.data && response.data.message) ? response.data.message : '添加訂單到佇列失敗';
+                            alert(errorMsg);
+                            reject(new Error(errorMsg));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('添加訂單到佇列失敗:', error);
+                        alert('添加訂單到佇列失敗，請稍後重試');
+                        reject(error);
+                    });
+            } catch (e) {
+                console.error('添加訂單到佇列時發生錯誤:', e);
+                alert('添加訂單到佇列時發生錯誤: ' + (e.message || e));
+                reject(e);
+            }
+        });
+    },
+    
+    /**
+     * 將 URLSearchParams 轉換為普通對象
+     * @param {URLSearchParams} params - 訂單參數
+     * @returns {Object} - 轉換後的對象
+     */
+    paramsToObject: function(params) {
+        const result = {};
+        for (const [key, value] of params.entries()) {
+            result[key] = value;
+        }
+        return result;
     },
 
     /**
