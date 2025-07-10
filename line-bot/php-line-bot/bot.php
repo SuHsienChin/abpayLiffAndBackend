@@ -1,6 +1,6 @@
 <?php
 // 引入 Composer 自動載入的檔案
-require_once __DIR__ . '../vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 // 引入所有會用到的 SDK 類別
 use LINE\LINEBot;
