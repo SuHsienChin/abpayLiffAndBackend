@@ -63,12 +63,54 @@
     <script src="js/orderModule.js"></script>
 
     <script>
+        // 防止重複提交標記
+        let isSubmitting = false;
+        
         // 確認下單
-        function confirmOrder() {
+        async function confirmOrder() {
+            // 如果正在提交中，則直接返回
+            if (isSubmitting) {
+                console.log('訂單正在處理中，請勿重複提交');
+                alert('訂單正在處理中，請勿重複提交');
+                return;
+            }
+            
             logUserAction('order_check', '確認下單');
             if (confirm("確認下單？")) {
-                OrderProcessor.sendOrder();
+                // 設置提交標記為true
+                isSubmitting = true;
+                // 禁用所有按鈕，防止重複點擊
+                $('.btn').prop('disabled', true);
+                // 顯示處理中的提示
+                const confirmBtn = $('.btn-success');
+                const originalText = confirmBtn.text();
+                confirmBtn.text('處理中...');
+                // 等待2秒，讓使用者看到處理中效果
+                await sleep(2000);
+                try {
+                    await OrderProcessor.sendOrder();
+                } catch (error) {
+                    console.error('訂單提交過程中發生錯誤:', error);
+                    alert('訂單提交過程中發生錯誤，請稍後再試');
+                } finally {
+                    setTimeout(() => {
+                        isSubmitting = false;
+                        // 恢復按鈕文字
+                        confirmBtn.text(originalText);
+                        // 啟用所有按鈕
+                        $('.btn').prop('disabled', false);
+                    }, 3000); // 延遲3秒重置，防止快速重複點擊
+                }
             }
+        }
+
+        /**
+         * 等待指定毫秒
+         * @param {number} ms 毫秒
+         * @returns {Promise<void>}
+         */
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
         }
 
         // 頁面載入完成後執行
@@ -166,7 +208,7 @@
                 };
 
                 // 記錄使用者的參數log
-                saveLogsToMysql('在order_check.php一進入時的訂單內容', params_json_data);
+                OrderProcessor.saveLogsToMysql('在order_check.php一進入時的訂單內容', params_json_data);
             } catch (e) {
                 console.log('記錄初始訂單資料錯誤：\n' + e);
             }
