@@ -85,8 +85,6 @@
                 const confirmBtn = $('.btn-success');
                 const originalText = confirmBtn.text();
                 confirmBtn.text('處理中...');
-                // 等待2秒，讓使用者看到處理中效果
-                await sleep(2000);
                 try {
                     await OrderProcessor.sendOrder();
                 } catch (error) {
@@ -96,21 +94,12 @@
                     setTimeout(() => {
                         isSubmitting = false;
                         // 恢復按鈕文字
-                        confirmBtn.text(originalText);
+                        //confirmBtn.text(originalText);
                         // 啟用所有按鈕
-                        $('.btn').prop('disabled', false);
-                    }, 3000); // 延遲3秒重置，防止快速重複點擊
+                        //$('.btn').prop('disabled', false);
+                    }, 5000); // 延遲3秒重置，防止快速重複點擊
                 }
             }
-        }
-
-        /**
-         * 等待指定毫秒
-         * @param {number} ms 毫秒
-         * @returns {Promise<void>}
-         */
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
         }
 
         // 頁面載入完成後執行

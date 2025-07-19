@@ -1,0 +1,27 @@
+============ New Request ============
+Time: 2025-07-11 17:05:21
+Method: POST
+URI: /line-bot/php-line-bot/bot.php
+From IP: 147.92.149.167
+Headers: {"host":"abpay.tw","x-line-signature":"XnVaffe7ZEhe7GDHB41gvKZAun+0TFDhnqTS5ESeCEo=","content-type":"application\/json; charset=utf-8","content-length":"557","user-agent":"LineBotWebhook\/2.0"}
+Raw Body: {"destination":"Uc382f0354dfc85e1bd252dce67eebb9f","events":[{"type":"message","message":{"type":"text","id":"569455984981573752","quoteToken":"g7RVP--PQAr6NSLDtUn7Rpz3NVI23Up9TLIoewkv6NXNZnKlKkLpxxIe-fMs1VPj4vLI27YLq8A0ASRi1MEFt5hznBT6aW_4k8XGIRmmKcf-uqh172ho3Vof9jjUyh9OawHk38u6R1R-j4VW39dPMQ","text":"1"},"webhookEventId":"01JZX75QKEDSFEJH0853J9RRQA","deliveryContext":{"isRedelivery":false},"timestamp":1752253521012,"source":{"type":"user","userId":"U40f4fb5c0d7f98042f65533203fbefbc"},"replyToken":"01413e765cfa4683a372ef0322fffb0e","mode":"active"}]}
+-------------------------------------
+
+============ New Request ============
+Time: 2025-07-11 19:30:32
+Method: POST
+URI: /line-bot/php-line-bot/bot.php
+From IP: 147.92.149.168
+Headers: {"host":"abpay.tw","x-line-signature":"CrYYRi7N5ZD5E8NLHlWy4Zbxaq5hopg2O2EjMeWDMEg=","content-type":"application\/json; charset=utf-8","content-length":"327","user-agent":"LineBotWebhook\/2.0"}
+Raw Body: {"destination":"Uc382f0354dfc85e1bd252dce67eebb9f","events":[{"type":"join","webhookEventId":"01JZXFFJ09D43XCSDB7TM8WHBY","deliveryContext":{"isRedelivery":false},"timestamp":1752262231571,"source":{"type":"group","groupId":"C66aab04aa906394cdec3ba3fc009e8d8"},"replyToken":"e038490e946e48088767375e332c316e","mode":"active"}]}
+-------------------------------------
+
+============ New Request ============
+Time: 2025-07-11 19:30:32
+Method: POST
+URI: /line-bot/php-line-bot/bot.php
+From IP: 147.92.149.168
+Headers: {"host":"abpay.tw","x-line-signature":"zH2TUa0oJ4ToYLKuNKHpHNqwiMALd9H361g9HNPebqw=","content-type":"application\/json; charset=utf-8","content-length":"280","user-agent":"LineBotWebhook\/2.0"}
+Raw Body: {"destination":"Uc382f0354dfc85e1bd252dce67eebb9f","events":[{"type":"leave","webhookEventId":"01JZXFFJA8AAW5QT1KHD5PVBS0","deliveryContext":{"isRedelivery":false},"timestamp":1752262232153,"source":{"type":"group","groupId":"C66aab04aa906394cdec3ba3fc009e8d8"},"mode":"active"}]}
+-------------------------------------
+
