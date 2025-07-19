@@ -149,7 +149,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/parser/test/EventRequestParserTest.php"><a href="files/src-parser-test-eventrequestparsertest.html"><abbr title="src/parser/test/EventRequestParserTest.php">EventRequestParserTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">31</span>
+    <span class="phpdocumentor-element-found-in__line">33</span>
 
     </aside>
 
@@ -172,14 +172,14 @@
                     <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a href="classes/LINE-Parser-Tests-EventRequestParserTest.html#property_json">$json</a>
     <span>
-                        &nbsp;: mixed            </span>
+                        &nbsp;: string            </span>
 </dt>
 <dd></dd>
 
                 <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a href="classes/LINE-Parser-Tests-EventRequestParserTest.html#method_testParseEventRequest">testParseEventRequest()</a>
     <span>
-                                &nbsp;: mixed    </span>
+                                &nbsp;: void    </span>
 </dt>
 <dd></dd>
 
@@ -218,14 +218,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/parser/test/EventRequestParserTest.php"><a href="files/src-parser-test-eventrequestparsertest.html"><abbr title="src/parser/test/EventRequestParserTest.php">EventRequestParserTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">33</span>
+    <span class="phpdocumentor-element-found-in__line">35</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">string</span>
     <span class="phpdocumentor-signature__name">$json</span>
      = <span class="phpdocumentor-signature__default-value">&lt;&lt;&lt;JSON
 {
@@ -1122,12 +1122,66 @@
     &quot;module&quot;: {
       &quot;type&quot;: &quot;detached&quot;,
       &quot;botId&quot;: &quot;botid&quot;,
-      &quot;reason&quot;: &quot;bot deleted&quot;
+      &quot;reason&quot;: &quot;bot_deleted&quot;
     },
     &quot;webhookEventId&quot;: &quot;testwebhookeventid&quot;,
     &quot;deliveryContext&quot;: {
       &quot;isRedelivery&quot;: false
     }
+  },
+  {
+    &quot;type&quot;: &quot;membership&quot;,
+    &quot;timestamp&quot;: 12345678901234,
+    &quot;mode&quot;: &quot;active&quot;,
+    &quot;source&quot;: {
+      &quot;type&quot;: &quot;user&quot;,
+      &quot;userId&quot;: &quot;userid&quot;
+    },
+    &quot;membership&quot;: {
+      &quot;type&quot;: &quot;joined&quot;,
+      &quot;membershipId&quot;: 1234567890
+    },
+    &quot;webhookEventId&quot;: &quot;testwebhookeventid&quot;,
+    &quot;deliveryContext&quot;: {
+      &quot;isRedelivery&quot;: false
+    },
+    &quot;replyToken&quot;: &quot;replytoken&quot;
+  },
+  {
+    &quot;type&quot;: &quot;membership&quot;,
+    &quot;timestamp&quot;: 12345678901234,
+    &quot;mode&quot;: &quot;active&quot;,
+    &quot;source&quot;: {
+      &quot;type&quot;: &quot;user&quot;,
+      &quot;userId&quot;: &quot;userid&quot;
+    },
+    &quot;membership&quot;: {
+      &quot;type&quot;: &quot;left&quot;,
+      &quot;membershipId&quot;: 1234567890
+    },
+    &quot;webhookEventId&quot;: &quot;testwebhookeventid&quot;,
+    &quot;deliveryContext&quot;: {
+      &quot;isRedelivery&quot;: false
+    },
+    &quot;replyToken&quot;: &quot;replytoken&quot;  
+  },
+  {
+    &quot;type&quot;: &quot;membership&quot;,
+    &quot;timestamp&quot;: 12345678901234,
+    &quot;mode&quot;: &quot;active&quot;,
+    &quot;source&quot;: {
+      &quot;type&quot;: &quot;user&quot;,
+      &quot;userId&quot;: &quot;userid&quot;
+    },
+    &quot;membership&quot;: {
+      &quot;type&quot;: &quot;renewed&quot;,
+      &quot;membershipId&quot;: 1234567890
+    },
+    &quot;webhookEventId&quot;: &quot;testwebhookeventid&quot;,
+    &quot;deliveryContext&quot;: {
+      &quot;isRedelivery&quot;: false
+    },
+    &quot;replyToken&quot;: &quot;replytoken&quot;  
   }
  ]
 }
@@ -1161,14 +1215,14 @@ JSON
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/parser/test/EventRequestParserTest.php"><a href="files/src-parser-test-eventrequestparsertest.html"><abbr title="src/parser/test/EventRequestParserTest.php">EventRequestParserTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">944</span>
+    <span class="phpdocumentor-element-found-in__line">1001</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">testParseEventRequest</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">testParseEventRequest</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     
     
@@ -1202,10 +1256,18 @@ JSON
                                                             
                                              
                                     </dd>
+                            <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">throws</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><abbr title="\JsonException">JsonException</abbr></span>
+                                                            
+                                             
+                                    </dd>
                         </dl>
 
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-    <span class="phpdocumentor-signature__response_type">mixed</span>
+    <span class="phpdocumentor-signature__response_type">void</span>
             &mdash;
         
     
@@ -1223,7 +1285,7 @@ JSON
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/parser/test/EventRequestParserTest.php"><a href="files/src-parser-test-eventrequestparsertest.html"><abbr title="src/parser/test/EventRequestParserTest.php">EventRequestParserTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1715</span>
+    <span class="phpdocumentor-element-found-in__line">1845</span>
 
     </aside>
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9aaa62087622cedb8def293457c4fa42",
+    "content-hash": "b21b3f2144f1299d6fd87eec8c44e49d",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -321,16 +321,16 @@
         },
         {
             "name": "linecorp/line-bot-sdk",
-            "version": "9.8.0",
+            "version": "v11.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/line/line-bot-sdk-php.git",
-                "reference": "c85ea46c4812ecd532f5568da2294eb9762840cb"
+                "reference": "1efb37062c51e41f178fe739cf514574d5f15a4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/line/line-bot-sdk-php/zipball/c85ea46c4812ecd532f5568da2294eb9762840cb",
-                "reference": "c85ea46c4812ecd532f5568da2294eb9762840cb",
+                "url": "https://api.github.com/repos/line/line-bot-sdk-php/zipball/1efb37062c51e41f178fe739cf514574d5f15a4f",
+                "reference": "1efb37062c51e41f178fe739cf514574d5f15a4f",
                 "shasum": ""
             },
             "require": {
@@ -343,25 +343,25 @@
                 "guzzlehttp/psr7": "^1.7 || ^2.0",
                 "orchestra/testbench": "*",
                 "phpmd/phpmd": "2.15.0",
-                "phpstan/phpstan": "^1.10",
+                "phpstan/phpstan": "^2.0",
                 "phpunit/phpunit": "^10.2",
-                "squizlabs/php_codesniffer": "3.9.1"
+                "squizlabs/php_codesniffer": "3.12.2"
             },
             "type": "library",
             "extra": {
                 "laravel": {
+                    "aliases": {
+                        "LINELiffApi": "LINE\\Laravel\\Facades\\LINELiffApi",
+                        "LINEInsightApi": "LINE\\Laravel\\Facades\\LINEInsightApi",
+                        "LINEMessagingApi": "LINE\\Laravel\\Facades\\LINEMessagingApi",
+                        "LINEMessagingBlobApi": "LINE\\Laravel\\Facades\\LINEMessagingBlobApi",
+                        "LINEManageAudienceApi": "LINE\\Laravel\\Facades\\LINEManageAudienceApi",
+                        "LINEChannelAccessTokenApi": "LINE\\Laravel\\Facades\\LINEChannelAccessTokenApi",
+                        "LINEManageAudienceBlobApi": "LINE\\Laravel\\Facades\\LINEManageAudienceBlobApi"
+                    },
                     "providers": [
                         "LINE\\Laravel\\LINEBotServiceProvider"
-                    ],
-                    "aliases": {
-                        "LINEChannelAccessTokenApi": "LINE\\Laravel\\Facades\\LINEChannelAccessTokenApi",
-                        "LINEInsightApi": "LINE\\Laravel\\Facades\\LINEInsightApi",
-                        "LINELiffApi": "LINE\\Laravel\\Facades\\LINELiffApi",
-                        "LINEManageAudienceApi": "LINE\\Laravel\\Facades\\LINEManageAudienceApi",
-                        "LINEManageAudienceBlobApi": "LINE\\Laravel\\Facades\\LINEManageAudienceBlobApi",
-                        "LINEMessagingApi": "LINE\\Laravel\\Facades\\LINEMessagingApi",
-                        "LINEMessagingBlobApi": "LINE\\Laravel\\Facades\\LINEMessagingBlobApi"
-                    }
+                    ]
                 }
             },
             "autoload": {
@@ -410,7 +410,11 @@
                 "line",
                 "sdk"
             ],
-            "time": "2024-04-03T05:17:39+00:00"
+            "support": {
+                "issues": "https://github.com/line/line-bot-sdk-php/issues",
+                "source": "https://github.com/line/line-bot-sdk-php/tree/v11.1.1"
+            },
+            "time": "2025-04-24T11:20:52+00:00"
         },
         {
             "name": "psr/http-client",
@@ -676,5 +680,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.6.0"
 }

@@ -20,22 +20,3 @@ function logUserAction(page, action, data = null) {
         console.error('記錄行為時發生錯誤:', e);
     }
 }
-
-/**
- * 將使用者操作紀錄存入 MySQL
- * @param {string} action 操作描述
- * @param {object} data 相關資料
- */
-function saveLogsToMysql(action, data) {
-    axios.post('log_user_action.php', {
-        action: action,
-        data: data
-    })
-    .then(function(response) {
-        // 可以根據需要處理回應
-        // console.log('Log saved:', response.data);
-    })
-    .catch(function(error) {
-        console.error('Log 儲存失敗:', error);
-    });
-}
