@@ -10,7 +10,7 @@ class LogManager {
       };
   
       console.log(logData);
-      axios.get('saveLogsToMysql.php', logData, {
+      axios.post('saveLogsToMysql.php', logData, {
         auth: this.auth
       })
       .then(response => {

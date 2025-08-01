@@ -120,8 +120,12 @@ const OrderProcessor = {
             const params = this.createOrderParams(orderData);
             const params_json_data = this.createOrderJsonData(orderData);
 
-            // 記錄用戶的參數log
-            this.saveLogsToMysql('在傳送訂單到官方LINE之前的params_json_data', params_json_data);
+            // 構建完整的 API URL
+            const apiBaseUrl = 'http://www.adp.idv.tw/api/Order?';
+            const fullApiUrl = apiBaseUrl + orderData.UrlParametersString;
+
+            // 記錄用戶的參數log，包含完整的 API URL
+            this.saveLogsToMysql('在傳送訂單到官方LINE之前的params_json_data', params_json_data, fullApiUrl);
 
             // 傳送訂單內容到官方LINE
             this.sendMessageToLineOfficial(params_json_data);
@@ -129,8 +133,9 @@ const OrderProcessor = {
             // 發送訂單到API
             this.sendOrderToApi(orderData.UrlParametersString, params);
             console.log('發送訂單到API完成');
-            console.log(orderData.UrlParametersString);
-            console.log(params);
+            console.log('API URL:', fullApiUrl);
+            console.log('URL Parameters:', orderData.UrlParametersString);
+            console.log('Params:', params);
         } catch (e) {
             alert('發送訂單時發生錯誤，請洽小編\n' + e);
             console.error('發送訂單錯誤:', e);
@@ -401,12 +406,23 @@ const OrderProcessor = {
             // 記錄最終的 URL 參數
             console.log('發送訂單到 API，參數:', urlParams);
             
+            // 構建完整的 API URL
+            const apiBaseUrl = 'http://www.adp.idv.tw/api/Order?';
+            const fullApiUrl = apiBaseUrl + urlParams;
+            
+            // 記錄 API 請求日誌
+            OrderProcessor.saveLogsToMysql('發送訂單到 API 的請求', { urlParams: urlParams }, fullApiUrl);
+            
             axios.get('sendOrderUrlByCORS.php?' + urlParams)
                 .then(function(response) {
                     const resdata = response.data;
                     let orderId = '';
                     console.log(resdata);
                     console.log(resdata.Status);
+                    
+                    // 記錄 API 響應日誌
+                    OrderProcessor.saveLogsToMysql('API 響應結果', resdata, fullApiUrl);
+                    
                     if (resdata.Status == '1') {
                         orderId = resdata.OrderId;
                         params.append('orderId', orderId);
@@ -516,13 +532,22 @@ const OrderProcessor = {
      * 把要記錄的logs存到數據庫裡面
      * @param {string} log_type - 日誌類型
      * @param {Object} params_json_data - 參數JSON數據
+     * @param {string} api_url - API URL (可選)
      */
-    saveLogsToMysql: function(log_type, params_json_data) {
+    saveLogsToMysql: function(log_type, params_json_data, api_url) {
         try {
-            axios.post('saveLogsToMysql.php', {
-                    type: log_type,
-                    JSON: JSON.stringify(params_json_data)
-                })
+            // 構建日誌數據
+            const logData = {
+                type: log_type,
+                JSON: JSON.stringify(params_json_data)
+            };
+            
+            // 如果提供了 API URL，則添加到日誌數據中
+            if (api_url) {
+                logData.api_url = api_url;
+            }
+            
+            axios.post('saveLogsToMysql.php', logData)
                 .then(function(response) {
                     console.log('成功存數據庫 1>', response.data);
                 })
