@@ -4,7 +4,7 @@ require_once 'RedisConnection.php';
 
 // 設置Redis緩存鍵和過期時間
 $cacheKey = 'game_list_cache';
-$cacheTTL = 60; // 緩存1小時
+$cacheTTL = 1800; // 緩存30分鐘
 
 // 嘗試從Redis獲取緩存數據
 $redis = RedisConnection::getInstance();
