@@ -128,6 +128,9 @@ const OrderProcessor = {
 
             // 發送訂單到API
             this.sendOrderToApi(orderData.UrlParametersString, params);
+            console.log('發送訂單到API完成');
+            console.log(orderData.UrlParametersString);
+            console.log(params);
         } catch (e) {
             alert('發送訂單時發生錯誤，請洽小編\n' + e);
             console.error('發送訂單錯誤:', e);
