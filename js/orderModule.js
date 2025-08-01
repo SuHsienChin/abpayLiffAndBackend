@@ -142,25 +142,49 @@ const OrderProcessor = {
      * @returns {Object} - 訂單數據對象
      */
     prepareOrderData: function() {
-        const item = String(JSON.parse(sessionStorage.getItem('gameItemSelectedValues')));
-        const gameItemCounts = String(JSON.parse(sessionStorage.getItem('gameItemCounts')));
-        const itemMoney = sessionStorage.getItem('itemMoney');
-        const sumMoney = sessionStorage.getItem('sumMoney');
-        const customer = JSON.parse(sessionStorage.getItem('customerData')).Sid;
-        const account = JSON.parse(sessionStorage.getItem('gameAccountSid'));
-        const lineId = sessionStorage.getItem('lineId');
-        const customerData = JSON.parse(sessionStorage.getItem('customerData'));
-        const gameName = sessionStorage.getItem('gameNameText');
-        const gameItemsName = String(JSON.parse(sessionStorage.getItem('gameItemSelectedTexts')));
+        // 檢查並獲取 sessionStorage 中的數據，確保不會有 undefined 值
+        const getSessionItem = (key, defaultValue = '') => {
+            const value = sessionStorage.getItem(key);
+            return value !== null ? value : defaultValue;
+        };
+        
+        const getJsonSessionItem = (key, defaultValue = []) => {
+            const value = sessionStorage.getItem(key);
+            try {
+                return value !== null ? JSON.parse(value) : defaultValue;
+            } catch (e) {
+                console.error(`解析 ${key} 時出錯:`, e);
+                return defaultValue;
+            }
+        };
+        
+        const item = String(getJsonSessionItem('gameItemSelectedValues'));
+        const gameItemCounts = String(getJsonSessionItem('gameItemCounts'));
+        const itemMoney = getSessionItem('itemMoney', '0');
+        const sumMoney = getSessionItem('sumMoney', '0');
+        const customerData = getJsonSessionItem('customerData', {Sid: ''});
+        const customer = customerData.Sid || '';
+        const account = getSessionItem('gameAccountSid', '');
+        const lineId = getSessionItem('lineId', '');
+        const gameName = getSessionItem('gameNameText', '');
+        const gameItemsName = String(getJsonSessionItem('gameItemSelectedTexts'));
         
         // 過濾遊戲賬號
         let customerGameAccount = this.filterGameAccount(
-            JSON.parse(sessionStorage.getItem('customerGameAccounts')), 
-            sessionStorage.getItem('gameAccountSid')
+            getJsonSessionItem('customerGameAccounts'), 
+            getSessionItem('gameAccountSid', '')
         );
-        const customerGameAccounts = customerGameAccount[0];
-        const orderDateTime = sessionStorage.getItem('orderDateTime');
-        const gameRemark = sessionStorage.getItem('gameRemark');
+        const customerGameAccounts = customerGameAccount.length > 0 ? customerGameAccount[0] : {};
+        const orderDateTime = getSessionItem('orderDateTime', new Date().toISOString());
+        const gameRemark = getSessionItem('gameRemark', '');
+        
+        // 檢查必要參數
+        if (!customer || !account || !item || !gameItemCounts) {
+            alert('訂單參數不完整，請重新下單');
+            console.error('訂單參數不完整:', { customer, account, item, gameItemCounts });
+            window.location = "order.php";
+            throw new Error('訂單參數不完整');
+        }
         
         // 構建URL參數字符串
         const UrlParametersString = 'UserId=test02&Password=3345678&Customer=' + customer +
@@ -195,33 +219,62 @@ const OrderProcessor = {
         const params = new URLSearchParams();
         
         try {
-            params.append('gameName', orderData.gameName);
-            params.append('UserId', 'test01');
-            params.append('Password', '111111');
-            params.append('Customer', orderData.customer);
-            params.append('GameAccount', orderData.account);
-            params.append('Item', orderData.item);
-            params.append('Count', orderData.gameItemCounts);
-            params.append('lineId', orderData.lineId);
-            params.append('customerId', orderData.customerData.Id);
-            params.append('gameItemsName', orderData.gameItemsName);
-            params.append('gameItemCounts', orderData.gameItemCounts);
-            params.append('logintype', orderData.customerGameAccounts.LoginType);
-            params.append('acount', orderData.customerGameAccounts.LoginAccount);
-            params.append('password', orderData.customerGameAccounts.LoginPassword);
-            params.append('serverName', orderData.customerGameAccounts.ServerName);
-            params.append('gameAccountName', orderData.customerGameAccounts.Characters);
-            params.append('gameAccountId', orderData.customerGameAccounts.Id);
-            params.append('gameAccountSid', orderData.customerGameAccounts.Sid);
-            params.append('customerSid', orderData.customerGameAccounts.CustomerId);
+            // 檢查 orderData 是否為有效對象
+            if (!orderData || typeof orderData !== 'object') {
+                throw new Error('訂單數據無效');
+            }
+            
+            // 安全地獲取屬性值的輔助函數
+            const safeGet = (obj, path, defaultValue = '') => {
+                if (!obj) return defaultValue;
+                const parts = path.split('.');
+                let current = obj;
+                
+                for (let i = 0; i < parts.length; i++) {
+                    if (current === null || current === undefined) {
+                        return defaultValue;
+                    }
+                    current = current[parts[i]];
+                }
+                
+                return current !== null && current !== undefined ? current : defaultValue;
+            };
+            
+            // 安全地添加參數
+            const safeAppend = (key, value, defaultValue = '') => {
+                params.append(key, value !== null && value !== undefined ? value : defaultValue);
+            };
+            
+            safeAppend('gameName', orderData.gameName);
+            params.append('UserId', 'test02');
+            params.append('Password', '3345678');
+            safeAppend('Customer', orderData.customer);
+            safeAppend('GameAccount', orderData.account);
+            safeAppend('Item', orderData.item);
+            safeAppend('Count', orderData.gameItemCounts);
+            safeAppend('lineId', orderData.lineId);
+            safeAppend('customerId', safeGet(orderData, 'customerData.Id'));
+            safeAppend('gameItemsName', orderData.gameItemsName);
+            safeAppend('gameItemCounts', orderData.gameItemCounts);
+            safeAppend('logintype', safeGet(orderData, 'customerGameAccounts.LoginType'));
+            safeAppend('acount', safeGet(orderData, 'customerGameAccounts.LoginAccount'));
+            safeAppend('password', safeGet(orderData, 'customerGameAccounts.LoginPassword'));
+            safeAppend('serverName', safeGet(orderData, 'customerGameAccounts.ServerName'));
+            safeAppend('gameAccountName', safeGet(orderData, 'customerGameAccounts.Characters'));
+            safeAppend('gameAccountId', safeGet(orderData, 'customerGameAccounts.Id'));
+            safeAppend('gameAccountSid', safeGet(orderData, 'customerGameAccounts.Sid'));
+            safeAppend('customerSid', safeGet(orderData, 'customerGameAccounts.CustomerId'));
             params.append('status', '訂單處理中');
-            params.append('itemsMoney', orderData.itemMoney);
-            params.append('sumMoney', orderData.sumMoney);
-            params.append('orderDateTime', orderData.orderDateTime);
-            params.append('gameRemark', orderData.gameRemark);
+            safeAppend('itemsMoney', orderData.itemMoney);
+            safeAppend('sumMoney', orderData.sumMoney);
+            safeAppend('orderDateTime', orderData.orderDateTime);
+            safeAppend('gameRemark', orderData.gameRemark);
+            
+            console.log('訂單參數創建成功');
         } catch (e) {
             alert('組參數發生錯誤，請洽小編\n' + e);
             console.error('組參數錯誤:', e);
+            window.location = "order.php";
         }
         
         return params;
@@ -233,32 +286,60 @@ const OrderProcessor = {
      * @returns {Object} - 訂單JSON數據
      */
     createOrderJsonData: function(orderData) {
-        return {
-            "gameName": orderData.gameName,
-            "UserId": "test01",
-            "Password": "111111",
-            "Customer": orderData.customer,
-            "GameAccount": orderData.account,
-            "Item": orderData.item,
-            "Count": orderData.gameItemCounts,
-            "lineId": orderData.lineId,
-            "customerId": orderData.customerData.Id,
-            "gameItemsName": orderData.gameItemsName,
-            "gameItemCounts": orderData.gameItemCounts,
-            "logintype": orderData.customerGameAccounts.LoginType,
-            "acount": orderData.customerGameAccounts.LoginAccount,
-            "password": orderData.customerGameAccounts.LoginPassword,
-            "serverName": orderData.customerGameAccounts.ServerName,
-            "gameAccountName": orderData.customerGameAccounts.Characters,
-            "gameAccountId": orderData.customerGameAccounts.Id,
-            "gameAccountSid": orderData.customerGameAccounts.Sid,
-            "customerSid": orderData.customerGameAccounts.CustomerId,
-            "status": "訂單處理中",
-            "itemsMoney": orderData.itemMoney,
-            "sumMoney": orderData.sumMoney,
-            "orderDateTime": orderData.orderDateTime,
-            "gameRemark": orderData.gameRemark
-        };
+        try {
+            // 檢查 orderData 是否為有效對象
+            if (!orderData || typeof orderData !== 'object') {
+                throw new Error('訂單數據無效');
+            }
+            
+            // 安全地獲取屬性值的輔助函數
+            const safeGet = (obj, path, defaultValue = '') => {
+                if (!obj) return defaultValue;
+                const parts = path.split('.');
+                let current = obj;
+                
+                for (let i = 0; i < parts.length; i++) {
+                    if (current === null || current === undefined) {
+                        return defaultValue;
+                    }
+                    current = current[parts[i]];
+                }
+                
+                return current !== null && current !== undefined ? current : defaultValue;
+            };
+            
+            return {
+                "gameName": orderData.gameName || '',
+                "UserId": "test02",
+                "Password": "3345678",
+                "Customer": orderData.customer || '',
+                "GameAccount": orderData.account || '',
+                "Item": orderData.item || '',
+                "Count": orderData.gameItemCounts || '',
+                "lineId": orderData.lineId || '',
+                "customerId": safeGet(orderData, 'customerData.Id'),
+                "gameItemsName": orderData.gameItemsName || '',
+                "gameItemCounts": orderData.gameItemCounts || '',
+                "logintype": safeGet(orderData, 'customerGameAccounts.LoginType'),
+                "acount": safeGet(orderData, 'customerGameAccounts.LoginAccount'),
+                "password": safeGet(orderData, 'customerGameAccounts.LoginPassword'),
+                "serverName": safeGet(orderData, 'customerGameAccounts.ServerName'),
+                "gameAccountName": safeGet(orderData, 'customerGameAccounts.Characters'),
+                "gameAccountId": safeGet(orderData, 'customerGameAccounts.Id'),
+                "gameAccountSid": safeGet(orderData, 'customerGameAccounts.Sid'),
+                "customerSid": safeGet(orderData, 'customerGameAccounts.CustomerId'),
+                "status": "訂單處理中",
+                "itemsMoney": orderData.itemMoney || '0',
+                "sumMoney": orderData.sumMoney || '0',
+                "orderDateTime": orderData.orderDateTime || new Date().toISOString(),
+                "gameRemark": orderData.gameRemark || ''
+            };
+        } catch (e) {
+            alert('創建訂單數據發生錯誤，請洽小編\n' + e);
+            console.error('創建訂單數據錯誤:', e);
+            window.location = "order.php";
+            return {};
+        }
     },
 
     /**
@@ -268,6 +349,58 @@ const OrderProcessor = {
      */
     sendOrderToApi: function(urlParams, params) {
         try {
+            // 檢查 urlParams 是否為有效字符串
+            if (!urlParams || typeof urlParams !== 'string') {
+                alert('訂單參數無效，請重新下單');
+                console.error('訂單參數無效:', urlParams);
+                window.location = "order.php";
+                return;
+            }
+            
+            // 檢查參數中是否有 undefined 值
+            if (urlParams.includes('undefined') || urlParams.includes('null')) {
+                alert('訂單參數有誤，請重新下單');
+                console.error('訂單參數有 undefined 或 null 值:', urlParams);
+                // 返回到流程的第一步重新下單
+                window.location = "order.php";
+                return;
+            }
+            
+            // 解析 URL 參數並檢查每個值
+            const paramPairs = urlParams.split('&');
+            const requiredParams = ['UserId', 'Password', 'Customer', 'GameAccount', 'Item', 'Count'];
+            const foundParams = {};
+            
+            // 檢查每個參數對
+            for (let i = 0; i < paramPairs.length; i++) {
+                const pair = paramPairs[i].split('=');
+                if (pair.length < 2 || pair[1] === '' || pair[1] === 'undefined' || pair[1] === 'null') {
+                    alert('訂單參數 ' + pair[0] + ' 有誤，請重新下單');
+                    console.error('訂單參數有空值或無效值:', pair[0], pair[1]);
+                    // 返回到流程的第一步重新下單
+                    window.location = "order.php";
+                    return;
+                }
+                
+                // 標記找到的必要參數
+                if (requiredParams.includes(pair[0])) {
+                    foundParams[pair[0]] = true;
+                }
+            }
+            
+            // 檢查是否所有必要參數都存在
+            for (let i = 0; i < requiredParams.length; i++) {
+                if (!foundParams[requiredParams[i]]) {
+                    alert('缺少必要的訂單參數: ' + requiredParams[i] + '，請重新下單');
+                    console.error('缺少必要的訂單參數:', requiredParams[i]);
+                    window.location = "order.php";
+                    return;
+                }
+            }
+            
+            // 記錄最終的 URL 參數
+            console.log('發送訂單到 API，參數:', urlParams);
+            
             axios.get('sendOrderUrlByCORS.php?' + urlParams)
                 .then(function(response) {
                     const resdata = response.data;
@@ -289,10 +422,13 @@ const OrderProcessor = {
                 })
                 .catch(function(error) {
                     console.error('Error fetching :', error);
+                    alert('API 請求失敗，請重新下單');
+                    window.location = "order.php";
                 });
         } catch (e) {
             alert('API下單錯誤，請洽小編\n' + e);
             console.error('API下單錯誤:', e);
+            window.location = "order.php";
         }
     },
 
@@ -365,8 +501,14 @@ const OrderProcessor = {
      * @returns {Array} - 過濾後的遊戲賬號
      */
     filterGameAccount: function(json_data, gameAccountSid) {
+        // 確保 json_data 是陣列且 gameAccountSid 有值
+        if (!Array.isArray(json_data) || !json_data.length || !gameAccountSid) {
+            console.error('過濾遊戲賬號時參數無效:', { json_data, gameAccountSid });
+            return [];
+        }
+        
         // 找出 Sid 等於 gameAccountSid
-        let result = json_data.filter(item => item.Sid == gameAccountSid);
+        let result = json_data.filter(item => item && item.Sid == gameAccountSid);
         return result;
     },
 
