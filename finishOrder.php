@@ -94,12 +94,6 @@
                                 <p id='order_finish_display_message' class="mb-0"></p>
                             </div>
                         </div>
-                        
-                        <div class="mt-4">
-                            <button id="closeBtn" class="btn btn-primary btn-check-order">
-                                <i class="fas fa-check me-2"></i>完成下單
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -113,21 +107,6 @@
     <script>
         // 初始化 LIFF
         $(document).ready(function() {
-            // 初始化 LIFF
-            liff.init({
-                liffId: '2000183731-BLmrAGPp',  // 使用與 order.php 相同的 LIFF ID
-                withLoginOnExternalBrowser: true
-            }).then(() => {
-                console.log('LIFF 初始化成功');
-                // 綁定按鈕點擊事件
-                $('#closeBtn').on('click', function() {
-                    // 關閉 LIFF 視窗
-                    liff.closeWindow();
-                });
-            }).catch((err) => {
-                console.error('LIFF 初始化失敗:', err);
-            });
-            
             // 記錄用戶操作
             logUserAction('finish_order', '完成下單', {
                 orderId: new URLSearchParams(window.location.search).get('orderId')
