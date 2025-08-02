@@ -107,11 +107,28 @@
     <script>
         // 初始化 LIFF
         $(document).ready(function() {
+            // 初始化 LIFF
+            initializeLiff('2000183731-BLmrAGPp');
+            
             // 記錄用戶操作
             logUserAction('finish_order', '完成下單', {
                 orderId: new URLSearchParams(window.location.search).get('orderId')
             });
         });
+        
+        function initializeLiff(myLiffId) {
+            liff
+                .init({
+                    liffId: myLiffId,
+                    withLoginOnExternalBrowser: true, // Enable automatic login process
+                })
+                .then(() => {
+                    console.log('LIFF 初始化成功');
+                })
+                .catch((err) => {
+                    console.error('LIFF 初始化失敗:', err);
+                });
+        }
 
         // 獲取訂單完成顯示訊息
         axios.get('get_order_finish_display_messages.php')

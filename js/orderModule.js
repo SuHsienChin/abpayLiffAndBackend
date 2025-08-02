@@ -533,6 +533,28 @@ const OrderProcessor = {
                         params.append('queueId', resdata.queue_id);
                         OrderProcessor.insertOrderData(params);
                         
+                        // 獲取訂單JSON數據並發送到官方LINE
+                        try {
+                            // 從 URL 參數中提取訂單數據
+                            const orderParams = {};
+                            urlParams.split('&').forEach(param => {
+                                const [key, value] = param.split('=');
+                                if (key && value) orderParams[key] = decodeURIComponent(value);
+                            });
+                            
+                            // 從表單參數中提取更多訂單數據
+                            const formData = {};
+                            for (const [key, value] of params.entries()) {
+                                formData[key] = value;
+                            }
+                            
+                            // 合併數據並發送到官方LINE
+                            const combinedData = {...orderParams, ...formData};
+                            OrderProcessor.sendMessageToLineOfficial(combinedData);
+                        } catch (e) {
+                            console.error('準備發送LINE訊息時出錯:', e);
+                        }
+                        
                         // 跳轉到訂單完成頁面
                         window.location = "finishOrder.php?orderId=" + tempOrderId;
                     } else {
