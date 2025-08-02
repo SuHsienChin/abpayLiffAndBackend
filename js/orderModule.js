@@ -130,9 +130,9 @@ const OrderProcessor = {
             // 傳送訂單內容到官方LINE
             this.sendMessageToLineOfficial(params_json_data);
 
-            // 發送訂單到API
-            this.sendOrderToApi(orderData.UrlParametersString, params);
-            console.log('發送訂單到API完成');
+            // 使用 Redis 佇列發送訂單到 API (每秒發送一次)
+            this.sendOrderToQueueApi(orderData.UrlParametersString, params);
+            console.log('訂單已添加到佇列，將按順序處理');
             console.log('API URL:', fullApiUrl);
             console.log('URL Parameters:', orderData.UrlParametersString);
             console.log('Params:', params);
@@ -444,6 +444,109 @@ const OrderProcessor = {
         } catch (e) {
             alert('API下單錯誤，請洽小編\n' + e);
             console.error('API下單錯誤:', e);
+            window.location = "order.php";
+        }
+    },
+    
+    /**
+     * 將訂單添加到 Redis 佇列中，以每秒發送一次到 API
+     * @param {string} urlParams - URL參數字符串
+     * @param {URLSearchParams} params - 訂單參數
+     */
+    sendOrderToQueueApi: function(urlParams, params) {
+        try {
+            // 檢查 urlParams 是否為有效字符串
+            if (!urlParams || typeof urlParams !== 'string') {
+                alert('訂單參數無效，請重新下單');
+                console.error('訂單參數無效:', urlParams);
+                window.location = "order.php";
+                return;
+            }
+            
+            // 檢查參數中是否有 undefined 值
+            if (urlParams.includes('undefined') || urlParams.includes('null')) {
+                alert('訂單參數有誤，請重新下單');
+                console.error('訂單參數有 undefined 或 null 值:', urlParams);
+                // 返回到流程的第一步重新下單
+                window.location = "order.php";
+                return;
+            }
+            
+            // 解析 URL 參數並檢查每個值
+            const paramPairs = urlParams.split('&');
+            const requiredParams = ['UserId', 'Password', 'Customer', 'GameAccount', 'Item', 'Count'];
+            const foundParams = {};
+            
+            // 檢查每個參數對
+            for (let i = 0; i < paramPairs.length; i++) {
+                const pair = paramPairs[i].split('=');
+                if (pair.length < 2 || pair[1] === '' || pair[1] === 'undefined' || pair[1] === 'null') {
+                    alert('訂單參數 ' + pair[0] + ' 有誤，請重新下單');
+                    console.error('訂單參數有空值或無效值:', pair[0], pair[1]);
+                    // 返回到流程的第一步重新下單
+                    window.location = "order.php";
+                    return;
+                }
+                
+                // 標記找到的必要參數
+                if (requiredParams.includes(pair[0])) {
+                    foundParams[pair[0]] = true;
+                }
+            }
+            
+            // 檢查是否所有必要參數都存在
+            for (let i = 0; i < requiredParams.length; i++) {
+                if (!foundParams[requiredParams[i]]) {
+                    alert('缺少必要的訂單參數: ' + requiredParams[i] + '，請重新下單');
+                    console.error('缺少必要的訂單參數:', requiredParams[i]);
+                    window.location = "order.php";
+                    return;
+                }
+            }
+            
+            // 記錄最終的 URL 參數
+            console.log('將訂單添加到佇列，參數:', urlParams);
+            
+            // 構建完整的 API URL
+            const apiBaseUrl = 'http://www.adp.idv.tw/api/Order?';
+            const fullApiUrl = apiBaseUrl + urlParams;
+            
+            // 記錄 API 請求日誌
+            OrderProcessor.saveLogsToMysql('將訂單添加到佇列', { urlParams: urlParams }, fullApiUrl);
+            
+            // 將訂單添加到 Redis 佇列
+            axios.post('addOrderToQueue.php?' + urlParams, params)
+                .then(function(response) {
+                    const resdata = response.data;
+                    console.log('佇列響應:', resdata);
+                    
+                    // 記錄佇列響應日誌
+                    OrderProcessor.saveLogsToMysql('佇列響應結果', resdata, 'addOrderToQueue.php');
+                    
+                    if (resdata.success) {
+                        // 訂單已成功添加到佇列
+                        alert('訂單已成功添加到處理佇列，請稍後查看訂單狀態');
+                        
+                        // 創建臨時訂單 ID
+                        const tempOrderId = 'queue_' + resdata.queue_id;
+                        params.append('orderId', tempOrderId);
+                        params.append('queueId', resdata.queue_id);
+                        OrderProcessor.insertOrderData(params);
+                        
+                        // 跳轉到訂單列表頁面
+                        window.location = "order_list.php";
+                    } else {
+                        alert('添加訂單到佇列時發生錯誤，請洽小編');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Error adding to queue:', error);
+                    alert('添加訂單到佇列失敗，請重新下單');
+                    window.location = "order.php";
+                });
+        } catch (e) {
+            alert('添加訂單到佇列時發生錯誤，請洽小編\n' + e);
+            console.error('添加訂單到佇列錯誤:', e);
             window.location = "order.php";
         }
     },
