@@ -536,13 +536,17 @@ const OrderProcessor = {
                         // 跳轉到訂單列表頁面
                         window.location = "order_list.php";
                     } else {
-                        alert('添加訂單到佇列時發生錯誤，請洽小編');
+                        console.error('佇列錯誤:', resdata.message);
+                        // 如果佇列添加失敗，嘗試直接發送訂單
+                        alert('佇列處理暫時不可用，將直接處理您的訂單');
+                        OrderProcessor.sendOrderToApi(urlParams, params);
                     }
                 })
                 .catch(function(error) {
                     console.error('Error adding to queue:', error);
-                    alert('添加訂單到佇列失敗，請重新下單');
-                    window.location = "order.php";
+                    // 如果佇列添加失敗，嘗試直接發送訂單
+                    alert('佇列處理暫時不可用，將直接處理您的訂單');
+                    OrderProcessor.sendOrderToApi(urlParams, params);
                 });
         } catch (e) {
             alert('添加訂單到佇列時發生錯誤，請洽小編\n' + e);

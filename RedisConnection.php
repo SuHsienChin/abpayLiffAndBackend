@@ -1,4 +1,5 @@
 <?php
+require_once 'RedisSimulator.php';
 
 class RedisConnection {
     private $redis;
@@ -37,6 +38,13 @@ class RedisConnection {
     
     private function connect() {
         try {
+            // 檢查 Redis 擴展是否可用
+            if (!extension_loaded('redis')) {
+                error_log("Redis擴展未安裝，使用模擬模式");
+                $this->redis = new RedisSimulator();
+                return $this->redis;
+            }
+            
             $this->redis = new Redis();
             $this->redis->connect($_ENV['REDIS_HOST'], $_ENV['REDIS_PORT']);
             
@@ -47,7 +55,9 @@ class RedisConnection {
             return $this->redis;
         } catch (Exception $e) {
             error_log("Redis連接失敗: " . $e->getMessage());
-            return null;
+            // 使用模擬器作為後備
+            $this->redis = new RedisSimulator();
+            return $this->redis;
         }
     }
     

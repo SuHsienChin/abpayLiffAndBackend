@@ -8,18 +8,31 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// 檢查是否有 GET 參數存在
+// 檢查是否有 GET 參數存在，或者是否通過命令行傳遞參數
+$params = [];
+
+// 處理命令行參數
+if (isset($argv) && count($argv) > 1) {
+    parse_str($argv[1], $params);
+}
+
+// 處理 GET 參數
 if (isset($_GET) && !empty($_GET)) {
+    $params = $_GET;
+}
+
+// 檢查參數是否存在
+if (!empty($params)) {
     // 構建 URL 參數字符串
     $urlParams = '';
-    foreach ($_GET as $key => $value) {
+    foreach ($params as $key => $value) {
         $urlParams .= $key . '=' . urlencode($value) . '&';
     }
     $urlParams = rtrim($urlParams, '&');
     
     // 獲取 POST 數據作為訂單數據
     $orderData = [];
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $orderData = $_POST;
     }
     
@@ -42,13 +55,17 @@ if (isset($_GET) && !empty($_GET)) {
         ];
         
         // 連接數據庫並記錄日誌
-        $conn = connectToDatabase();
-        if ($conn) {
+        try {
+            $dbConnection = new DatabaseConnection();
+            $conn = $dbConnection->connect();
+            
             $stmt = $conn->prepare("INSERT INTO system_logs (type, JSON, api_url, created_at) VALUES (?, ?, ?, NOW())");
-            $stmt->bind_param("sss", $logData['type'], $logData['JSON'], $logData['api_url']);
+            $stmt->bindParam(1, $logData['type']);
+            $stmt->bindParam(2, $logData['JSON']);
+            $stmt->bindParam(3, $logData['api_url']);
             $stmt->execute();
-            $stmt->close();
-            $conn->close();
+        } catch (Exception $e) {
+            error_log("數據庫記錄錯誤: " . $e->getMessage());
         }
         
         // 返回成功響應

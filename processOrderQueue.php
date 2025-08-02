@@ -10,6 +10,19 @@ require_once 'RedisOrderQueue.php';
 // 設置執行時間限制
 set_time_limit(30);
 
+// 確保日誌目錄存在
+$logDir = __DIR__ . '/logs';
+if (!is_dir($logDir)) {
+    mkdir($logDir, 0755, true);
+}
+
+// 記錄腳本執行日誌
+file_put_contents(
+    $logDir . '/script_execution_' . date('Y-m-d') . '.log',
+    date('Y-m-d H:i:s') . ' - 腳本執行' . PHP_EOL,
+    FILE_APPEND
+);
+
 // 創建佇列處理器實例
 $orderQueue = new RedisOrderQueue();
 
@@ -25,7 +38,7 @@ if ($queueLength > 0) {
         
         // 記錄處理結果
         file_put_contents(
-            __DIR__ . '/logs/order_queue_' . date('Y-m-d') . '.log',
+            $logDir . '/order_queue_' . date('Y-m-d') . '.log',
             date('Y-m-d H:i:s') . ' - 處理訂單: ' . $queueItem['id'] . ', 狀態: ' . $queueItem['status'] . PHP_EOL,
             FILE_APPEND
         );
@@ -36,7 +49,7 @@ if ($queueLength > 0) {
             
             // 這裡可以添加其他處理邏輯，例如更新數據庫等
             file_put_contents(
-                __DIR__ . '/logs/successful_orders_' . date('Y-m-d') . '.log',
+                $logDir . '/successful_orders_' . date('Y-m-d') . '.log',
                 date('Y-m-d H:i:s') . ' - 訂單成功: ' . $orderId . PHP_EOL,
                 FILE_APPEND
             );
@@ -45,13 +58,21 @@ if ($queueLength > 0) {
 } else {
     // 佇列為空，記錄日誌
     file_put_contents(
-        __DIR__ . '/logs/order_queue_' . date('Y-m-d') . '.log',
+        $logDir . '/order_queue_' . date('Y-m-d') . '.log',
         date('Y-m-d H:i:s') . ' - 佇列為空' . PHP_EOL,
         FILE_APPEND
     );
 }
 
 // 確保日誌目錄存在
-if (!is_dir(__DIR__ . '/logs')) {
-    mkdir(__DIR__ . '/logs', 0755, true);
+$logDir = __DIR__ . '/logs';
+if (!is_dir($logDir)) {
+    mkdir($logDir, 0755, true);
 }
+
+// 記錄腳本執行日誌
+file_put_contents(
+    $logDir . '/script_execution_' . date('Y-m-d') . '.log',
+    date('Y-m-d H:i:s') . ' - 腳本執行' . PHP_EOL,
+    FILE_APPEND
+);
