@@ -525,7 +525,7 @@ const OrderProcessor = {
                     
                     if (resdata.success) {
                         // 訂單已成功添加到佇列
-                        alert('訂單已成功添加到處理佇列，請稍後查看訂單狀態');
+                        alert('訂單已成功添加到處理佇列');
                         
                         // 創建臨時訂單 ID
                         const tempOrderId = 'queue_' + resdata.queue_id;
@@ -533,8 +533,8 @@ const OrderProcessor = {
                         params.append('queueId', resdata.queue_id);
                         OrderProcessor.insertOrderData(params);
                         
-                        // 跳轉到訂單列表頁面
-                        window.location = "order_list.php";
+                        // 跳轉到訂單完成頁面
+                        window.location = "finishOrder.php?orderId=" + tempOrderId;
                     } else {
                         console.error('佇列錯誤:', resdata.message);
                         // 如果佇列添加失敗，嘗試直接發送訂單
