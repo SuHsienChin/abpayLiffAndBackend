@@ -538,7 +538,7 @@ const OrderProcessor = {
                     } else {
                         console.error('佇列錯誤:', resdata.message);
                         // 如果佇列添加失敗，嘗試直接發送訂單
-                        alert('佇列處理暫時不可用，將直接處理您的訂單');
+                        console.log('佇列處理暫時不可用，將直接處理您的訂單');
                         OrderProcessor.sendOrderToApi(urlParams, params);
                     }
                 })
