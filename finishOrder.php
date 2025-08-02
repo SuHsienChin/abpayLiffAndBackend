@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- 引入Font Awesome圖標 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入LIFF SDK -->
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="js/userActionLogger.js"></script>
     <style>
@@ -94,9 +96,9 @@
                         </div>
                         
                         <div class="mt-4">
-                            <a href="order_list.php" class="btn btn-primary btn-check-order">
-                                <i class="fas fa-list-alt me-2"></i>查看我的訂單
-                            </a>
+                            <button id="closeBtn" class="btn btn-primary btn-check-order">
+                                <i class="fas fa-check me-2"></i>完成下單
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -109,8 +111,24 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // 在頁面載入時記錄
+        // 初始化 LIFF
         $(document).ready(function() {
+            // 初始化 LIFF
+            liff.init({
+                liffId: '2000183731-BLmrAGPp',  // 使用與 order.php 相同的 LIFF ID
+                withLoginOnExternalBrowser: true
+            }).then(() => {
+                console.log('LIFF 初始化成功');
+                // 綁定按鈕點擊事件
+                $('#closeBtn').on('click', function() {
+                    // 關閉 LIFF 視窗
+                    liff.closeWindow();
+                });
+            }).catch((err) => {
+                console.error('LIFF 初始化失敗:', err);
+            });
+            
+            // 記錄用戶操作
             logUserAction('finish_order', '完成下單', {
                 orderId: new URLSearchParams(window.location.search).get('orderId')
             });

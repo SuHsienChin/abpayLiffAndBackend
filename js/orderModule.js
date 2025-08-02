@@ -525,7 +525,7 @@ const OrderProcessor = {
                     
                     if (resdata.success) {
                         // 訂單已成功添加到佇列
-                        alert('訂單已成功添加到處理佇列');
+                        console.log('訂單已成功添加到處理佇列');
                         
                         // 創建臨時訂單 ID
                         const tempOrderId = 'queue_' + resdata.queue_id;
@@ -545,7 +545,7 @@ const OrderProcessor = {
                 .catch(function(error) {
                     console.error('Error adding to queue:', error);
                     // 如果佇列添加失敗，嘗試直接發送訂單
-                    alert('佇列處理暫時不可用，將直接處理您的訂單');
+                    console.log('佇列處理暫時不可用，將直接處理您的訂單');
                     OrderProcessor.sendOrderToApi(urlParams, params);
                 });
         } catch (e) {
