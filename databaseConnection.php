@@ -40,7 +40,8 @@ class DatabaseConnection {
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $pdo;
         } catch (PDOException $e) {
-            die("連線失敗：" . $e->getMessage());
+            error_log("數據庫連接失敗: " . $e->getMessage());
+            throw new Exception("數據庫連接失敗: " . $e->getMessage());
         }
     }
 }

@@ -12,6 +12,7 @@
 4. **processOrderQueue.php**: 佇列處理腳本，用於從佇列中取出訂單並發送到 API 伺服器。
 5. **setup_cron.php**: 設置 cron 作業的腳本，用於定時執行佇列處理腳本。
 6. **orderModule.js**: 前端訂單處理模組，已修改為使用 Redis 佇列功能。
+7. **databaseConnection.php**: 數據庫連接類，提供與 MySQL 數據庫的連接和基本操作。
 
 ## 安裝與配置
 
@@ -48,14 +49,20 @@ sudo apt-get install php-redis
 sudo systemctl restart apache2  # 或 nginx
 ```
 
-### 3. 配置 Redis 連接
+### 3. 配置 Redis 和數據庫連接
 
-在專案根目錄創建 `.env` 文件，並設置 Redis 連接參數：
+在專案根目錄創建 `.env` 文件，並設置 Redis 和數據庫連接參數：
 
 ```
 REDIS_HOST=127.0.0.1
 REDIS_PORT=6379
 REDIS_PASSWORD=your_password  # 如果有設置密碼
+
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
 ```
 
 ### 4. 設置定時任務
@@ -113,6 +120,12 @@ php setup_cron.php
 - 檢查 API 伺服器是否可訪問
 - 檢查訂單參數是否正確
 
+### 4. addOrderToQueue.php 返回 500 錯誤
+
+- 檢查數據庫連接是否正確
+- 檢查 system_logs 表是否存在（系統會自動創建，但如果數據庫權限不足可能會失敗）
+- 查看 PHP 錯誤日誌獲取詳細錯誤信息
+
 ## 開發者說明
 
 ### 添加新功能
@@ -131,9 +144,32 @@ php setup_cron.php
 2. 測試佇列處理
 3. 測試 API 響應處理
 
+## 系統日誌
+
+系統使用 `system_logs` 表記錄操作日誌，特別是訂單處理相關的操作。表結構如下：
+
+```sql
+CREATE TABLE IF NOT EXISTS system_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type VARCHAR(255) NOT NULL,
+    JSON TEXT,
+    api_url TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+日誌記錄包括：
+- 操作類型（type）
+- JSON 格式的詳細信息（JSON）
+- API URL（api_url）
+- 創建時間（created_at）
+
+更多詳細信息請參考 `README_SYSTEM_LOGS.md` 文件。
+
 ## 注意事項
 
 1. 請確保 Redis 伺服器的安全性，設置強密碼並限制訪問 IP
-2. 定期備份 Redis 數據
+2. 定期備份 Redis 數據和數據庫
 3. 監控佇列長度，避免佇列過長導致處理延遲
-4. 定期檢查日誌文件，及時發現並解決問題
+4. 定期檢查日誌文件和系統日誌表，及時發現並解決問題
+5. 定期清理過舊的日誌記錄，避免表過大影響系統性能

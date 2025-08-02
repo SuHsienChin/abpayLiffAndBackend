@@ -59,6 +59,20 @@ if (!empty($params)) {
             $dbConnection = new DatabaseConnection();
             $conn = $dbConnection->connect();
             
+            // 檢查 system_logs 表是否存在，如果不存在則創建
+            $stmt = $conn->query("SHOW TABLES LIKE 'system_logs'");
+            if ($stmt->rowCount() == 0) {
+                $createTableSql = "CREATE TABLE IF NOT EXISTS system_logs (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    type VARCHAR(255) NOT NULL,
+                    JSON TEXT,
+                    api_url TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+                $conn->exec($createTableSql);
+                error_log("system_logs 表已自動創建");
+            }
+            
             $stmt = $conn->prepare("INSERT INTO system_logs (type, JSON, api_url, created_at) VALUES (?, ?, ?, NOW())");
             $stmt->bindParam(1, $logData['type']);
             $stmt->bindParam(2, $logData['JSON']);
