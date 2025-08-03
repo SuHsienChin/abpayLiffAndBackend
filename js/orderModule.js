@@ -595,8 +595,8 @@ const OrderProcessor = {
                             }
                             
                             // 合併數據並發送到官方LINE
-                            //const combinedData = {...orderParams, ...formData};
-                            //OrderProcessor.sendMessageToLineOfficial(combinedData);
+                            const combinedData = {...orderParams, ...formData};
+                            OrderProcessor.sendMessageToLineOfficial(combinedData);
                         } catch (e) {
                             console.error('準備發送LINE訊息時出錯:', e);
                         }
