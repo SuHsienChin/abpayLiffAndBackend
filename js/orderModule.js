@@ -432,7 +432,7 @@ const OrderProcessor = {
                         alert('下單成功');
 
                         //sessionStorage.clear();
-                        //window.location = "finishOrder.php?orderId=" + orderId;
+                        window.location = "finishOrder.php?orderId=" + orderId;
                     } else {
                         alert('下單發生錯誤，請洽小編');
                     }
@@ -557,7 +557,7 @@ const OrderProcessor = {
                         }
                         
                         // 跳轉到訂單完成頁面
-                        //window.location = "finishOrder.php?orderId=" + tempOrderId;
+                        window.location = "finishOrder.php?orderId=" + tempOrderId;
                     } else {
                         console.error('佇列錯誤:', resdata.message);
                         // 如果佇列添加失敗，嘗試直接發送訂單
