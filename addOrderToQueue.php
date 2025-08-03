@@ -36,6 +36,38 @@ if (!empty($params)) {
         $orderData = $_POST;
     }
     
+    // 驗證訂單參數
+    $errors = [];
+    
+    // 檢查必要參數
+    $requiredParams = ['UserId', 'Password', 'Customer', 'GameAccount', 'Item', 'Count'];
+    foreach ($requiredParams as $param) {
+        if (!isset($params[$param]) || $params[$param] === '') {
+            $errors[] = "缺少必要參數: {$param}";
+        }
+    }
+    
+    // 特別檢查 Count 參數
+    if (isset($params['Count'])) {
+        $counts = explode(',', $params['Count']);
+        foreach ($counts as $index => $count) {
+            if (!is_numeric($count) || intval($count) <= 0) {
+                $errors[] = "商品 {$index} 的數量無效: {$count}，數量必須大於 0";
+            }
+        }
+    }
+    
+    // 如果有錯誤，返回錯誤響應
+    if (!empty($errors)) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => '訂單參數無效',
+            'errors' => $errors
+        ]);
+        exit;
+    }
+    
     try {
         // 創建佇列處理器實例
         $orderQueue = new RedisOrderQueue();

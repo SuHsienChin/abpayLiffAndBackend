@@ -192,6 +192,27 @@ const OrderProcessor = {
             throw new Error('訂單參數不完整');
         }
         
+        // 檢查商品數量是否有效
+        const counts = gameItemCounts.split(',');
+        let hasInvalidCount = false;
+        let invalidCountIndex = -1;
+        
+        for (let i = 0; i < counts.length; i++) {
+            const count = counts[i];
+            if (!count || isNaN(count) || parseInt(count) <= 0) {
+                hasInvalidCount = true;
+                invalidCountIndex = i;
+                break;
+            }
+        }
+        
+        if (hasInvalidCount) {
+            alert('商品數量無效，請確保所有商品數量大於 0');
+            console.error('商品數量無效:', counts, '無效索引:', invalidCountIndex);
+            window.location = "order.php";
+            throw new Error('商品數量無效');
+        }
+        
         // 構建URL參數字符串
         const UrlParametersString = 'UserId=test02&Password=3345678&Customer=' + customer +
             '&GameAccount=' + account +
@@ -471,6 +492,30 @@ const OrderProcessor = {
                 // 返回到流程的第一步重新下單
                 window.location = "order.php";
                 return;
+            }
+            
+            // 特別檢查 Count 參數
+            const countMatch = urlParams.match(/Count=([^&]+)/);
+            if (countMatch && countMatch[1]) {
+                const counts = decodeURIComponent(countMatch[1]).split(',');
+                let hasInvalidCount = false;
+                let invalidCountIndex = -1;
+                
+                for (let i = 0; i < counts.length; i++) {
+                    const count = counts[i];
+                    if (!count || isNaN(count) || parseInt(count) <= 0) {
+                        hasInvalidCount = true;
+                        invalidCountIndex = i;
+                        break;
+                    }
+                }
+                
+                if (hasInvalidCount) {
+                    alert('商品數量無效，請確保所有商品數量大於 0');
+                    console.error('商品數量無效:', counts, '無效索引:', invalidCountIndex);
+                    window.location = "order.php";
+                    return;
+                }
             }
             
             // 解析 URL 參數並檢查每個值

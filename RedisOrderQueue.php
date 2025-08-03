@@ -58,6 +58,24 @@ class RedisOrderQueue {
         $queueItem['status'] = 'processing';
         
         try {
+            // 檢查訂單參數
+            $urlParams = $queueItem['url_params'];
+            $paramErrors = $this->validateOrderParams($urlParams);
+            
+            if (!empty($paramErrors)) {
+                // 參數驗證失敗
+                $queueItem['status'] = 'invalid_params';
+                $queueItem['error'] = $paramErrors;
+                
+                // 記錄錯誤
+                error_log("訂單參數無效: {$queueItem['id']}, 錯誤: " . json_encode($paramErrors));
+                
+                return [
+                    'queue_item' => $queueItem,
+                    'error' => $paramErrors
+                ];
+            }
+            
             // 構建完整的 API URL
             $apiBaseUrl = 'http://www.adp.idv.tw/api/Order?';
             $fullApiUrl = $apiBaseUrl . $queueItem['url_params'];
@@ -91,6 +109,39 @@ class RedisOrderQueue {
                 'error' => $e->getMessage()
             ];
         }
+    }
+    
+    /**
+     * 驗證訂單參數
+     * @param string $urlParams - URL 參數字符串
+     * @return array - 錯誤訊息陣列
+     */
+    private function validateOrderParams($urlParams) {
+        $errors = [];
+        
+        // 解析 URL 參數
+        $params = [];
+        parse_str($urlParams, $params);
+        
+        // 檢查必要參數
+        $requiredParams = ['UserId', 'Password', 'Customer', 'GameAccount', 'Item', 'Count'];
+        foreach ($requiredParams as $param) {
+            if (!isset($params[$param]) || $params[$param] === '') {
+                $errors[] = "缺少必要參數: {$param}";
+            }
+        }
+        
+        // 特別檢查 Count 參數
+        if (isset($params['Count'])) {
+            $counts = explode(',', $params['Count']);
+            foreach ($counts as $index => $count) {
+                if (!is_numeric($count) || intval($count) <= 0) {
+                    $errors[] = "商品 {$index} 的數量無效: {$count}，數量必須大於 0";
+                }
+            }
+        }
+        
+        return $errors;
     }
     
     /**

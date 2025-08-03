@@ -43,6 +43,34 @@ if ($queueLength > 0) {
             FILE_APPEND
         );
         
+        // 記錄到 system_logs 資料表
+        require_once 'databaseConnection.php';
+        try {
+            $dbConnection = new DatabaseConnection();
+            $conn = $dbConnection->connect();
+            
+            // 準備日誌數據
+            $logType = '訂單處理結果: ' . $queueItem['status'];
+            $logJson = json_encode([
+                'queue_id' => $queueItem['id'],
+                'url_params' => $queueItem['url_params'],
+                'status' => $queueItem['status'],
+                'response' => isset($result['response']) ? $result['response'] : null,
+                'error' => isset($result['error']) ? $result['error'] : null,
+                'processed_at' => $queueItem['processed_at']
+            ]);
+            $apiUrl = 'http://www.adp.idv.tw/api/Order?' . $queueItem['url_params'];
+            
+            // 插入日誌記錄
+            $stmt = $conn->prepare("INSERT INTO system_logs (type, JSON, api_url, created_at) VALUES (?, ?, ?, NOW())");
+            $stmt->bindParam(1, $logType);
+            $stmt->bindParam(2, $logJson);
+            $stmt->bindParam(3, $apiUrl);
+            $stmt->execute();
+        } catch (Exception $e) {
+            error_log("數據庫記錄錯誤: " . $e->getMessage());
+        }
+        
         // 如果訂單處理成功，可以在這裡執行其他操作
         if ($queueItem['status'] === 'success' && isset($result['response']['OrderId'])) {
             $orderId = $result['response']['OrderId'];
