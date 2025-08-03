@@ -26,7 +26,15 @@ if (!empty($params)) {
     // 構建 URL 參數字符串
     $urlParams = '';
     foreach ($params as $key => $value) {
-        $urlParams .= $key . '=' . urlencode($value) . '&';
+        // 對於 Item 和 Count 參數，避免對逗號進行編碼
+        if ($key === 'Item' || $key === 'Count') {
+            // 先對值進行編碼，然後將編碼後的逗號 %2C 替換回原始逗號
+            $encodedValue = urlencode($value);
+            $encodedValue = str_replace('%2C', ',', $encodedValue);
+            $urlParams .= $key . '=' . $encodedValue . '&';
+        } else {
+            $urlParams .= $key . '=' . urlencode($value) . '&';
+        }
     }
     $urlParams = rtrim($urlParams, '&');
     
@@ -105,7 +113,7 @@ if (!empty($params)) {
                 error_log("system_logs 表已自動創建");
             }
             
-            $stmt = $conn->prepare("INSERT INTO system_logs (type, JSON, api_url, created_at) VALUES (?, ?, ?, NOW())");
+            $stmt = $conn->prepare("INSERT INTO system_logs (type, JSON, api_url) VALUES (?, ?, ?)");
             $stmt->bindParam(1, $logData['type']);
             $stmt->bindParam(2, $logData['JSON']);
             $stmt->bindParam(3, $logData['api_url']);
