@@ -596,13 +596,30 @@ const OrderProcessor = {
                             
                             // 合併數據並發送到官方LINE
                             const combinedData = {...orderParams, ...formData};
-                            OrderProcessor.sendMessageToLineOfficial(combinedData);
+                            
+                            // 使用Promise處理LINE訊息發送
+                            OrderProcessor.sendMessageToLineOfficial(combinedData)
+                                .then(() => {
+                                    console.log('LINE訊息發送成功，準備跳轉到訂單完成頁面');
+                                    // 訊息發送成功後跳轉到訂單完成頁面
+                                    window.location = "finishOrder.php?orderId=" + tempOrderId;
+                                })
+                                .catch((error) => {
+                                    alert('LINE訊息發送失敗:', error);
+                                    // 即使LINE訊息發送失敗，仍然跳轉到訂單完成頁面，因為訂單已經成功添加到佇列
+                                    setTimeout(() => {
+                                        window.location = "finishOrder.php?orderId=" + tempOrderId;
+                                    }, 2000); // 延遲2秒，讓用戶有時間看到錯誤訊息
+                                });
                         } catch (e) {
                             console.error('準備發送LINE訊息時出錯:', e);
+                            // 即使出錯，仍然跳轉到訂單完成頁面
+                            setTimeout(() => {
+                                window.location = "finishOrder.php?orderId=" + tempOrderId;
+                            }, 2000);
                         }
                         
-                        // 跳轉到訂單完成頁面
-                        window.location = "finishOrder.php?orderId=" + tempOrderId; // 已註解跳轉到訂單完成頁面
+                        // 注意：跳轉已移至Promise處理中，確保在訊息發送完成後才跳轉
                     } else {
                         console.error('佇列錯誤:', resdata.message);
                         // 如果佇列添加失敗，嘗試直接發送訂單
@@ -641,47 +658,68 @@ const OrderProcessor = {
     /**
      * 傳送訂單內容到官方LINE
      * @param {Object} params_json_data - 訂單JSON數據
+     * @returns {Promise} - 返回一個Promise，表示訊息發送的結果
      */
     sendMessageToLineOfficial: function(params_json_data) {
-        try {
-            const jsonParams = params_json_data;
-            const itemArr = PriceCalculator.calculateTotalPrice();
+        return new Promise((resolve, reject) => {
+            try {
+                // 檢查LIFF是否已初始化
+                if (typeof liff === 'undefined' || !liff.isInClient()) {
+                    const errorMsg = '無法傳送訊息到LINE，請確保在LINE應用內開啟此頁面';
+                    console.error(errorMsg);
+                    alert(errorMsg);
+                    reject(new Error(errorMsg));
+                    return;
+                }
+                
+                const jsonParams = params_json_data;
+                const itemArr = PriceCalculator.calculateTotalPrice();
 
-            // 輸出 JSON 對象
-            let txt = "";
-            txt += "【自動下單】\n";
-            txt += "客戶編號: " + jsonParams.customerId + "\n";
-            txt += "下單時間: " + jsonParams.orderDateTime + "\n";
-            txt += "遊戲名稱: " + jsonParams.gameName + "\n";
-            txt += "登入方式: " + jsonParams.logintype + "\n";
-            txt += "遊戲賬號: " + jsonParams.acount + "\n";
-            txt += "遊戲密碼: " + jsonParams.password + "\n";
-            txt += "伺 服 器: " + jsonParams.serverName + "\n";
-            txt += "角色名稱: " + jsonParams.gameAccountName + "\n";
-            txt += "\n";
-            txt += itemArr.gameitemSLabelText + '\n\n';
-            txt += '總計: $' + itemArr.sumMoney + "\n";
-            txt += "幣別: " + itemArr.customerCurrency + '\n\n';
-            txt += "備註: \n" + jsonParams.gameRemark + '\n';
+                // 輸出 JSON 對象
+                let txt = "";
+                txt += "【自動下單】\n";
+                txt += "客戶編號: " + jsonParams.customerId + "\n";
+                txt += "下單時間: " + jsonParams.orderDateTime + "\n";
+                txt += "遊戲名稱: " + jsonParams.gameName + "\n";
+                txt += "登入方式: " + jsonParams.logintype + "\n";
+                txt += "遊戲賬號: " + jsonParams.acount + "\n";
+                txt += "遊戲密碼: " + jsonParams.password + "\n";
+                txt += "伺 服 器: " + jsonParams.serverName + "\n";
+                txt += "角色名稱: " + jsonParams.gameAccountName + "\n";
+                txt += "\n";
+                txt += itemArr.gameitemSLabelText + '\n\n';
+                txt += '總計: $' + itemArr.sumMoney + "\n";
+                txt += "幣別: " + itemArr.customerCurrency + '\n\n';
+                txt += "備註: \n" + jsonParams.gameRemark + '\n';
 
-            txt = txt.replace(/<br\s*[\/]?>/gi, "\n");
+                txt = txt.replace(/<br\s*[\/]?>/gi, "\n");
 
-            // 傳送通知到官方LINE
-            liff.sendMessages([{
-                    type: "text",
-                    text: txt,
-                }, ])
-                .then(() => {
-                    alert('訂單內容傳送到官方');
-                })
-                .catch((err) => {
-                    console.log("error", err);
-                    //alert('下單錯誤 請截圖洽小編' + err);
-                });
-        } catch (e) {
-            alert('傳送訂單內容發生錯誤\n' + e);
-            console.error('傳送訂單內容錯誤:', e);
-        }
+                // 記錄發送的訊息內容
+                console.log('準備發送訊息到LINE:', txt);
+                
+                // 傳送通知到官方LINE
+                liff.sendMessages([{
+                        type: "text",
+                        text: txt,
+                    }])
+                    .then(() => {
+                        console.log('訊息成功發送到LINE');
+                        alert('訂單內容已傳送到官方LINE');
+                        resolve('訊息發送成功');
+                    })
+                    .catch((err) => {
+                        const errorMsg = '無法傳送訊息到LINE: ' + err.message;
+                        console.error("LINE訊息發送錯誤", err);
+                        alert('LINE訊息發送失敗，請截圖洽小編\n' + errorMsg);
+                        reject(err);
+                    });
+            } catch (e) {
+                const errorMsg = '傳送訂單內容發生錯誤: ' + e.message;
+                console.error('傳送訂單內容錯誤:', e);
+                alert(errorMsg);
+                reject(e);
+            }
+        });
     },
 
     
