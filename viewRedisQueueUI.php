@@ -64,6 +64,15 @@
             正在載入佇列資訊...
         </div>
         
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Redis 連接狀態</h5>
+            </div>
+            <div class="card-body" id="connectionInfo">
+                <p>正在載入連接資訊...</p>
+            </div>
+        </div>
+        
         <div id="queueItems" class="row">
             <!-- 佇列項目將在這裡動態生成 -->
         </div>
@@ -150,6 +159,49 @@
                 <br>
                 <strong>最後更新時間:</strong> ${new Date().toLocaleString()}
             `;
+            
+            // 更新連接狀態信息
+            if (data.connection_info) {
+                updateConnectionInfo(data.connection_info, data.server_info);
+            }
+        }
+        
+        // 更新連接狀態信息
+        function updateConnectionInfo(connectionInfo, serverInfo) {
+            const connectionInfoElement = document.getElementById('connectionInfo');
+            
+            // 設置連接狀態顏色
+            const statusColor = connectionInfo.connected ? 'text-success' : 'text-danger';
+            const statusText = connectionInfo.connected ? '已連接' : '未連接';
+            
+            // 構建連接信息 HTML
+            let html = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Redis 連接</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>狀態:</strong> <span class="${statusColor}">${statusText}</span></li>
+                            <li><strong>類型:</strong> ${connectionInfo.type === 'simulator' ? 'Redis 模擬器' : 'Redis 伺服器'}</li>
+                            <li><strong>主機:</strong> ${connectionInfo.host}</li>
+                            <li><strong>端口:</strong> ${connectionInfo.port}</li>
+                            ${connectionInfo.version ? `<li><strong>版本:</strong> ${connectionInfo.version}</li>` : ''}
+                            ${connectionInfo.error ? `<li><strong>錯誤:</strong> <span class="text-danger">${connectionInfo.error}</span></li>` : ''}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>伺服器信息</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>操作系統:</strong> ${serverInfo.os}</li>
+                            <li><strong>PHP 版本:</strong> ${serverInfo.php_version}</li>
+                            <li><strong>伺服器軟體:</strong> ${serverInfo.server_software}</li>
+                            <li><strong>數據目錄:</strong> ${serverInfo.data_dir || '使用 Redis 伺服器'}</li>
+                            <li><strong>時間戳:</strong> ${serverInfo.timestamp}</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            connectionInfoElement.innerHTML = html;
         }
         
         // 渲染佇列項目

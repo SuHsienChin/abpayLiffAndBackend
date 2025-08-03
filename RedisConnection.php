@@ -65,6 +65,36 @@ class RedisConnection {
         return $this->redis;
     }
     
+    /**
+     * 檢查 Redis 連接狀態
+     * @return array 連接狀態信息
+     */
+    public function getConnectionStatus() {
+        $status = [
+            'connected' => false,
+            'type' => 'unknown',
+            'host' => $_ENV['REDIS_HOST'] ?? 'unknown',
+            'port' => $_ENV['REDIS_PORT'] ?? 'unknown',
+            'error' => null
+        ];
+        
+        try {
+            if ($this->redis instanceof RedisSimulator) {
+                $status['connected'] = true;
+                $status['type'] = 'simulator';
+                $status['data_dir'] = $this->redis->getDataDir();
+            } else if ($this->redis instanceof Redis) {
+                $status['connected'] = $this->redis->ping() ? true : false;
+                $status['type'] = 'redis';
+                $status['version'] = $this->redis->info('server')['redis_version'] ?? 'unknown';
+            }
+        } catch (Exception $e) {
+            $status['error'] = $e->getMessage();
+        }
+        
+        return $status;
+    }
+    
     public function get($key) {
         try {
             return $this->redis->get($key);

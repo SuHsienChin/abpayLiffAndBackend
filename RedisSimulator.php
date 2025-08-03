@@ -154,4 +154,48 @@ class RedisSimulator {
         $listPath = $this->getListPath($key);
         file_put_contents($listPath, json_encode($list));
     }
+    
+    /**
+     * 獲取數據目錄路徑
+     * @return string 數據目錄路徑
+     */
+    public function getDataDir() {
+        return $this->dataDir;
+    }
+    
+    /**
+     * 獲取列表範圍內的元素
+     * @param string $key 列表鍵名
+     * @param int $start 開始索引
+     * @param int $end 結束索引
+     * @return array 列表元素數組
+     */
+    public function lRange($key, $start, $end) {
+        $list = $this->getList($key);
+        
+        // 處理負數索引（從列表末尾開始計數）
+        if ($start < 0) {
+            $start = count($list) + $start;
+        }
+        if ($end < 0) {
+            $end = count($list) + $end;
+        }
+        
+        // 確保索引在有效範圍內
+        $start = max(0, $start);
+        $end = min(count($list) - 1, $end);
+        
+        // 如果 $end 是 -1 且列表為空，返回空數組
+        if ($end == -1 && empty($list)) {
+            return [];
+        }
+        
+        // 如果開始索引大於結束索引，返回空數組
+        if ($start > $end) {
+            return [];
+        }
+        
+        // 返回指定範圍的元素
+        return array_slice($list, $start, $end - $start + 1);
+    }
 }
