@@ -127,10 +127,8 @@ const OrderProcessor = {
             // 記錄用戶的參數log，包含完整的 API URL
             this.saveLogsToMysql('在傳送訂單到官方LINE之前的params_json_data', params_json_data, fullApiUrl);
 
-            // 傳送訂單內容到官方LINE
-            this.sendMessageToLineOfficial(params_json_data);
-
             // 使用 Redis 佇列發送訂單到 API (每秒發送一次)
+            this.saveLogsToMysql('訂單已添加到佇列，將按順序處理', params_json_data, fullApiUrl);
             this.sendOrderToQueueApi(orderData.UrlParametersString, params);
             console.log('訂單已添加到佇列，將按順序處理');
             console.log('API URL:', fullApiUrl);
