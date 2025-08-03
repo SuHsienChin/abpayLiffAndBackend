@@ -125,32 +125,16 @@ const OrderProcessor = {
             const fullApiUrl = apiBaseUrl + orderData.UrlParametersString;
 
             // 記錄用戶的參數log，包含完整的 API URL
-            this.saveLogsToMysql('在傳送訂單到官方LINE之前的params_json_data', params_json_data, fullApiUrl);
-
-            // 先傳送訂單內容到官方LINE，等待完成後再繼續處理
-            this.sendMessageToLineOfficial(params_json_data)
-                .then(() => {
-                    console.log('LINE訊息發送成功，繼續處理訂單');
-                    
-                    // 使用 Redis 佇列發送訂單到 API (每秒發送一次)
-                    this.saveLogsToMysql('訂單已添加到佇列，將按順序處理', params_json_data, fullApiUrl);
-                    this.sendOrderToQueueApi(orderData.UrlParametersString, params);
-                    console.log('訂單已添加到佇列，將按順序處理');
-                    console.log('API URL:', fullApiUrl);
-                    console.log('URL Parameters:', orderData.UrlParametersString);
-                    console.log('Params:', params);
-                })
-                .catch((error) => {
-                    console.error('LINE訊息發送失敗，但仍繼續處理訂單:', error);
-                    
-                    // 即使LINE訊息發送失敗，仍然繼續處理訂單
-                    this.saveLogsToMysql('訂單已添加到佇列，將按順序處理 (LINE訊息發送失敗)', params_json_data, fullApiUrl);
-                    this.sendOrderToQueueApi(orderData.UrlParametersString, params);
-                    console.log('訂單已添加到佇列，將按順序處理');
-                    console.log('API URL:', fullApiUrl);
-                    console.log('URL Parameters:', orderData.UrlParametersString);
-                    console.log('Params:', params);
-                });
+            this.saveLogsToMysql('準備處理訂單', params_json_data, fullApiUrl);
+            
+            // 使用 Redis 佇列發送訂單到 API (每秒發送一次)
+            // 注意：LINE訊息發送將在佇列處理中進行，避免重複發送
+            this.saveLogsToMysql('訂單已添加到佇列，將按順序處理', params_json_data, fullApiUrl);
+            this.sendOrderToQueueApi(orderData.UrlParametersString, params);
+            console.log('訂單已添加到佇列，將按順序處理');
+            console.log('API URL:', fullApiUrl);
+            console.log('URL Parameters:', orderData.UrlParametersString);
+            console.log('Params:', params);
         } catch (e) {
             alert('發送訂單時發生錯誤，請洽小編\n' + e);
             console.error('發送訂單錯誤:', e);
