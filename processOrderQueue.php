@@ -62,7 +62,7 @@ if ($queueLength > 0) {
             $apiUrl = 'http://www.adp.idv.tw/api/Order?' . $queueItem['url_params'];
             
             // 插入日誌記錄
-            $stmt = $conn->prepare("INSERT INTO system_logs (type, JSON, api_url, created_at) VALUES (?, ?, ?, NOW())");
+            $stmt = $conn->prepare("INSERT INTO system_logs (type, JSON, api_url) VALUES (?, ?, ?)");
             $stmt->bindParam(1, $logType);
             $stmt->bindParam(2, $logJson);
             $stmt->bindParam(3, $apiUrl);
