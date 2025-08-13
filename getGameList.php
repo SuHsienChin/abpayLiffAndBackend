@@ -1,6 +1,7 @@
 <?php
 require_once 'getApiJsonClass.php';
 require_once 'RedisConnection.php';
+require_once 'ApiLogger.php';
 
 // 設置Redis緩存鍵和過期時間
 $cacheKey = 'game_list_cache';
@@ -22,8 +23,13 @@ if ($cachedData) {
     $data = json_decode($response, true);
     
     if ($data === null) {
+        // 記錄失敗的API請求
+        ApiLogger::logApiRequest('getGameList.php', $url, [], '', false);
         die("無法取得API資料");
     }
+    
+    // 記錄成功的API請求
+    ApiLogger::logApiRequest('getGameList.php', $url, [], $response, true);
     
     // 將數據存入Redis緩存
     $redis->set($cacheKey, $response, $cacheTTL);

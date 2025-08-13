@@ -1,6 +1,7 @@
 <?php
 require_once 'getApiJsonClass.php';
 require_once 'RedisConnection.php';
+require_once 'ApiLogger.php';
 
 // 獲取請求參數
 $lineId = $_GET["lineId"];
@@ -25,8 +26,13 @@ if ($cachedData) {
     $data = json_decode($response, true);
     
     if ($data === null) {
+        // 記錄失敗的API請求
+        ApiLogger::logApiRequest('getCustomer.php', $url, ['lineId' => $lineId], '', false);
         die("無法取得API資料");
     }
+    
+    // 記錄成功的API請求
+    ApiLogger::logApiRequest('getCustomer.php', $url, ['lineId' => $lineId], $response, true);
     
     // 將數據存入Redis緩存
     $redis->set($cacheKey, $response, $cacheTTL);
