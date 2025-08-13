@@ -14,8 +14,9 @@ class ApiLogger {
      * @param array $params - 請求參數
      * @param string $response - API 響應（可選）
      * @param bool $success - 請求是否成功
+     * @param string $dataSource - 資料來源（'api', 'cache', 'cache_wait'）
      */
-    public static function logApiRequest($source, $apiUrl, $params = [], $response = '', $success = true) {
+    public static function logApiRequest($source, $apiUrl, $params = [], $response = '', $success = true, $dataSource = 'api') {
         try {
             $dbConnection = new DatabaseConnection();
             $conn = $dbConnection->connect();
@@ -35,12 +36,28 @@ class ApiLogger {
             
             // 準備日誌數據
             $logType = $success ? 'API請求成功' : 'API請求失敗';
+            
+            // 根據資料來源調整日誌類型
+            switch ($dataSource) {
+                case 'cache':
+                    $logType = '快取命中';
+                    break;
+                case 'cache_wait':
+                    $logType = '快取等待後命中';
+                    break;
+                case 'api':
+                default:
+                    $logType = $success ? 'API請求成功' : 'API請求失敗';
+                    break;
+            }
+            
             $logData = [
                 'source' => $source,
                 'api_url' => $apiUrl,
                 'params' => $params,
                 'success' => $success,
-                'timestamp' => date('Y-m-d H:i:s')
+                'timestamp' => date('Y-m-d H:i:s'),
+                'data_source' => $dataSource
             ];
             
             if ($response) {

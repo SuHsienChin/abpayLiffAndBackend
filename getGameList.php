@@ -15,6 +15,9 @@ $cachedData = $redis->get($cacheKey);
 if ($cachedData) {
     // 如果有緩存數據，直接返回
     $data = json_decode($cachedData, true);
+    
+    // 記錄從快取獲取數據
+    ApiLogger::logApiRequest('getGameList.php', 'redis://game_list_cache', [], $cachedData, true, 'cache');
 } else {
     // 快取未命中，使用分散式鎖防止快取雪崩
     $lockKey = $cacheKey . ':lock';
@@ -44,7 +47,7 @@ if ($cachedData) {
                 }
                 
                 // 記錄成功的API請求
-                ApiLogger::logApiRequest('getGameList.php', $url, [], $response, true);
+                ApiLogger::logApiRequest('getGameList.php', $url, [], $response, true, 'api');
                 
                 // 將數據存入Redis緩存
                 $redis->set($cacheKey, $response, $cacheTTL);
@@ -60,6 +63,9 @@ if ($cachedData) {
         if ($cachedData !== false) {
             // 等待成功，使用快取數據
             $data = json_decode($cachedData, true);
+            
+            // 記錄從快取獲取數據（等待後）
+            ApiLogger::logApiRequest('getGameList.php', 'redis://game_list_cache', [], $cachedData, true, 'cache_wait');
         } else {
             // 等待超時，返回錯誤
             die("快取更新超時，請稍後再試");
