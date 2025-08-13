@@ -190,7 +190,10 @@
         function customerBtn(mylineId) {
             logUserAction('order', '進入訂單頁面', { lineId: mylineId });
             // const mylineId = $("#lineId").val();
-        
+            if(mylineId === undefined){
+                alert('系統檢測到無效參數，請重新整理頁面或聯繫客服');
+                return;
+            }
             //取得客人資料
             axios.get('getCustomer.php?lineId=' + mylineId)
                 .then(function (response) {
@@ -226,6 +229,10 @@
 
         //取得客人所有的遊戲帳號
         function getCustomerGameAccounts(Sid) {
+            if(Sid === undefined){
+                alert('系統檢測到無效參數，請重新整理頁面或聯繫客服');
+                return;
+            }
             axios.get('getGameAccount.php?Sid=' + Sid)
                 .then(function (response) {
                     const accountData = response.data;
@@ -371,6 +378,10 @@
             removeElementsByClass("dropdownDiv");
 
             // 使用axios進行後端請求
+            if(selectedGame === undefined){
+                alert('系統檢測到無效參數，請重新整理頁面或聯繫客服');
+                return;
+            }
             axios.get('getGameItem.php?Sid=' + selectedGame)
                 .then(function (response) {
                     // 從回傳的資料中生成商品下拉選單選項
@@ -431,6 +442,10 @@
             const newGameItem = document.createElement("select");
             newGameItem.classList.add("form-control", "mr-2", "gameItems");
 
+            if(selectedGame === undefined){
+                alert('系統檢測到無效參數，請重新整理頁面或聯繫客服');
+                return;
+            }
             axios.get('getGameItem.php?Sid=' + selectedGame)
                 .then(function (response) {
                     // 從回傳的資料中生成商品下拉選單選項
@@ -488,6 +503,10 @@
 
 
         function getGemeItemsDataToJson(selectedGame) {
+            if(selectedGame === undefined){
+                alert('系統檢測到無效參數，請重新整理頁面或聯繫客服');
+                return;
+            }
             axios.get('getGameItem.php?Sid=' + selectedGame)
                 .then(function (response) {
                     return response;
