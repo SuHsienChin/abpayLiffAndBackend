@@ -2,6 +2,7 @@
 require_once 'getApiJsonClass.php';
 require_once 'RedisConnection.php';
 require_once 'ApiLogger.php';
+require_once 'DistributedLock.php';
 
 // 獲取請求參數
 $sid = $_GET["Sid"];
@@ -18,24 +19,55 @@ if ($cachedData) {
     // 如果有緩存數據，直接返回
     $data = json_decode($cachedData, true);
 } else {
-    // 如果沒有緩存數據，從API獲取
-    $url = 'http://www.adp.idv.tw/api/GameItem?Sid=' . $sid;
-    $curlRequest = new CurlRequest($url);
-    $response = $curlRequest->sendRequest();
+    // 快取未命中，使用分散式鎖防止快取雪崩
+    $lockKey = $cacheKey . ':lock';
+    $lockTimeout = 10; // 鎖超時時間（秒）
+    $maxWaitTime = 5; // 最大等待時間（秒）
     
-    $data = json_decode($response, true);
-    
-    if ($data === null) {
-        // 記錄失敗的API請求
-        ApiLogger::logApiRequest('getGameItem.php', $url, ['sid' => $sid], '', false);
-        die("無法取得API資料");
+    // 嘗試獲取分散式鎖
+    if (DistributedLock::acquireLock($lockKey, $lockTimeout)) {
+        // 成功獲取鎖，負責更新快取
+        try {
+            // 再次檢查快取，防止在獲取鎖期間其他進程已經更新了快取
+            $cachedData = $redis->get($cacheKey);
+            if ($cachedData) {
+                $data = json_decode($cachedData, true);
+            } else {
+                // 從API獲取新數據
+                $url = 'http://www.adp.idv.tw/api/GameItem?Sid=' . $sid;
+                $curlRequest = new CurlRequest($url);
+                $response = $curlRequest->sendRequest();
+                
+                $data = json_decode($response, true);
+                
+                if ($data === null) {
+                    // 記錄失敗的API請求
+                    ApiLogger::logApiRequest('getGameItem.php', $url, ['sid' => $sid], '', false);
+                    throw new Exception("無法取得API資料");
+                }
+                
+                // 記錄成功的API請求
+                ApiLogger::logApiRequest('getGameItem.php', $url, ['sid' => $sid], $response, true);
+                
+                // 將數據存入Redis緩存
+                $redis->set($cacheKey, $response, $cacheTTL);
+            }
+        } finally {
+            // 無論成功或失敗，都要釋放鎖
+            DistributedLock::releaseLock($lockKey);
+        }
+    } else {
+        // 獲取鎖失敗，等待其他進程更新快取
+        $cachedData = DistributedLock::waitForCache($cacheKey, $maxWaitTime, 200);
+        
+        if ($cachedData !== false) {
+            // 等待成功，使用快取數據
+            $data = json_decode($cachedData, true);
+        } else {
+            // 等待超時，返回錯誤
+            die("快取更新超時，請稍後再試");
+        }
     }
-    
-    // 記錄成功的API請求
-    ApiLogger::logApiRequest('getGameItem.php', $url, ['sid' => $sid], $response, true);
-    
-    // 將數據存入Redis緩存
-    $redis->set($cacheKey, $response, $cacheTTL);
 }
 
 header('Content-Type: application/json');
