@@ -40,7 +40,7 @@ class DistributedLock {
             $redis = RedisConnection::getInstance();
             
             // 刪除鎖鍵
-            $result = $redis->del($lockKey);
+	            $result = $redis->delete($lockKey);
             
             return $result > 0;
             

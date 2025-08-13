@@ -24,6 +24,18 @@ class RedisSimulator {
      */
     public function get($key) {
         $filePath = $this->getFilePath($key);
+        // 檢查是否過期
+        $expirePath = $this->getExpirePath($key);
+        if (file_exists($expirePath)) {
+            $expireTime = (int)file_get_contents($expirePath);
+            if ($expireTime > 0 && time() >= $expireTime) {
+                if (file_exists($filePath)) {
+                    @unlink($filePath);
+                }
+                @unlink($expirePath);
+                return false;
+            }
+        }
         if (file_exists($filePath)) {
             return file_get_contents($filePath);
         }

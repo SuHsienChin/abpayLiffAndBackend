@@ -104,9 +104,45 @@ class RedisConnection {
         }
     }
     
-    public function set($key, $value, $ttl = 60) {
+    public function set($key, $value, $options = 60) {
         try {
-            return $this->redis->set($key, $value, $ttl);
+            // 原生 Redis 擴展可直接接受 array 選項（NX/XX/EX/PX）
+            if ($this->redis instanceof Redis) {
+                return $this->redis->set($key, $value, $options);
+            }
+
+            // 模擬器環境下，手動解析選項
+            $ttlSeconds = null;
+            $useNx = false;
+            $useXx = false;
+
+            if (is_array($options)) {
+                // 可能的形式：['NX', 'EX' => 10] 或 ['EX' => 10] 等
+                $upperKeys = array_change_key_case($options, CASE_UPPER);
+                if (isset($upperKeys['EX'])) {
+                    $ttlSeconds = (int)$upperKeys['EX'];
+                } elseif (isset($upperKeys['PX'])) {
+                    $ttlMs = (int)$upperKeys['PX'];
+                    $ttlSeconds = (int)ceil($ttlMs / 1000);
+                }
+                $useNx = in_array('NX', $upperKeys, true) || (isset($upperKeys['NX']) && $upperKeys['NX']);
+                $useXx = in_array('XX', $upperKeys, true) || (isset($upperKeys['XX']) && $upperKeys['XX']);
+            } elseif (is_int($options)) {
+                $ttlSeconds = $options;
+            } elseif ($options === null) {
+                $ttlSeconds = null;
+            }
+
+            // NX: 僅當不存在時設置；XX: 僅當存在時設置
+            $exists = (bool)$this->redis->exists($key);
+            if ($useNx && $exists) {
+                return false;
+            }
+            if ($useXx && !$exists) {
+                return false;
+            }
+
+            return $this->redis->set($key, $value, $ttlSeconds);
         } catch (Exception $e) {
             error_log("Redis設置數據失敗: " . $e->getMessage());
             return false;
