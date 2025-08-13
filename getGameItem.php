@@ -4,6 +4,7 @@ require_once 'RedisConnection.php';
 require_once 'ApiLogger.php';
 require_once 'DistributedLock.php';
 
+try {
 // 獲取請求參數
 $sid = $_GET["Sid"];
 
@@ -70,11 +71,21 @@ if ($cachedData) {
             // 記錄從快取獲取數據（等待後）
             ApiLogger::logApiRequest('getGameItem.php', 'redis://game_item_cache_' . $sid, ['sid' => $sid], $cachedData, true, 'cache_wait');
         } else {
-            // 等待超時，返回錯誤
-            die("快取更新超時，請稍後再試");
+            // 等待超時，改為丟出例外，統一由外層處理
+            throw new Exception("快取更新超時，請稍後再試");
         }
     }
 }
 
 header('Content-Type: application/json');
 echo json_encode($data);
+} catch (Throwable $e) {
+    http_response_code(500);
+    header('Content-Type: application/json');
+    ApiLogger::logApiRequest('getGameItem.php', 'internal://exception', ['sid' => isset($sid) ? $sid : null], $e->getMessage(), false, 'internal');
+    echo json_encode([
+        'success' => false,
+        'message' => '伺服器發生錯誤，請稍後再試',
+        'error' => $e->getMessage()
+    ], JSON_UNESCAPED_UNICODE);
+}

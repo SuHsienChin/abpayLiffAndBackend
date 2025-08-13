@@ -4,6 +4,7 @@ require_once 'RedisConnection.php';
 require_once 'ApiLogger.php';
 require_once 'DistributedLock.php';
 
+try {
 // 設置Redis緩存鍵和過期時間
 $cacheKey = 'rate_cache';
 $cacheTTL = 5; // 緩存5秒
@@ -67,8 +68,8 @@ if ($cachedData) {
             // 記錄從快取獲取數據（等待後）
             ApiLogger::logApiRequest('getRate.php', 'redis://rate_cache', [], $cachedData, true, 'cache_wait');
         } else {
-            // 等待超時，返回錯誤
-            die("快取更新超時，請稍後再試");
+            // 等待超時，改為丟出例外，統一由外層處理
+            throw new Exception("快取更新超時，請稍後再試");
         }
     }
 }
@@ -76,3 +77,13 @@ if ($cachedData) {
 
 header('Content-Type: application/json');
 echo json_encode($data);
+} catch (Throwable $e) {
+    http_response_code(500);
+    header('Content-Type: application/json');
+    ApiLogger::logApiRequest('getRate.php', 'internal://exception', [], $e->getMessage(), false, 'internal');
+    echo json_encode([
+        'success' => false,
+        'message' => '伺服器發生錯誤，請稍後再試',
+        'error' => $e->getMessage()
+    ], JSON_UNESCAPED_UNICODE);
+}

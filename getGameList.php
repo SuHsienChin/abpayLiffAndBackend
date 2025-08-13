@@ -4,6 +4,7 @@ require_once 'RedisConnection.php';
 require_once 'ApiLogger.php';
 require_once 'DistributedLock.php';
 
+try {
 // 設置Redis緩存鍵和過期時間
 $cacheKey = 'game_list_cache';
 $cacheTTL = 60; // 緩存1小時
@@ -67,11 +68,21 @@ if ($cachedData) {
             // 記錄從快取獲取數據（等待後）
             ApiLogger::logApiRequest('getGameList.php', 'redis://game_list_cache', [], $cachedData, true, 'cache_wait');
         } else {
-            // 等待超時，返回錯誤
-            die("快取更新超時，請稍後再試");
+            // 等待超時，改為丟出例外，統一由外層處理
+            throw new Exception("快取更新超時，請稍後再試");
         }
     }
 }
 
 header('Content-Type: application/json');
 echo json_encode($data);
+} catch (Throwable $e) {
+    http_response_code(500);
+    header('Content-Type: application/json');
+    ApiLogger::logApiRequest('getGameList.php', 'internal://exception', [], $e->getMessage(), false, 'internal');
+    echo json_encode([
+        'success' => false,
+        'message' => '伺服器發生錯誤，請稍後再試',
+        'error' => $e->getMessage()
+    ], JSON_UNESCAPED_UNICODE);
+}
