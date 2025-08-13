@@ -4,6 +4,12 @@ require_once 'RedisConnection.php';
 require_once 'ApiLogger.php';
 require_once 'DistributedLock.php';
 
+/**
+ * 取得遊戲帳號資料
+ * - 先讀 Redis 快取，未命中時使用分散式鎖避免快取雪崩
+ * - 錯誤以 try/catch 捕捉，統一回傳 JSON 格式
+ */
+try {
 // 獲取請求參數
 $sid = $_GET["Sid"];
 
@@ -70,11 +76,22 @@ if ($cachedData) {
             // 記錄從快取獲取數據（等待後）
             ApiLogger::logApiRequest('getGameAccount.php', 'redis://game_account_cache_' . $sid, ['sid' => $sid], $cachedData, true, 'cache_wait');
         } else {
-            // 等待超時，返回錯誤
-            die("快取更新超時，請稍後再試");
+            // 等待超時，改為丟出例外，統一由外層處理
+            throw new Exception("快取更新超時，請稍後再試");
         }
     }
 }
 
 header('Content-Type: application/json');
 echo json_encode($data);
+} catch (Throwable $e) {
+    // 捕捉所有錯誤，回傳一致 JSON 並記錄
+    http_response_code(500);
+    header('Content-Type: application/json');
+    ApiLogger::logApiRequest('getGameAccount.php', 'internal://exception', ['sid' => isset($sid) ? $sid : null], $e->getMessage(), false, 'internal');
+    echo json_encode([
+        'success' => false,
+        'message' => '伺服器發生錯誤，請稍後再試',
+        'error' => $e->getMessage()
+    ], JSON_UNESCAPED_UNICODE);
+}
