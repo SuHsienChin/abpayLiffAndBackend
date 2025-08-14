@@ -21,6 +21,7 @@ try {
     $stmt->execute();
     $database_games = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $database_games_by_sid = array_column($database_games, null, 'Sid');
+    $database_games_by_id = array_column($database_games, null, 'id');
 
     // 更新遊戲列表到資料庫
     $inserted_count = 0;
@@ -35,9 +36,9 @@ try {
         $updateTime = date('Y-m-d H:i:s');
         $userSid = $game['UserSid'] ?? 0;
 
-        // 檢查資料庫中是否已經存在相同的 Sid
-        if (array_key_exists($sid, $database_games_by_sid)) {
-            // 如果 Sid 已存在,則跳過更新
+        // 檢查資料庫中是否已經存在相同的 Sid 或 id
+        if (array_key_exists($sid, $database_games_by_sid) || array_key_exists($id, $database_games_by_id)) {
+            // 如果 Sid 或 id 已存在,則跳過更新
             continue;
         }
 
