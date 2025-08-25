@@ -7,7 +7,7 @@ require_once 'DistributedLock.php';
 try {
 // 設置Redis緩存鍵和過期時間
 $cacheKey = 'rate_cache';
-$cacheTTL = 5; // 緩存5秒
+$cacheTTL = 300; // 緩存5秒
 
 // 嘗試從Redis獲取緩存數據
 $redis = RedisConnection::getInstance();
