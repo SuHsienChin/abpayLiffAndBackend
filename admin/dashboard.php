@@ -82,6 +82,12 @@ if (!isset($_SESSION['admin_id'])) {
                             <p>戰略自動發單</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="redis_refresh.php" class="nav-link">
+                            <i class="nav-icon fas fa-sync-alt"></i>
+                            <p>Redis 快取刷新</p>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
