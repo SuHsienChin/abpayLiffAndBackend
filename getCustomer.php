@@ -1,6 +1,7 @@
 <?php
 require_once 'getApiJsonClass.php';
 require_once 'RedisConnection.php';
+require_once 'CacheConfig.php';
 require_once 'ApiLogger.php';
 require_once 'DistributedLock.php';
 
@@ -10,7 +11,7 @@ $lineId = $_GET["lineId"];
 
 // 設置Redis緩存鍵和過期時間
 $cacheKey = 'customer_cache_' . $lineId;
-$cacheTTL = 10; // 緩存1小時
+$cacheTTL = CACHE_TTL_CUSTOMER; // 統一設定檔
 
 // 嘗試從Redis獲取緩存數據
 $redis = RedisConnection::getInstance();

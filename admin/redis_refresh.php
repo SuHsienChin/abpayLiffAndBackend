@@ -153,7 +153,7 @@ if (!isset($_SESSION['admin_id'])) {
                                             <input id="sid_account" type="text" class="form-control mr-2" placeholder="輸入 Sid">
                                             <button id="btn_game_account" class="btn btn-primary">立即更新</button>
                                         </div>
-                                        <div class="small mt-2">快取鍵：game_account_cache_{Sid}（TTL 86400s）</div>
+                                        <div class="small mt-2">快取鍵：game_account_cache_{Sid}（TTL 10s）</div>
                                     </div>
                                 </div>
                             </div>

@@ -1,13 +1,14 @@
 <?php
 require_once 'getApiJsonClass.php';
 require_once 'RedisConnection.php';
+require_once 'CacheConfig.php';
 require_once 'ApiLogger.php';
 require_once 'DistributedLock.php';
 
 try {
 // 設置Redis緩存鍵和過期時間
 $cacheKey = 'game_list_cache';
-$cacheTTL = 86400; // 緩存1小時
+$cacheTTL = CACHE_TTL_GAME_LIST; // 統一設定檔
 
 // 嘗試從Redis獲取緩存數據
 $redis = RedisConnection::getInstance();

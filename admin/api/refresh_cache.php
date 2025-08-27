@@ -2,6 +2,7 @@
 require_once dirname(__DIR__, 2) . '/getApiJsonClass.php';
 require_once dirname(__DIR__, 2) . '/RedisConnection.php';
 require_once dirname(__DIR__, 2) . '/ApiLogger.php';
+require_once dirname(__DIR__, 2) . '/CacheConfig.php';
 
 /**
  * 強制刷新指定資源的 Redis 快取，直接調用外部 API 更新
@@ -38,7 +39,7 @@ try {
             $resource = 'getCustomer.php';
             $cacheKey = 'customer_cache_' . $lineId;
             $url = 'http://www.adp.idv.tw/api/Customer?Line=' . urlencode($lineId);
-            $ttl = 300; // 與 getCustomer.php 一致
+            $ttl = CACHE_TTL_CUSTOMER; // 統一設定檔
             break;
         case 'game_account':
             if ($sid === null || $sid === '') {
@@ -47,7 +48,7 @@ try {
             $resource = 'getGameAccount.php';
             $cacheKey = 'game_account_cache_' . $sid;
             $url = 'http://www.adp.idv.tw/api/GameAccount?Sid=' . urlencode($sid);
-            $ttl = 86400; // 與 getGameAccount.php 一致
+            $ttl = CACHE_TTL_GAME_ACCOUNT; // 統一設定檔
             break;
         case 'game_item':
             if ($sid === null || $sid === '') {
@@ -56,19 +57,19 @@ try {
             $resource = 'getGameItem.php';
             $cacheKey = 'game_item_cache_' . $sid;
             $url = 'http://www.adp.idv.tw/api/GameItem?Sid=' . urlencode($sid);
-            $ttl = 300; // 與 getGameItem.php 一致
+            $ttl = CACHE_TTL_GAME_ITEM; // 統一設定檔
             break;
         case 'game_list':
             $resource = 'getGameList.php';
             $cacheKey = 'game_list_cache';
             $url = 'http://www.adp.idv.tw/api/GameList';
-            $ttl = 86400; // 與 getGameList.php 一致
+            $ttl = CACHE_TTL_GAME_LIST; // 統一設定檔
             break;
         case 'rate':
             $resource = 'getRate.php';
             $cacheKey = 'rate_cache';
             $url = 'http://www.adp.idv.tw/api/Rate';
-            $ttl = 5; // 與 getRate.php 一致
+            $ttl = CACHE_TTL_RATE; // 統一設定檔
             break;
         default:
             throw new Exception('不支援的 type');
