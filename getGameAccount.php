@@ -15,7 +15,7 @@ $sid = $_GET["Sid"];
 
 // 設置Redis緩存鍵和過期時間
 $cacheKey = 'game_account_cache_' . $sid;
-$cacheTTL = 86400; // 緩存1小時
+$cacheTTL = 10; // 緩存1小時
 
 // 嘗試從Redis獲取緩存數據
 $redis = RedisConnection::getInstance();

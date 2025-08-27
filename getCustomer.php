@@ -10,7 +10,7 @@ $lineId = $_GET["lineId"];
 
 // 設置Redis緩存鍵和過期時間
 $cacheKey = 'customer_cache_' . $lineId;
-$cacheTTL = 300; // 緩存1小時
+$cacheTTL = 10; // 緩存1小時
 
 // 嘗試從Redis獲取緩存數據
 $redis = RedisConnection::getInstance();
