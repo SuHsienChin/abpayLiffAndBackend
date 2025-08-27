@@ -78,10 +78,16 @@ if ($cachedData) {
     }
 }
 
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 header('Content-Type: application/json');
 echo json_encode($data);
 } catch (Throwable $e) {
     http_response_code(500);
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    header('Expires: 0');
     header('Content-Type: application/json');
     ApiLogger::logApiRequest('getGameItem.php', 'internal://exception', ['sid' => isset($sid) ? $sid : null], $e->getMessage(), false, 'internal');
     echo json_encode([

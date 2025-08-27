@@ -83,11 +83,17 @@ if ($cachedData) {
     }
 }
 
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 header('Content-Type: application/json');
 echo json_encode($data);
 } catch (Throwable $e) {
     // 捕捉所有錯誤，回傳一致 JSON 並記錄
     http_response_code(500);
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    header('Expires: 0');
     header('Content-Type: application/json');
     ApiLogger::logApiRequest('getGameAccount.php', 'internal://exception', ['sid' => isset($sid) ? $sid : null], $e->getMessage(), false, 'internal');
     echo json_encode([

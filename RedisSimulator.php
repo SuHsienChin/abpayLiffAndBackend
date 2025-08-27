@@ -78,6 +78,27 @@ class RedisSimulator {
         
         return $result;
     }
+
+    /**
+     * 取得鍵的TTL（秒）
+     * -2: 不存在；-1: 無過期
+     */
+    public function ttl($key) {
+        $filePath = $this->getFilePath($key);
+        if (!file_exists($filePath)) {
+            return -2;
+        }
+        $expirePath = $this->getExpirePath($key);
+        if (!file_exists($expirePath)) {
+            return -1;
+        }
+        $expireTime = (int)@file_get_contents($expirePath);
+        if ($expireTime <= 0) {
+            return -1;
+        }
+        $remaining = $expireTime - time();
+        return $remaining > 0 ? $remaining : -2;
+    }
     
     /**
      * 檢查鍵是否存在

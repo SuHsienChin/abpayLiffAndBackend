@@ -108,6 +108,10 @@ class RedisConnection {
         try {
             // 原生 Redis 擴展可直接接受 array 選項（NX/XX/EX/PX）
             if ($this->redis instanceof Redis) {
+                // 為避免不同版本行為差異，若為整數直接轉為 EX 選項
+                if (is_int($options)) {
+                    $options = ['EX' => $options];
+                }
                 return $this->redis->set($key, $value, $options);
             }
 
@@ -147,6 +151,26 @@ class RedisConnection {
             error_log("Redis設置數據失敗: " . $e->getMessage());
             return false;
         }
+    }
+
+    /**
+     * 取得鍵的剩餘壽命（秒）
+     * @param string $key
+     * @return int 剩餘秒數；-1 無過期；-2 不存在或錯誤
+     */
+    public function ttl($key) {
+        try {
+            if ($this->redis instanceof Redis) {
+                return (int)$this->redis->ttl($key);
+            }
+            // 模擬器：讀取 expire 檔
+            if ($this->redis instanceof RedisSimulator) {
+                return $this->redis->ttl($key);
+            }
+        } catch (Exception $e) {
+            error_log("Redis獲取TTL失敗: " . $e->getMessage());
+        }
+        return -2;
     }
     
     public function delete($key) {
