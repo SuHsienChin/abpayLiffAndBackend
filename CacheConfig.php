@@ -5,13 +5,13 @@
  */
 
 /** @var int 客戶資料 TTL（秒） */
-const CACHE_TTL_CUSTOMER = 10;
+const CACHE_TTL_CUSTOMER = 30;
 
 /** @var int 遊戲帳號 TTL（秒） */
-const CACHE_TTL_GAME_ACCOUNT = 10;
+const CACHE_TTL_GAME_ACCOUNT = 30;
 
 /** @var int 遊戲商品 TTL（秒） */
-const CACHE_TTL_GAME_ITEM = 10;
+const CACHE_TTL_GAME_ITEM = 20;
 
 /** @var int 遊戲清單 TTL（秒） */
 const CACHE_TTL_GAME_LIST = 86400;
