@@ -120,9 +120,15 @@
         loadingModal.show();
 
         $(function () {
+            // 每次開啟頁面時清空所有暫存資料
+            sessionStorage.clear();
+            localStorage.clear(); // 清空 localStorage 以防萬一
+            
+            // 清空表單資料
+            $('form')[0].reset();
+            
             //使用 LIFF_ID 初始化 LIFF 應用
             initializeLiff('2000183731-BLmrAGPp');
-            sessionStorage.clear();
         });
 
 
@@ -181,8 +187,7 @@
 
         }
 
-        //一開始進來清除所有暫存資料
-        //sessionStorage.clear();
+        // 註解：sessionStorage.clear() 已移至頁面載入時執行
 
 
         
