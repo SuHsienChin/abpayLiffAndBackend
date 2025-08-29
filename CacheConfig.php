@@ -11,7 +11,7 @@ const CACHE_TTL_CUSTOMER = 30;
 const CACHE_TTL_GAME_ACCOUNT = 30;
 
 /** @var int 遊戲商品 TTL（秒） */
-const CACHE_TTL_GAME_ITEM = 20;
+const CACHE_TTL_GAME_ITEM = 5;
 
 /** @var int 遊戲清單 TTL（秒） */
 const CACHE_TTL_GAME_LIST = 86400;
