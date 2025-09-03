@@ -451,36 +451,43 @@
                 alert('系統檢測到無效參數，請重新整理頁面或聯繫客服');
                 return;
             }
-            axios.get('getGameItem.php?Sid=' + selectedGame)
-                .then(function (response) {
-                    // 從回傳的資料中生成商品下拉選單選項
-                    let gameItems = response.data;
+            
+            // 從 sessionStorage 讀取遊戲商品資料
+            try {
+                const gameItemsData = sessionStorage.getItem('gemeItems');
+                if (!gameItemsData) {
+                    console.error('無法從 sessionStorage 取得遊戲商品資料');
+                    newGameItem.innerHTML = '<option value="">請先選擇遊戲名稱</option>';
+                    return;
+                }
+                
+                let gameItems = JSON.parse(gameItemsData);
+                console.log('✅ 新增商品 - 從 sessionStorage 讀取遊戲商品資料');
+                
+                // 去掉商品底線後面的字
+                gameItems = removeAfterOnderLineWords(gameItems);
 
-                    // 去掉商品底線後面的字
-                    gameItems = removeAfterOnderLineWords(gameItems);
+                //確認港幣客人只能顯示港幣商品
+                const hkdFlag = checkHkdCurrencyAndHkdGameItems(gameItems);
 
-                    //確認港幣客人只能顯示港幣商品
-                    const hkdFlag = checkHkdCurrencyAndHkdGameItems(gameItems);
+                //回傳專用的港幣商品
+                if (hkdFlag === true) {
+                    gameItems = returnHkdGameItems(gameItems);
+                }
 
-                    //回傳專用的港幣商品
-                    if (hkdFlag === true) {
-                        gameItems = returnHkdGameItems(gameItems);
+                let options = '<option value="-1">請選擇遊戲商品</option>';
+                $.each(gameItems, function (i, item) {
+                    if (item.Enable === 1) {
+                        options +=
+                            `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
                     }
-
-                    let options = '<option value="-1">請選擇遊戲商品</option>';
-                    $.each(gameItems, function (i, item) {
-                        //options += `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
-                        if (item.Enable === 1) {
-                            options +=
-                                `<option value="${item.Sid}" data-bouns="${item.Bonus}">${item.Name}</option>`;
-                        }
-                    });
-                    newGameItem.innerHTML = options;
-                })
-                .catch(function (error) {
-                    console.error('Error fetching game items:', error);
-                    newGameItem.innerHTML = '<option value="">無法取得商品資料</option>';
                 });
+                newGameItem.innerHTML = options;
+                
+            } catch (error) {
+                console.error('解析 sessionStorage 遊戲商品資料失敗:', error);
+                newGameItem.innerHTML = '<option value="">無法取得商品資料</option>';
+            }
 
             //123
             dropdownDiv.appendChild(newGameItem);
