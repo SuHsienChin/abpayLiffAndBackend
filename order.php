@@ -120,11 +120,30 @@
         loadingModal.show();
 
         $(function () {
-            // 每次開啟頁面時清空所有暫存資料
-            sessionStorage.clear();
-            localStorage.clear(); // 清空 localStorage 以防萬一
+            // 檢查是否已經有 LINE 登入狀態，避免無限迴圈
+            const existingLineUserId = sessionStorage.getItem('lineUserId');
             
-            // 清空表單資料
+            if (existingLineUserId) {
+                // 如果已經有登入狀態，直接使用現有資料
+                console.log('使用現有登入狀態:', existingLineUserId);
+                $("#lineId").val(existingLineUserId);
+                
+                // 嘗試從快取恢復客戶資料
+                const cachedCustomerData = sessionStorage.getItem('customerData');
+                if (cachedCustomerData) {
+                    try {
+                        const customerData = JSON.parse(cachedCustomerData);
+                        displayCustomerData(customerData);
+                        getCustomerGameAccounts(customerData.Sid);
+                        loadingModal.hide();
+                        return; // 直接返回，不需要重新初始化 LIFF
+                    } catch (e) {
+                        console.log('快取資料解析失敗，重新初始化');
+                    }
+                }
+            }
+            
+            // 清空表單資料（但保留登入狀態）
             $('form')[0].reset();
             
             //使用 LIFF_ID 初始化 LIFF 應用
@@ -191,6 +210,23 @@
 
 
         
+        // 顯示客戶資料的輔助函式
+        function displayCustomerData(customerData) {
+            const customer = document.getElementById("customerData");
+            const walletBalance = document.getElementById("walletBalance");
+            let currentMoney = 0;
+            
+            //預防餘額還沒有設定的客人會出現undefined
+            if (typeof customerData.CurrentMoney === 'undefined') {
+                currentMoney = 0;
+            } else {
+                currentMoney = customerData.CurrentMoney;
+            }
+            
+            customer.innerHTML = customerData.Id + ' ' + customerData.Name;
+            walletBalance.innerHTML = currentMoney + ' ' + customerData.Currency;
+        }
+        
         // 在各個函數中加入記錄
         function customerBtn(mylineId) {
             logUserAction('order', '進入訂單頁面', { lineId: mylineId });
@@ -203,18 +239,12 @@
             axios.get('getCustomer.php?lineId=' + mylineId)
                 .then(function (response) {
                     const customerData = response.data;
-                    const customer = document.getElementById("customerData");
-                    const walletBalance = document.getElementById("walletBalance");
                     const lineId = $('#lineId').val();
-                    let currentMoney = 0;
-                    //預防餘額還沒有設定的客人會出現undefined
-                    if (typeof customerData.CurrentMoney === 'undefined') {
-                        currentMoney = 0;
-                    } else {
-                        currentMoney = customerData.CurrentMoney;
-                    }
-                    customer.innerHTML = customerData.Id + ' ' + customerData.Name;
-                    walletBalance.innerHTML = currentMoney + ' ' + customerData.Currency;
+                    
+                    // 使用輔助函式顯示客戶資料
+                    displayCustomerData(customerData);
+                    
+                    // 儲存到 sessionStorage
                     sessionStorage.setItem('customerData', JSON.stringify(response.data));
                     sessionStorage.setItem('lineId', lineId);
 
