@@ -55,7 +55,8 @@ function handleEvent($event) {
             ["name" => "毛孩形象全檔方案", "price" => "NT.5980", "description" => "專業攝影師為您的寵物拍攝完整形象照，包含多種場景和造型。", "title" => "專業形象攝影"],
             ["name" => "毛孩親寫真", "price" => "NT.600", "description" => "為您的毛孩拍攝精美的個人寫真，捕捉最自然的一面。", "title" => "個人寫真精選"],
             ["name" => "毛孩與你親子寫真", "price" => "NT.1200", "description" => "與毛孩一起入鏡，留下溫馨動人的合照回憶。", "title" => "溫馨親子合照"],
-            ["name" => "毛孩BOOM起來", "price" => "NT.800", "description" => "活力四射的動態拍攝，展現毛孩最活潑的一面。", "title" => "動態活力拍攝"]
+            ["name" => "毛孩BOOM起來", "price" => "NT.800", "description" => "活力四射的動態拍攝，展現毛孩最活潑的一面。", "title" => "動態活力拍攝"],
+            ["name" => "毛腳腳單張系列", "price" => "NT.2980", "description" => "毛腳腳單張系列。", "title" => "毛腳腳單張系列"]
         ];
 
         if (trim($messageText) == "價目表") {
