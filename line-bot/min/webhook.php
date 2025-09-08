@@ -1,7 +1,8 @@
 <?php
 
 // 載入環境變數
-function loadEnv() {
+function loadEnv()
+{
     $envPath = __DIR__ . '/.env';
     if (file_exists($envPath)) {
         $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -45,7 +46,8 @@ if (isset($data['events'])) {
 }
 
 // 處理單個事件
-function handleEvent($event) {
+function handleEvent($event)
+{
     if ($event['type'] == 'message' && $event['message']['type'] == 'text') {
         $userId = $event['source']['userId'];
         $messageText = $event['message']['text'];
@@ -57,7 +59,7 @@ function handleEvent($event) {
             ["name" => "毛孩形象全檔方案", "price" => "NT.5980", "description" => "專業攝影師為您的寵物拍攝完整形象照，包含多種場景和造型。", "title" => "專業形象攝影"],
             ["name" => "毛孩親寫真", "price" => "NT.600", "description" => "為您的毛孩拍攝精美的個人寫真，捕捉最自然的一面。", "title" => "個人寫真精選"],
             ["name" => "毛孩與你親子寫真", "price" => "NT.1200", "description" => "與毛孩一起入鏡，留下溫馨動人的合照回憶。", "title" => "溫馨親子合照"],
-            ["name" => "毛孩BOOM起來", "price" => "NT.800", "description" => "活力四射的動態拍攝，展現毛孩最活潑的一面。", "title" => "動態活力拍攝"]            
+            ["name" => "毛孩BOOM起來", "price" => "NT.800", "description" => "活力四射的動態拍攝，展現毛孩最活潑的一面。", "title" => "動態活力拍攝"]
         ];
 
         if (trim($messageText) == "價目表") {
@@ -73,15 +75,15 @@ function handleEvent($event) {
                 "altText" => "價目表",
                 "contents" => $flexMessage
             ], $quickReply);
-        } 
+        }
         // 處理各方案的詳細查詢
         elseif (strpos($messageText, "我想了解") === 0) {
             foreach ($priceList as $item) {
                 if ($messageText === "我想了解" . $item["name"]) {
                     $content = "";
                     $imagePath = "";
-                    
-                    switch($item["name"]) {
+
+                    switch ($item["name"]) {
                         case "毛孩形象全檔方案":
                             $content = "NT.5980\n\n拍攝時數大約1~1.5hr\n檔案當天拍攝全贈\n自行挑選精修12張\n4G USB\n客製放大相框1組\n贈每年週年照2張\n限定毛孩隻數1隻\n家人可一同入鏡(限定2人)\n可拍攝三款造型(需自備兩款造型搭配)\n引導師協助引導(視情況家人輔助)\n\n加購項目：\n多加一隻毛孩加收500元\n多一位大人加收1000\n如需妝髮加收1200";
                             $imagePath = "https://abpay.tw/line-bot/min/images/allfile.jpg";
@@ -176,27 +178,35 @@ function handleEvent($event) {
                             ]
                         ]
                     ];
-                    
+
                     replyMessage($event['replyToken'], $flexMessage, generateQuickReply($priceList));
                     return;
                 }
             }
-        } 
+        }
         // 處理預約請求
         elseif (strpos($messageText, "預約拍攝") === 0) {
+            // 回覆預約表單和付款資訊
+            $replyText = "確認訂購的話\n麻煩先幫我留個資料唷\n姓名：\n電話：\n地址：\n寵物品種：\n主人入鏡人數：\nEmail：\n拍攝地點：\n\n第一銀行(007)\n帳號：14757038557\n\n匯款完成後再麻煩跟我們說後五碼唷";
+
+            replyMessage($event['replyToken'], [
+                "type" => "text",
+                "text" => $replyText
+            ]);
+            return;
             // 找出對應的方案
-            foreach ($priceList as $item) {
-                if ($messageText === "預約拍攝" . $item["name"]) {
-                    // 回覆預約表單和付款資訊
-                    $replyText = "確認訂購的話\n麻煩先幫我留個資料唷\n姓名：\n電話：\n地址：\n寵物品種：\n主人入鏡人數：\nEmail：\n拍攝地點：\n\n第一銀行(007)\n帳號：14757038557\n\n匯款完成後再麻煩跟我們說後五碼唷";
-                    
-                    replyMessage($event['replyToken'], [
-                        "type" => "text",
-                        "text" => $replyText
-                    ]);
-                    return;
-                }
-            }
+            // foreach ($priceList as $item) {
+            //     if ($messageText === "預約拍攝" . $item["name"]) {
+            //         // 回覆預約表單和付款資訊
+            //         $replyText = "確認訂購的話\n麻煩先幫我留個資料唷\n姓名：\n電話：\n地址：\n寵物品種：\n主人入鏡人數：\nEmail：\n拍攝地點：\n\n第一銀行(007)\n帳號：14757038557\n\n匯款完成後再麻煩跟我們說後五碼唷";
+
+            //         replyMessage($event['replyToken'], [
+            //             "type" => "text",
+            //             "text" => $replyText
+            //         ]);
+            //         return;
+            //     }
+            // }
         } elseif (trim($messageText) == "常見問題") {
             $faqMessage = [
                 "type" => "flex",
@@ -325,7 +335,7 @@ function handleEvent($event) {
                                         "wrap" => true,
                                         "size" => "sm"
                                     ],
-                                    
+
                                 ]
                             ]
                         ]
@@ -340,7 +350,8 @@ function handleEvent($event) {
 }
 
 // 生成 Flex Message
-function generateFlexMessage($priceList) {
+function generateFlexMessage($priceList)
+{
     $contents = [];
     foreach ($priceList as $item) {
         $contents[] = [
@@ -383,7 +394,8 @@ function generateFlexMessage($priceList) {
 }
 
 // 生成 Quick Reply
-function generateQuickReply($priceList) {
+function generateQuickReply($priceList)
+{
     $items = [];
     foreach ($priceList as $item) {
         $items[] = [
@@ -405,7 +417,8 @@ function generateQuickReply($priceList) {
 // 將 Token 移至 .env 檔案中
 
 
-function replyMessage($replyToken, $message, $quickReply = null) {
+function replyMessage($replyToken, $message, $quickReply = null)
+{
     $url = "https://api.line.me/v2/bot/message/reply";
     $headers = [
         "Authorization: Bearer " . LINE_CONFIG['LINE_CHANNEL_ACCESS_TOKEN'],
@@ -433,16 +446,16 @@ function replyMessage($replyToken, $message, $quickReply = null) {
 
     $context = stream_context_create($options);
     $response = file_get_contents($url, false, $context);
-    
+
     if ($response === FALSE) {
         throw new Exception("API 請求失敗：" . error_get_last()['message']);
     }
-    
+
     $result = json_decode($response, true);
     if (isset($result['message'])) {
         throw new Exception("LINE API 錯誤：" . $result['message']);
     }
-    
+
     error_log("回覆成功：" . $response);
 }
 
