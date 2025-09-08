@@ -183,12 +183,12 @@ function handleEvent($event) {
             }
         } 
         // 處理預約請求
-        elseif (strpos($messageText, "預約") === 0) {
+        elseif (strpos($messageText, "預約拍攝") === 0) {
             // 找出對應的方案
             foreach ($priceList as $item) {
-                if ($messageText === "預約" . $item["name"]) {
+                if ($messageText === "預約拍攝" . $item["name"]) {
                     // 回覆預約表單和付款資訊
-                    $replyText = "確認訂購的話\n麻煩先幫我留個資料唷\n姓名：\n電話：\n地址：\n寵物品種：\n主人入鏡人數：\nEmail：\n拍攝地點：\n\n銀行代號：013 國泰世華銀行\n帳號：699519441822\n戶名：羅敏明\n分行：東林口分行\n匯款完成後再麻煩跟我們說後五碼唷";
+                    $replyText = "確認訂購的話\n麻煩先幫我留個資料唷\n姓名：\n電話：\n地址：\n寵物品種：\n主人入鏡人數：\nEmail：\n拍攝地點：\n\n第一銀行(007)\n帳號：14757038557\n\n匯款完成後再麻煩跟我們說後五碼唷";
                     
                     replyMessage($event['replyToken'], [
                         "type" => "text",
