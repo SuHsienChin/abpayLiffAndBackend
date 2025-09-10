@@ -55,39 +55,17 @@ $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <a href="dashboard.php" class="brand-link">
             <span class="brand-text font-weight-light">ABPay 後台管理</span>
         </a>
+        <!-- Sidebar -->
         <div class="sidebar">
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
-                    <li class="nav-item">
-                        <a href="dashboard.php" class="nav-link">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
-                            <p>儀表板</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="orders.php" class="nav-link">
-                            <i class="nav-icon fas fa-shopping-cart"></i>
-                            <p>訂單管理</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="users.php" class="nav-link active">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>使用者管理</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="games.php" class="nav-link">
-                            <i class="nav-icon fas fa-gamepad"></i>
-                            <p>遊戲管理</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="strategy_order.php" class="nav-link">
-                            <i class="nav-icon fas fa-file-upload"></i>
-                            <p>戰略自動發單</p>
-                        </a>
-                    </li>
+                    <li class="nav-item"><a href="dashboard.php" class="nav-link"><i class="nav-icon fas fa-tachometer-alt"></i><p>儀表板</p></a></li>
+                    <li class="nav-item"><a href="orders.php" class="nav-link"><i class="nav-icon fas fa-shopping-cart"></i><p>訂單管理</p></a></li>
+                    <li class="nav-item"><a href="users.php" class="nav-link"><i class="nav-icon fas fa-users"></i><p>使用者管理</p></a></li>
+                    <li class="nav-item"><a href="games.php" class="nav-link"><i class="nav-icon fas fa-gamepad"></i><p>遊戲管理</p></a></li>
+                    <li class="nav-item"><a href="strategy_order.php" class="nav-link"><i class="nav-icon fas fa-file-upload"></i><p>戰略自動發單</p></a></li>
+                    <li class="nav-item"><a href="redis_refresh.php" class="nav-link"><i class="nav-icon fas fa-sync-alt"></i><p>Redis 快取刷新</p></a></li>
+                    <li class="nav-item"><a href="redis_monitor.php" class="nav-link active"><i class="nav-icon fas fa-database"></i><p>Redis 監控</p></a></li>
                 </ul>
             </nav>
         </div>
