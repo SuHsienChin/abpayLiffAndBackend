@@ -17,6 +17,9 @@ const CACHE_TTL_GAME_ITEM = 5;
 const CACHE_TTL_GAME_LIST = 86400;
 
 /** @var int 匯率 TTL（秒） */
-const CACHE_TTL_RATE = 2;
+const CACHE_TTL_RATE = 10;
+
+/** @var int 匯率自動更新間隔（秒） */
+const CACHE_UPDATE_INTERVAL_RATE = 10;
 
 
