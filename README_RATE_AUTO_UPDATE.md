@@ -31,12 +31,12 @@ crontab -e
 
 添加以下行（每 10 秒執行一次）：
 ```bash
-* * * * * /usr/bin/php /path/to/your/project/update_rate_cache.php
-* * * * * sleep 10; /usr/bin/php /path/to/your/project/update_rate_cache.php
-* * * * * sleep 20; /usr/bin/php /path/to/your/project/update_rate_cache.php
-* * * * * sleep 30; /usr/bin/php /path/to/your/project/update_rate_cache.php
-* * * * * sleep 40; /usr/bin/php /path/to/your/project/update_rate_cache.php
-* * * * * sleep 50; /usr/bin/php /path/to/your/project/update_rate_cache.php
+* * * * * /usr/bin/php /var/www/html/update_rate_cache.php
+* * * * * sleep 10; /usr/bin/php /var/www/html/update_rate_cache.php
+* * * * * sleep 20; /usr/bin/php /var/www/html/update_rate_cache.php
+* * * * * sleep 30; /usr/bin/php /var/www/html/update_rate_cache.php
+* * * * * sleep 40; /usr/bin/php /var/www/html/update_rate_cache.php
+* * * * * sleep 50; /usr/bin/php /var/www/html/update_rate_cache.php
 ```
 
 ### 2. 替代方案：使用 systemd timer（推薦）
