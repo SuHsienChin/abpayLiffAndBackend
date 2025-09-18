@@ -85,7 +85,7 @@ function handleEvent($event)
 
                     switch ($item["name"]) {
                         case "毛孩形象全檔方案":
-                            $content = "NT.5980\n\n拍攝時數大約1~1.5hr\n檔案當天拍攝全贈(約150張左右)\n自行挑選精修12張\n4G USB\n客製放大相框1組\n限定毛孩隻數1隻\n家人可一同入鏡(限定2人)\n可拍攝三款造型(需自備兩款造型搭配)\n引導師協助引導(視情況家人輔助)\n\n加購項目：\n多加一隻毛孩加收500元\n多一位大人加收1000\n如需妝髮加收1200";
+                            $content = "NT.5980\n\n拍攝時數大約1~1.5hr\n檔案當天拍攝全贈(約150張左右)\n自行挑選精修12張\n4G USB\n客製放大相框1組\n限定毛孩隻數1隻\n家人可一同入鏡(限定2人)\n可拍攝三款造型(需自備兩款造型搭配)\n引導師協助引導(視情況家人輔助)\n\n加購項目：\n多加一隻毛孩加收500元\n多一位大人加收1000\n如需妝髮加收1600";
                             $imagePath = "https://abpay.tw/line-bot/min/images/allfile.jpg";
                             break;
                         case "毛孩親寫真":
@@ -93,7 +93,7 @@ function handleEvent($event)
                             $imagePath = "https://abpay.tw/line-bot/min/images/onepet.jpg";
                             break;
                         case "毛孩與你親子寫真":
-                            $content = "少張數單拍方案(限一隻毛孩)\nNT.1200\n加購項目:\n多加一隻毛孩加收500元\n多一位大人加收1000\n如需妝髮加收1200";
+                            $content = "少張數單拍方案(限一隻毛孩)\nNT.1200\n加購項目:\n多加一隻毛孩加收500元\n多一位大人加收1000\n如需妝髮加收1600";
                             $imagePath = "https://abpay.tw/line-bot/min/images/famile_and_pet.jpg";
                             break;
                         case "毛孩BOOM起來":
