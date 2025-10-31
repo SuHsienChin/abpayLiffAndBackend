@@ -308,26 +308,26 @@
                         .then(function (response) {
                             const allGameLists = response.data;
                             const filterGameLists = filterGames(response.data, switchGameListsData);
-                            console.log('所有遊戲');
-                            console.log(allGameLists);
-                            console.log('過濾後的遊戲');
-                            console.log(filterGameLists);
+                            // console.log('所有遊戲');
+                            // console.log(allGameLists);
+                            // console.log('過濾後的遊戲');
+                            // console.log(filterGameLists);
                             const searchGameBySid = (Sid) => {
                                 return filterGameLists.find(filterGameList => filterGameList.Sid === Sid);
                             };
-                            console.log('搜尋遊戲的function');
-                            console.log(searchGameBySid);
-                            console.log('客人所屬的遊戲');
-                            console.log(customerGameAccounts);
+                            // console.log('搜尋遊戲的function');
+                            // console.log(searchGameBySid);
+                            // console.log('客人所屬的遊戲');
+                            // console.log(customerGameAccounts);
                             let options = '<option value="">請選擇遊戲</option>';
                             $.each(customerGameAccounts, function (i, item) {
-                                console.log('請選擇遊戲的ITEMs');
-                                console.log(item);
+                                // console.log('請選擇遊戲的ITEMs');
+                                // console.log(item);
                                 const gameData = searchGameBySid(parseInt(item.GameSid));
-                                console.log('搜尋遊戲的Sid');
-                                console.log(parseInt(item.GameSid));
-                                console.log('搜尋遊戲的結果');
-                                console.log(gameData);
+                                // console.log('搜尋遊戲的Sid');
+                                // console.log(parseInt(item.GameSid));
+                                // console.log('搜尋遊戲的結果');
+                                // console.log(gameData);
                                 if (gameData != undefined) {
                                     const selectedGame = document.getElementById("gameName")
                                     options +=
