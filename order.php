@@ -310,8 +310,8 @@
                             const filterGameLists = filterGames(response.data, switchGameListsData);
                             // console.log('所有遊戲');
                             // console.log(allGameLists);
-                            // console.log('過濾後的遊戲');
-                            // console.log(filterGameLists);
+                            console.log('過濾後的遊戲');
+                            console.log(filterGameLists);
                             const searchGameBySid = (Sid) => {
                                 return filterGameLists.find(filterGameList => filterGameList.Sid === Sid);
                             };
