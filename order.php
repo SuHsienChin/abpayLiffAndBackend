@@ -794,8 +794,14 @@
             console.log(enabledIdSet);
             // 以 Sid 為主、Id 為輔 做過濾
             const filteredJsonA = jsonA.filter(item => {
+                console.log('item');
+                console.log(item);
                 const bySid = item.Sid !== undefined && enabledSidSet.has(String(item.Sid));
                 const byId = item.Id !== undefined && item.Id !== '' && enabledIdSet.has(String(item.Id));
+                console.log('bySid');
+                console.log(bySid);
+                console.log('byId');
+                console.log(byId);
                 return bySid || byId;
             });
             console.log('filteredJsonA');
