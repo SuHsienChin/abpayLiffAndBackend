@@ -772,10 +772,6 @@
         */
         //篩選出有打開的遊戲
         function filterGames(jsonA, jsonB) {
-            console.log('jsonA');
-            console.log(jsonA);
-            console.log('jsonB');
-            console.log(jsonB);
 
             // 先收集 jsonB 中 flag === 1 的 Sid 與 Id（皆轉字串比對，容錯不同型別）
             const enabledSidSet = new Set();
@@ -799,7 +795,8 @@
                 const byId = item.Id !== undefined && item.Id !== '' && enabledIdSet.has(String(item.Id));
                 return bySid || byId;
             });
-
+            console.log('filteredJsonA');
+            console.log(filteredJsonA);
             return filteredJsonA;
         }
 
