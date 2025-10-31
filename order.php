@@ -319,7 +319,13 @@
                             console.log(customerGameAccounts);
                             let options = '<option value="">請選擇遊戲</option>';
                             $.each(customerGameAccounts, function (i, item) {
+                                console.log('請選擇遊戲');
+                                console.log(item);
                                 const gameData = searchGameBySid(parseInt(item.GameSid));
+                                console.log('搜尋遊戲');
+                                console.log(gameData);
+                                console.log('搜尋遊戲結果');
+                            
                                 console.log(gameData);
                                 if (gameData != undefined) {
                                     const selectedGame = document.getElementById("gameName")
