@@ -298,7 +298,7 @@
         function getCustomerGameLists() {
             const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameNames'));
             console.log('取得客人所屬的遊戲');
-            console.log(customerGameAccounts);
+            
             // const showGameLists = switchGameLists();
             // console.log('顯示遊戲的開關');
             // console.log(showGameLists);
@@ -313,7 +313,10 @@
                             const searchGameBySid = (Sid) => {
                                 return filterGameLists.find(filterGameList => filterGameList.Sid === Sid);
                             };
-
+                            console.log('過濾後的遊戲');
+                            console.log(filterGameLists);
+                            console.log('客人所屬的遊戲');
+                            console.log(customerGameAccounts);
                             let options = '<option value="">請選擇遊戲</option>';
                             $.each(customerGameAccounts, function (i, item) {
                                 const gameData = searchGameBySid(parseInt(item.GameSid));
