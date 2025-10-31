@@ -769,7 +769,13 @@
             console.log(jsonB);
             // 將 jsonB 轉換為以 Id 為 key 的物件
             const jsonBMap = jsonB.reduce((acc, curr) => {
+                console.log('curr');
+                console.log(curr);
                 acc[curr.Id] = curr;
+                console.log('acc');
+                console.log(acc);
+                console.log('return acc');
+                console.log(acc);
                 return acc;
             }, {});
 
