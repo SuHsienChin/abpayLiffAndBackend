@@ -297,7 +297,6 @@
         //取得客人所屬的遊戲
         function getCustomerGameLists() {
             const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameNames'));
-            console.log('取得客人所屬的遊戲');
             
             // const showGameLists = switchGameLists();
             // console.log('顯示遊戲的開關');
@@ -309,23 +308,23 @@
                         .then(function (response) {
                             const allGameLists = response.data;
                             const filterGameLists = filterGames(response.data, switchGameListsData);
-
+                            console.log('過濾後的遊戲');
+                            console.log(filterGameLists);
                             const searchGameBySid = (Sid) => {
                                 return filterGameLists.find(filterGameList => filterGameList.Sid === Sid);
                             };
-                            console.log('過濾後的遊戲');
-                            console.log(filterGameLists);
+                            console.log('搜尋遊戲的function');
+                            console.log(searchGameBySid);
                             console.log('客人所屬的遊戲');
                             console.log(customerGameAccounts);
                             let options = '<option value="">請選擇遊戲</option>';
                             $.each(customerGameAccounts, function (i, item) {
-                                console.log('請選擇遊戲');
+                                console.log('請選擇遊戲的ITEMs');
                                 console.log(item);
                                 const gameData = searchGameBySid(parseInt(item.GameSid));
-                                console.log('搜尋遊戲');
-                                console.log(gameData);
-                                console.log('搜尋遊戲結果');
-                            
+                                console.log('搜尋遊戲的Sid');
+                                console.log(parseInt(item.GameSid));
+                                console.log('搜尋遊戲的結果');
                                 console.log(gameData);
                                 if (gameData != undefined) {
                                     const selectedGame = document.getElementById("gameName")
