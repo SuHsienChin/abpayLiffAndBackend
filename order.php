@@ -308,6 +308,8 @@
                         .then(function (response) {
                             const allGameLists = response.data;
                             const filterGameLists = filterGames(response.data, switchGameListsData);
+                            console.log('所有遊戲');
+                            console.log(allGameLists);
                             console.log('過濾後的遊戲');
                             console.log(filterGameLists);
                             const searchGameBySid = (Sid) => {
@@ -763,13 +765,21 @@
         function filterGames(jsonA, jsonB) {
             // 將 jsonB 轉換為以 Id 為 key 的物件
             const jsonBMap = jsonB.reduce((acc, curr) => {
+                console.log('jsonBMap');
+                console.log(curr);
                 acc[curr.Id] = curr;
+                console.log('acc');
+                console.log(acc);
                 return acc;
             }, {});
 
             // 篩選出 jsonA 中 Id 對應到 jsonB 的 Id 且 jsonB 的 flag 為 1 的資料
             const filteredJsonA = jsonA.filter(item => {
+                console.log('item');
+                console.log(item);
                 const jsonBItem = jsonBMap[item.Id];
+                console.log('jsonBItem');
+                console.log(jsonBItem);
                 return jsonBItem && jsonBItem.flag === 1;
             });
 
