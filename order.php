@@ -788,7 +788,10 @@
                     }
                 }
             });
-
+            console.log('enabledSidSet');
+            console.log(enabledSidSet);
+            console.log('enabledIdSet');
+            console.log(enabledIdSet);
             // 以 Sid 為主、Id 為輔 做過濾
             const filteredJsonA = jsonA.filter(item => {
                 const bySid = item.Sid !== undefined && enabledSidSet.has(String(item.Sid));
