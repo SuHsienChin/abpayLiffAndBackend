@@ -304,7 +304,7 @@
 
             switchGameLists()
                 .then(function (switchGameListsData) {
-                    axios.get('../getGameList.php')
+                    axios.get('getGameList.php')
                         .then(function (response) {
                             const allGameLists = response.data;
                             const filterGameLists = filterGames(response.data, switchGameListsData);
