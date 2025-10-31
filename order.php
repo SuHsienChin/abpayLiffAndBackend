@@ -761,33 +761,46 @@
                 });
         }
 
+        /**
+        * 篩選出「有開啟」的遊戲清單。
+        * 以 jsonB 的 flag === 1 為準，並以 Sid 為主要對應鍵；若無 Sid 對應，退而以 Id 對應。
+        * 這樣可避免以 Id 對不上造成 jsonBItem 為 undefined 的問題。
+        *
+        * @param {Array<object>} jsonA - 遊戲主清單（例如 getGameList.php 回傳，含 Sid/Name/GameRate）
+        * @param {Array<object>} jsonB - 遊戲開關清單（含 Sid/Id/flag 等）
+        * @returns {Array<object>} 僅包含在 jsonB 中 flag === 1 的遊戲
+        */
         //篩選出有打開的遊戲
         function filterGames(jsonA, jsonB) {
             console.log('jsonA');
             console.log(jsonA);
             console.log('jsonB');
             console.log(jsonB);
-            // 將 jsonB 轉換為以 Id 為 key 的物件
-            const jsonBMap = jsonB.reduce((acc, curr) => {
-                console.log('curr');
-                console.log(curr);
-                acc[curr.Id] = curr;
-                console.log('acc');
-                console.log(acc);
-                console.log('return acc');
-                console.log(acc);
-                return acc;
-            }, {});
 
-            // 篩選出 jsonA 中 Id 對應到 jsonB 的 Id 且 jsonB 的 flag 為 1 的資料
-            const filteredJsonA = jsonA.filter(item => {
-                const jsonBItem = jsonBMap[item.Id];
-                console.log('jsonBItem');
-                console.log(jsonBItem);
-                return jsonBItem && jsonBItem.flag === 1;
+            // 先收集 jsonB 中 flag === 1 的 Sid 與 Id（皆轉字串比對，容錯不同型別）
+            const enabledSidSet = new Set();
+            const enabledIdSet = new Set();
+
+            jsonB.forEach(curr => {
+                const isEnabled = String(curr.flag) === '1';
+                if (isEnabled) {
+                    if (curr.Sid !== undefined && curr.Sid !== null) {
+                        enabledSidSet.add(String(curr.Sid));
+                    }
+                    if (curr.Id !== undefined && curr.Id !== null && curr.Id !== '') {
+                        enabledIdSet.add(String(curr.Id));
+                    }
+                }
             });
 
-            return (filteredJsonA);
+            // 以 Sid 為主、Id 為輔 做過濾
+            const filteredJsonA = jsonA.filter(item => {
+                const bySid = item.Sid !== undefined && enabledSidSet.has(String(item.Sid));
+                const byId = item.Id !== undefined && item.Id !== '' && enabledIdSet.has(String(item.Id));
+                return bySid || byId;
+            });
+
+            return filteredJsonA;
         }
 
         /*
