@@ -297,7 +297,7 @@
         //取得客人所屬的遊戲
         function getCustomerGameLists() {
             const customerGameAccounts = JSON.parse(sessionStorage.getItem('customerGameNames'));
-            console.log(//取得客人所屬的遊戲);
+            console.log('取得客人所屬的遊戲');
             // const showGameLists = switchGameLists();
             // console.log('顯示遊戲的開關');
             // console.log(showGameLists);
